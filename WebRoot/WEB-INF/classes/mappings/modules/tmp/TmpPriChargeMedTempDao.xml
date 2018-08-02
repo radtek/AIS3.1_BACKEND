@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.tmp.dao.TmpPriChargeMedTempDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    <id column="chargeMedTempId" property="chargeMedTempId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="tempName" property="tempName" jdbcType="VARCHAR" />
+    <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="createName" property="createName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="tempType" property="tempType" jdbcType="INTEGER" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    chargeMedTempId, createTime, createUser, tempName, pinyin, createName, 
+    type, remark, tempType,beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pri_charge_med_temp
+    where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryChargeMedTempList" resultMap="BaseResultMap" parameterType="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    select * from(
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pri_charge_med_temp
+    where 1 = 1 and beid = #{searchLiquidTempFormBean.beid,jdbcType=VARCHAR}
+    <if test="searchLiquidTempFormBean.roleType == 'ANAES_DOCTOR' or searchLiquidTempFormBean.roleType == 'NURSE'" >
+        and ((createUser = #{searchLiquidTempFormBean.createUser,jdbcType=VARCHAR} and type = '1') or type = '2')
+    </if> ) a where 1 = 1
+    <if test="filters != null">
+		<foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+		  	<if test="filter.value != null and filter.value != ''">
+			 	AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+		  	</if>
+		  </if>
+		</foreach>
+	</if>
+  	order by ${searchLiquidTempFormBean.sort} ${searchLiquidTempFormBean.orderBy}
+  	<if test="searchLiquidTempFormBean.pageSize != null" >
+	      limit #{searchLiquidTempFormBean.pageNo},#{searchLiquidTempFormBean.pageSize}
+	</if>
+  </select>
+  
+  <select id="queryCountChargeMedTempList" resultType="java.lang.Integer">
+  	select count(*) from(
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pri_charge_med_temp
+    where 1 = 1 and beid = #{searchLiquidTempFormBean.beid,jdbcType=VARCHAR}
+    <if test="searchLiquidTempFormBean.executiveLevel == 'ANAES_DOCTOR' or searchLiquidTempFormBean.executiveLevel == 'OPERROOM_NURSE'" >
+        and ((createUser = #{searchLiquidTempFormBean.createUser,jdbcType=VARCHAR} and type = '1') or type = '2')
+    </if> ) a where 1 = 1
+    <if test="filters != null">
+		<foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+		  	<if test="filter.value != null and filter.value != ''">
+			 AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+		  	</if>
+		  </if>
+		</foreach>
+	</if>
+  </select>
+  
+  
+  <select id="queryInvalidChargeItemList" resultType="com.digihealth.anesthesia.basedata.po.BasChargeItem">
+	select DISTINCT t.chargeItemId,chargeItemCode,chargeItemName,t1.basicUnitPrice,t1.`enable` 
+		From tmp_charge_pay_temp t ,bas_charge_item t1
+		where t.chargeItemId = t1.chargeItemId 
+		and t1.`enable`='0'
+		and t.beid = #{beid,jdbcType=VARCHAR}
+ </select>
+ 
+ 
+ <select id="queryInvalidMedOrPriceList" resultType="com.digihealth.anesthesia.basedata.formbean.MedicineFormBean">
+ 
+	 select DISTINCT x.medicineId,x.firmId,x.`code`,x.`name`,x.spec,x.priceMinPackage,x.`enable` from (
+		select DISTINCT t.medicineId,t.firmId,t1.`code`,t1.`name`,t2.spec,t2.priceMinPackage,t1.`enable` from tmp_med_pay_temp t,bas_medicine t1,bas_price t2
+				where t.medicineId=t1.medicineId
+				and t1.code = t2.`code`
+				and t.firmId = t2.firmId
+				and t1.`enable`='0' 
+				and t.beid = #{beid,jdbcType=VARCHAR}
+				union ALL
+				
+				select DISTINCT t.medicineId,t.firmId,t1.`code`,t1.`name`,t2.spec,t2.priceMinPackage,t1.`enable` from tmp_med_pay_temp t,bas_medicine t1,bas_price t2
+				where t.medicineId=t1.medicineId
+				and t1.code = t2.`code`
+				and t.firmId = t2.firmId
+				and t2.`enable`='0' 
+				and t.beid = #{beid,jdbcType=VARCHAR}
+		) x
+ </select>
+ 
+ 
+ <select id="queryChargeTempPayItemByPy" resultType="com.digihealth.anesthesia.basedata.po.BasChargeItem">
+	select DISTINCT t.chargeItemId,chargeItemCode,chargeItemName,t1.basicUnitPrice,t1.`enable`,t1.price,t1.unit
+		From tmp_charge_pay_temp t ,bas_charge_item t1
+		where t.chargeItemId = t1.chargeItemId 
+		and t.beid = #{beid,jdbcType=VARCHAR}
+    and (t1.pinYin like CONCAT(CONCAT('%',#{pinyin}),'%') or t1.chargeItemName like CONCAT(CONCAT('%',#{pinyin}),'%'))
+ </select>
+ 
+ 
+  <select id="queryChargeTempMedicineItemByPy" resultType="com.digihealth.anesthesia.basedata.formbean.MedicineFormBean">
+	select DISTINCT t.medicineId,t.firmId,t1.`code`,t1.`name`,t2.spec,t2.priceMinPackage,t1.`enable` from tmp_med_pay_temp t,bas_medicine t1,bas_price t2
+				where t.medicineId=t1.medicineId
+				and t1.code = t2.`code`
+				and t.firmId = t2.firmId
+				and t.beid = #{beid,jdbcType=VARCHAR}
+    and (t1.pinYin like CONCAT(CONCAT('%',#{name}),'%') or t1.name like CONCAT(CONCAT('%',#{name}),'%'))
+ </select>
+ 
+  <select id="queryRemarkByChargeTempList" resultType="com.digihealth.anesthesia.basedata.po.BasDept">
+	 select DISTINCT remark  name from tmp_pri_charge_med_temp where tempType= #{tempType,jdbcType=VARCHAR} 
+	 and beid = #{beid,jdbcType=VARCHAR}  
+	 and LENGTH(remark) &gt; 0
+	 order by name asc
+ </select>
+ 
+
+  <delete id="batchDelChargeMedInvalidData" >
+    delete from tmp_charge_med_temp
+    where medicineId = #{medicineId,jdbcType=VARCHAR} and firmId = #{firmId,jdbcType=VARCHAR}
+     and beid = #{beid,jdbcType=VARCHAR} 
+  </delete>
+
+
+  <delete id="batchDelChargePayInvalidData" >
+    delete from  tmp_charge_pay_temp
+    where chargeItemId = #{chargeItemId,jdbcType=INTEGER}
+    and beid = #{beid,jdbcType=VARCHAR} 
+  </delete>
+  
+  
+   <delete id="batchReplaceChargeMedData">
+    update  tmp_charge_med_temp set medicineId = #{chargeTempOptFormBean.toMedId,jdbcType=VARCHAR},firmId = #{chargeTempOptFormBean.toFirmId,jdbcType=VARCHAR}
+    where medicineId = #{chargeTempOptFormBean.fromMedId,jdbcType=VARCHAR} 
+    and firmId = #{chargeTempOptFormBean.fromFirmId,jdbcType=VARCHAR}
+    and beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+
+
+  <delete id="batchReplaceChargePayData">
+    update tmp_charge_pay_temp set chargeItemId = #{chargeTempOptFormBean.toChargeItemId,jdbcType=VARCHAR}
+    where chargeItemId = #{chargeTempOptFormBean.fromChargeItemId,jdbcType=VARCHAR} 
+    and beid = #{beid,jdbcType=VARCHAR} 
+  </delete>
+  
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tmp_pri_charge_med_temp
+    where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </delete>
+  
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    insert into tmp_pri_charge_med_temp (chargeMedTempId, createTime, createUser, 
+      tempName, pinyin, createName, 
+      type, remark, tempType,beid
+      )
+    values (#{chargeMedTempId,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{tempName,jdbcType=VARCHAR}, #{pinyin,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{tempType,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    insert into tmp_pri_charge_med_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="chargeMedTempId != null" >
+        chargeMedTempId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="tempName != null" >
+        tempName,
+      </if>
+      <if test="pinyin != null" >
+        pinyin,
+      </if>
+      <if test="createName != null" >
+        createName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="tempType != null" >
+        tempType,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="chargeMedTempId != null" >
+        #{chargeMedTempId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="tempName != null" >
+        #{tempName,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="tempType != null" >
+        #{tempType,jdbcType=INTEGER},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    update tmp_pri_charge_med_temp
+    <set >
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="tempName != null" >
+        tempName = #{tempName,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyin != null" >
+        pinyin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        createName = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="tempType != null" >
+        tempType = #{tempType,jdbcType=INTEGER},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.tmp.po.TmpPriChargeMedTemp" >
+    update tmp_pri_charge_med_temp
+    set createTime = #{createTime,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      tempName = #{tempName,jdbcType=VARCHAR},
+      pinyin = #{pinyin,jdbcType=VARCHAR},
+      createName = #{createName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      tempType = #{tempType,jdbcType=INTEGER},
+      beid = #{beid,jdbcType=VARCHAR}
+    where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

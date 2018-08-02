@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.tmp.dao.TmpAnalgesicDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.tmp.po.TmpAnalgesic" >
+    <id column="analTmpId" property="analTmpId" jdbcType="VARCHAR" />
+    <result column="analgesicType" property="analgesicType" jdbcType="VARCHAR" />
+    <result column="medicineId" property="medicineId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="spec" property="spec" jdbcType="VARCHAR" />
+    <result column="dosage" property="dosage" jdbcType="VARCHAR" />
+    <result column="dosageUnit" property="dosageUnit" jdbcType="VARCHAR" />
+    <result column="firm" property="firm" jdbcType="VARCHAR" />
+    <result column="medTakeWayId" property="medTakeWayId" jdbcType="VARCHAR" />
+    <result column="priceId" property="priceId" jdbcType="VARCHAR" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    analTmpId, analgesicType, medicineId, name, spec, dosage, dosageUnit, firm, medTakeWayId, 
+    priceId, beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_analgesic
+    where analTmpId = #{analTmpId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectTmpAnalgesicByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_analgesic
+    where analgesicType = #{analgesicType,jdbcType=VARCHAR}
+    and beid = #{beid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteTmpAnalgesicByType" parameterType="java.lang.String" >
+    delete from tmp_analgesic
+    where analgesicType = #{analgesicType,jdbcType=VARCHAR}
+    and beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tmp_analgesic
+    where analTmpId = #{analTmpId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.tmp.po.TmpAnalgesic" >
+    insert into tmp_analgesic (analTmpId, analgesicType, medicineId, 
+      name, spec, dosage, 
+      dosageUnit, firm, medTakeWayId, 
+      priceId, beid)
+    values (#{analTmpId,jdbcType=VARCHAR}, #{analgesicType,jdbcType=VARCHAR}, #{medicineId,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{spec,jdbcType=VARCHAR}, #{dosage,jdbcType=VARCHAR}, 
+      #{dosageUnit,jdbcType=VARCHAR}, #{firm,jdbcType=VARCHAR}, #{medTakeWayId,jdbcType=VARCHAR}, 
+      #{priceId,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpAnalgesic" >
+    insert into tmp_analgesic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="analTmpId != null" >
+        analTmpId,
+      </if>
+      <if test="analgesicType != null" >
+        analgesicType,
+      </if>
+      <if test="medicineId != null" >
+        medicineId,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="spec != null" >
+        spec,
+      </if>
+      <if test="dosage != null" >
+        dosage,
+      </if>
+      <if test="dosageUnit != null" >
+        dosageUnit,
+      </if>
+      <if test="firm != null" >
+        firm,
+      </if>
+      <if test="medTakeWayId != null" >
+        medTakeWayId,
+      </if>
+      <if test="priceId != null" >
+        priceId,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="analTmpId != null" >
+        #{analTmpId,jdbcType=VARCHAR},
+      </if>
+      <if test="analgesicType != null" >
+        #{analgesicType,jdbcType=VARCHAR},
+      </if>
+      <if test="medicineId != null" >
+        #{medicineId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null" >
+        #{spec,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage != null" >
+        #{dosage,jdbcType=VARCHAR},
+      </if>
+      <if test="dosageUnit != null" >
+        #{dosageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="firm != null" >
+        #{firm,jdbcType=VARCHAR},
+      </if>
+      <if test="medTakeWayId != null" >
+        #{medTakeWayId,jdbcType=VARCHAR},
+      </if>
+      <if test="priceId != null" >
+        #{priceId,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpAnalgesic" >
+    update tmp_analgesic
+    <set >
+      <if test="analgesicType != null" >
+        analgesicType = #{analgesicType,jdbcType=VARCHAR},
+      </if>
+      <if test="medicineId != null" >
+        medicineId = #{medicineId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null" >
+        spec = #{spec,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage != null" >
+        dosage = #{dosage,jdbcType=VARCHAR},
+      </if>
+      <if test="dosageUnit != null" >
+        dosageUnit = #{dosageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="firm != null" >
+        firm = #{firm,jdbcType=VARCHAR},
+      </if>
+      <if test="medTakeWayId != null" >
+        medTakeWayId = #{medTakeWayId,jdbcType=VARCHAR},
+      </if>
+      <if test="priceId != null" >
+        priceId = #{priceId,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where analTmpId = #{analTmpId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.tmp.po.TmpAnalgesic" >
+    update tmp_analgesic
+    set analgesicType = #{analgesicType,jdbcType=VARCHAR},
+      medicineId = #{medicineId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      spec = #{spec,jdbcType=VARCHAR},
+      dosage = #{dosage,jdbcType=VARCHAR},
+      dosageUnit = #{dosageUnit,jdbcType=VARCHAR},
+      firm = #{firm,jdbcType=VARCHAR},
+      medTakeWayId = #{medTakeWayId,jdbcType=VARCHAR},
+      priceId = #{priceId,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR}
+    where analTmpId = #{analTmpId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

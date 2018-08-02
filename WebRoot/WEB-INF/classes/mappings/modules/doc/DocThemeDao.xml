@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocThemeDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocTheme" >
+    <id column="docThemeId" property="docThemeId" jdbcType="VARCHAR" />
+    <result column="docThemeName" property="docThemeName" jdbcType="VARCHAR" />
+    <result column="menuId" property="menuId" jdbcType="VARCHAR" />
+    <result column="menuParentId" property="menuParentId" jdbcType="VARCHAR" />
+    <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+    <result column="docType" property="docType" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="roleIds" property="roleIds" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="themeState" property="themeState" jdbcType="INTEGER" />
+    <result column="themeType" property="themeType" jdbcType="VARCHAR" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="ResultMapWithBLOBs" type="com.digihealth.anesthesia.doc.po.DocTheme" extends="BaseResultMap" >
+    <result column="originalHtml" property="originalHtml" jdbcType="LONGVARCHAR" />
+    <result column="parseHtml" property="parseHtml" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    docThemeId, docThemeName, menuId, menuParentId, isDelete, docType, createTime, roleIds, url, themeState, 
+    themeType, beid
+  </sql>
+
+  <sql id="Blob_Column_List" >
+    originalHtml, parseHtml
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from doc_theme
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="seachDocTheme" resultType="com.digihealth.anesthesia.doc.formbean.DocThemeFormBean">
+    select docThemeId, docThemeName, menuId, menuParentId, 
+    isDelete, docType, createTime, roleIds, url, themeState, 
+    themeType, beid
+    from doc_theme
+    where beid = #{systemSearchFormBean.beid} ${filter} 
+	order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+	<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+	</if>
+  </select>
+  
+  <select id="seachDocThemeTotal" resultType="java.lang.Integer">
+    select count(docThemeId) 
+    from doc_theme
+    where isDelete = 0
+   	and beid = #{systemSearchFormBean.beid} ${filter} 
+  </select>
+
+  <select id="seachDocThemeById" resultType="com.digihealth.anesthesia.doc.formbean.DocThemeFormBean" >
+    select * from doc_theme
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="seachDocThemeByMenuId" resultType="com.digihealth.anesthesia.doc.formbean.DocThemeFormBean" >
+    select * from doc_theme 
+    where themeState = 3 and menuId like CONCAT(CONCAT('%',#{menuId,jdbcType=VARCHAR}),'%') limit 1
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_theme
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </delete>
+
+ <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocTheme" >
+    insert into doc_theme (docThemeId, docThemeName, menuId, 
+      menuParentId, isDelete, docType, 
+      createTime, roleIds, url, 
+      themeState, themeType, beid, 
+      originalHtml, parseHtml)
+    values (#{docThemeId,jdbcType=VARCHAR}, #{docThemeName,jdbcType=VARCHAR}, #{menuId,jdbcType=VARCHAR}, 
+      #{menuParentId,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER}, #{docType,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{roleIds,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{themeState,jdbcType=INTEGER}, #{themeType,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR}, 
+      #{originalHtml,jdbcType=LONGVARCHAR}, #{parseHtml,jdbcType=LONGVARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocTheme" >
+    insert into doc_theme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="docThemeId != null" >
+        docThemeId,
+      </if>
+      <if test="docThemeName != null" >
+        docThemeName,
+      </if>
+      <if test="menuId != null" >
+        menuId,
+      </if>
+      <if test="menuParentId != null" >
+        menuParentId,
+      </if>
+      <if test="isDelete != null" >
+        isDelete,
+      </if>
+      <if test="docType != null" >
+        docType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="roleIds != null" >
+        roleIds,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="themeState != null" >
+        themeState,
+      </if>
+      <if test="themeType != null" >
+        themeType,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="originalHtml != null" >
+        originalHtml,
+      </if>
+      <if test="parseHtml != null" >
+        parseHtml,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="docThemeId != null" >
+        #{docThemeId,jdbcType=VARCHAR},
+      </if>
+      <if test="docThemeName != null" >
+        #{docThemeName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentId != null" >
+        #{menuParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="docType != null" >
+        #{docType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roleIds != null" >
+        #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="themeState != null" >
+        #{themeState,jdbcType=INTEGER},
+      </if>
+      <if test="themeType != null" >
+        #{themeType,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="originalHtml != null" >
+        #{originalHtml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parseHtml != null" >
+        #{parseHtml,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocTheme" >
+    update doc_theme
+    <set >
+      <if test="docThemeName != null" >
+        docThemeName = #{docThemeName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        menuId = #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentId != null" >
+        menuParentId = #{menuParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        isDelete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="docType != null" >
+        docType = #{docType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roleIds != null" >
+        roleIds = #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="themeState != null" >
+        themeState = #{themeState,jdbcType=INTEGER},
+      </if>
+      <if test="themeType != null" >
+        themeType = #{themeType,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="originalHtml != null" >
+        originalHtml = #{originalHtml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parseHtml != null" >
+        parseHtml = #{parseHtml,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.digihealth.anesthesia.doc.po.DocTheme" >
+    update doc_theme
+    set docThemeName = #{docThemeName,jdbcType=VARCHAR},
+      menuId = #{menuId,jdbcType=VARCHAR},
+      menuParentId = #{menuParentId,jdbcType=VARCHAR},
+      isDelete = #{isDelete,jdbcType=INTEGER},
+      docType = #{docType,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      roleIds = #{roleIds,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      themeState = #{themeState,jdbcType=INTEGER},
+      themeType = #{themeType,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR},
+      originalHtml = #{originalHtml,jdbcType=LONGVARCHAR},
+      parseHtml = #{parseHtml,jdbcType=LONGVARCHAR}
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocTheme" >
+    update doc_theme
+    set docThemeName = #{docThemeName,jdbcType=VARCHAR},
+      menuId = #{menuId,jdbcType=VARCHAR},
+      menuParentId = #{menuParentId,jdbcType=VARCHAR},
+      isDelete = #{isDelete,jdbcType=INTEGER},
+      docType = #{docType,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      roleIds = #{roleIds,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      themeState = #{themeState,jdbcType=INTEGER},
+      themeType = #{themeType,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR}
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

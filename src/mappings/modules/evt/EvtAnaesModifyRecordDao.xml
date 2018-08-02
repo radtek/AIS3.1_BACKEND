@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.evt.dao.EvtAnaesModifyRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="operModule" property="operModule" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="eventId" property="eventId" jdbcType="VARCHAR" />
+    <result column="modTable" property="modTable" jdbcType="VARCHAR" />
+    <result column="modProperty" property="modProperty" jdbcType="VARCHAR" />
+    <result column="oldValue" property="oldValue" jdbcType="VARCHAR" />
+    <result column="newValue" property="newValue" jdbcType="VARCHAR" />
+    <result column="operId" property="operId" jdbcType="VARCHAR" />
+    <result column="modifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.digihealth.anesthesia.basedata.po.BasOperateLog" extends="BaseResultMap" >
+    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, operModule, ip, regOptId, eventId, modTable, modProperty, oldValue, newValue, 
+    operId, modifyDate, beid
+  </sql>
+  <sql id="Blob_Column_List" >
+    remark
+  </sql>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />,
+    <include refid="Blob_Column_List" />
+    
+    from evt_anaes_modify_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <select id="queryEvtAnaesModifyRecordList" resultType="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord">
+	
+	select x.* from (
+		SELECT a.* ,b.name,b.hid,b.operaDate,c.operRoomId,c.pcs,d.name operRoomName
+			FROM evt_anaes_modify_record a,bas_reg_opt b,bas_dispatch c,(select * from bas_operroom where beid='102') d
+		WHERE a.regOptId = b.regOptId
+			and b.regOptId = c.regOptId
+			and c.operRoomId = d.operRoomId
+		) x where 1 = 1 
+		<if test="filters != null">
+			<foreach collection="filters" item="filter" open=" " close=" " >
+				<if test="filter.field != null and filter.field != '' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+					</if>
+				</if>
+			</foreach>
+		</if>
+  		order by ${searchFormBean.sort} ${searchFormBean.orderBy}
+  		<if test="searchFormBean.pageSize != null" >
+	       limit #{searchFormBean.pageNo},#{searchFormBean.pageSize}
+	    </if>
+	</select>
+  
+     <select id="queryCountEvtAnaesModifyRecordList" resultType="java.lang.Integer">
+		SELECT count(1) from (
+		  select x.* from (
+			SELECT a.* ,b.name,b.hid,b.operaDate,c.operRoomId,c.pcs,d.name operRoomName
+			FROM evt_anaes_modify_record a,bas_reg_opt b,bas_dispatch c,(select * from bas_operroom where beid='102') d
+			WHERE a.regOptId = b.regOptId
+			and b.regOptId = c.regOptId
+			and c.operRoomId = d.operRoomId
+			) x where 1 = 1 
+			<if test="filters != null">
+				<foreach collection="filters" item="filter" open=" " close=" " >
+					<if test="filter.field != null and filter.field != '' ">
+						<if test="filter.value != null and filter.value != ''">
+							AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+						</if>
+					</if>
+				</foreach>
+			</if>
+			) y 
+	</select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from evt_anaes_modify_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord" >
+    insert into evt_anaes_modify_record (id, operModule, ip, 
+      regOptId, eventId, modTable, 
+      modProperty, oldValue, newValue, 
+      operId, modifyDate, beid, 
+      remark)
+    values (#{id,jdbcType=VARCHAR}, #{operModule,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{regOptId,jdbcType=VARCHAR}, #{eventId,jdbcType=VARCHAR}, #{modTable,jdbcType=VARCHAR}, 
+      #{modProperty,jdbcType=VARCHAR}, #{oldValue,jdbcType=VARCHAR}, #{newValue,jdbcType=VARCHAR}, 
+      #{operId,jdbcType=VARCHAR}, #{modifyDate,jdbcType=TIMESTAMP}, #{beid,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=LONGVARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord" >
+    insert into evt_anaes_modify_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="operModule != null" >
+        operModule,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="eventId != null" >
+        eventId,
+      </if>
+      <if test="modTable != null" >
+        modTable,
+      </if>
+      <if test="modProperty != null" >
+        modProperty,
+      </if>
+      <if test="oldValue != null" >
+        oldValue,
+      </if>
+      <if test="newValue != null" >
+        newValue,
+      </if>
+      <if test="operId != null" >
+        operId,
+      </if>
+      <if test="modifyDate != null" >
+        modifyDate,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="operModule != null" >
+        #{operModule,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="eventId != null" >
+        #{eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="modTable != null" >
+        #{modTable,jdbcType=VARCHAR},
+      </if>
+      <if test="modProperty != null" >
+        #{modProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="oldValue != null" >
+        #{oldValue,jdbcType=VARCHAR},
+      </if>
+      <if test="newValue != null" >
+        #{newValue,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null" >
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord" >
+    update evt_anaes_modify_record
+    <set >
+      <if test="operModule != null" >
+        operModule = #{operModule,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="eventId != null" >
+        eventId = #{eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="modTable != null" >
+        modTable = #{modTable,jdbcType=VARCHAR},
+      </if>
+      <if test="modProperty != null" >
+        modProperty = #{modProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="oldValue != null" >
+        oldValue = #{oldValue,jdbcType=VARCHAR},
+      </if>
+      <if test="newValue != null" >
+        newValue = #{newValue,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        operId = #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null" >
+        modifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.evt.po.EvtAnaesModifyRecord" >
+    update evt_anaes_modify_record
+    set operModule = #{operModule,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      regOptId = #{regOptId,jdbcType=VARCHAR},
+      eventId = #{eventId,jdbcType=VARCHAR},
+      modTable = #{modTable,jdbcType=VARCHAR},
+      modProperty = #{modProperty,jdbcType=VARCHAR},
+      oldValue = #{oldValue,jdbcType=VARCHAR},
+      newValue = #{newValue,jdbcType=VARCHAR},
+      operId = #{operId,jdbcType=VARCHAR},
+      modifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+      beid = #{beid,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+
+</mapper>

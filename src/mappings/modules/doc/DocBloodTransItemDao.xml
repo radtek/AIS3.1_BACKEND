@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocBloodTransItemDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocBloodTransItem" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="bloodTransId" property="bloodTransId" jdbcType="VARCHAR" />
+    <result column="bloodId" property="bloodId" jdbcType="VARCHAR" />
+    <result column="bloodName" property="bloodName" jdbcType="VARCHAR" />
+    <result column="bloodDosage" property="bloodDosage" jdbcType="REAL" />
+    <result column="bloodUnit" property="bloodUnit" jdbcType="VARCHAR" />
+    <result column="bloodType" property="bloodType" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, bloodTransId, bloodId, bloodName, bloodDosage, bloodUnit, bloodType, status, 
+    date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_blood_trans_item
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_blood_trans_item
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransItem" >
+    insert into doc_blood_trans_item (id, bloodTransId, bloodId, 
+      bloodName, bloodDosage, bloodUnit, 
+      bloodType, status, date
+      )
+    values (#{id,jdbcType=VARCHAR}, #{bloodTransId,jdbcType=VARCHAR}, #{bloodId,jdbcType=VARCHAR}, 
+      #{bloodName,jdbcType=VARCHAR}, #{bloodDosage,jdbcType=REAL}, #{bloodUnit,jdbcType=VARCHAR}, 
+      #{bloodType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransItem" >
+    insert into doc_blood_trans_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bloodTransId != null" >
+        bloodTransId,
+      </if>
+      <if test="bloodId != null" >
+        bloodId,
+      </if>
+      <if test="bloodName != null" >
+        bloodName,
+      </if>
+      <if test="bloodDosage != null" >
+        bloodDosage,
+      </if>
+      <if test="bloodUnit != null" >
+        bloodUnit,
+      </if>
+      <if test="bloodType != null" >
+        bloodType,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodTransId != null" >
+        #{bloodTransId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodId != null" >
+        #{bloodId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodName != null" >
+        #{bloodName,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodDosage != null" >
+        #{bloodDosage,jdbcType=REAL},
+      </if>
+      <if test="bloodUnit != null" >
+        #{bloodUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransItem" >
+    update doc_blood_trans_item
+    <set >
+      <if test="bloodTransId != null" >
+        bloodTransId = #{bloodTransId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodId != null" >
+        bloodId = #{bloodId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodName != null" >
+        bloodName = #{bloodName,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodDosage != null" >
+        bloodDosage = #{bloodDosage,jdbcType=REAL},
+      </if>
+      <if test="bloodUnit != null" >
+        bloodUnit = #{bloodUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        bloodType = #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransItem" >
+    update doc_blood_trans_item
+    set bloodTransId = #{bloodTransId,jdbcType=VARCHAR},
+      bloodId = #{bloodId,jdbcType=VARCHAR},
+      bloodName = #{bloodName,jdbcType=VARCHAR},
+      bloodDosage = #{bloodDosage,jdbcType=REAL},
+      bloodUnit = #{bloodUnit,jdbcType=VARCHAR},
+      bloodType = #{bloodType,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      date = #{date,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+	<select id="queryBloodItemListByRegoptId" resultType="com.digihealth.anesthesia.doc.po.DocBloodTransItem">
+		SELECT * from doc_blood_trans_item
+		where bloodTransId = #{bloodTransId} order by id desc
+	</select>
+
+	<select id="queryNotSendBloodItemListByRegoptId" resultType="com.digihealth.anesthesia.interfacedata.po.Blood">
+		SELECT * from doc_blood_trans_item
+		where bloodTransId = #{bloodTransId}
+		and status = #{status}
+	</select>
+
+	<update id="updateBloodItemState">
+		UPDATE bloodTransId set status = '2' where id = #{id}
+	</update>
+
+</mapper>

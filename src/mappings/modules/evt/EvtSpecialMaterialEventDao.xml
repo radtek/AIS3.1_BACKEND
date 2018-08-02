@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.evt.dao.EvtSpecialMaterialEventDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent" >
+    <id column="specialMaterialEventId" property="specialMaterialEventId" jdbcType="VARCHAR" />
+    <result column="docId" property="docId" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="specialItemName" property="specialItemName" jdbcType="VARCHAR" />
+    <result column="specialItemId" property="specialItemId" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    specialMaterialEventId, docId, startTime, endTime, specialItemName, specialItemId
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from evt_specialMaterialEvent
+    where specialMaterialEventId = #{specialMaterialEventId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectSpecialMaterialEvent" resultType="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent">
+	select 
+      <include refid="Base_Column_List" />
+       from evt_specialMaterialEvent where 1 = 1
+	  <if test="searchBean.docId != null and searchBean.docId != ''">
+			AND docId = #{searchBean.docId}
+	  </if>
+	  <if test="searchBean.id != null and searchBean.id != ''">
+			AND specialMaterialEventId = #{searchBean.id}
+      </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from evt_specialMaterialEvent
+    where specialMaterialEventId = #{specialMaterialEventId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent" >
+    insert into evt_specialMaterialEvent (specialMaterialEventId, docId, startTime, 
+      endTime, specialItemName, specialItemId
+      )
+    values (#{specialMaterialEventId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{specialItemName,jdbcType=VARCHAR}, #{specialItemId,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent" >
+    insert into evt_specialMaterialEvent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="specialMaterialEventId != null" >
+        specialMaterialEventId,
+      </if>
+      <if test="docId != null" >
+        docId,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="specialItemName != null" >
+        specialItemName,
+      </if>
+      <if test="specialItemId != null" >
+        specialItemId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="specialMaterialEventId != null" >
+        #{specialMaterialEventId,jdbcType=VARCHAR},
+      </if>
+      <if test="docId != null" >
+        #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="specialItemName != null" >
+        #{specialItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="specialItemId != null" >
+        #{specialItemId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent" >
+    update evt_specialMaterialEvent
+    <set >
+      <if test="docId != null" >
+        docId = #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="specialItemName != null" >
+        specialItemName = #{specialItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="specialItemId != null" >
+        specialItemId = #{specialItemId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where specialMaterialEventId = #{specialMaterialEventId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.evt.po.EvtSpecialMaterialEvent" >
+    update evt_specialMaterialEvent
+    set docId = #{docId,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      specialItemName = #{specialItemName,jdbcType=VARCHAR},
+      specialItemId = #{specialItemId,jdbcType=VARCHAR}
+    where specialMaterialEventId = #{specialMaterialEventId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

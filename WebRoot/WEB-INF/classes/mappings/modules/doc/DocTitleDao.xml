@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocTitleDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocTitle" >
+    <id column="docTitleId" property="docTitleId" jdbcType="VARCHAR" />
+    <result column="docThemeId" property="docThemeId" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="tableName" property="tableName" jdbcType="VARCHAR" />
+    <result column="fieldName" property="fieldName" jdbcType="VARCHAR" />
+    <result column="fieldType" property="fieldType" jdbcType="VARCHAR" />
+    <result column="maxdoc" property="maxdoc" jdbcType="REAL" />
+    <result column="mindoc" property="mindoc" jdbcType="REAL" />
+    <result column="ismast" property="ismast" jdbcType="INTEGER" />
+    <result column="other" property="other" jdbcType="VARCHAR" />
+    <result column="plugins" property="plugins" jdbcType="VARCHAR" />
+    <result column="maxlength" property="maxlength" jdbcType="INTEGER" />
+    <result column="groupName" property="groupName" jdbcType="VARCHAR" />
+    <result column="conHtml" property="conHtml" jdbcType="VARCHAR" />
+    <result column="dataUrl" property="dataUrl" jdbcType="VARCHAR" />
+    <result column="dataParam" property="dataParam" jdbcType="VARCHAR" />
+    <result column="keyValue" property="keyValue" jdbcType="VARCHAR" />
+    <result column="isDynamicSql" property="isDynamicSql" jdbcType="INTEGER" />
+    <result column="dynamicSql" property="dynamicSql" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    docTitleId, docThemeId, title, tableName, fieldName, fieldType, maxdoc, mindoc, ismast, 
+    other, plugins, maxlength, groupName, conHtml, dataUrl, dataParam, keyValue, isDynamicSql, 
+    dynamicSql
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_title
+    where docTitleId = #{docTitleId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="searchDocTitleByThemeId" resultType = "com.digihealth.anesthesia.doc.formbean.DocTitleFormBean" parameterType="java.lang.String" >
+    select * from doc_title
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </select>
+
+
+  <delete id="delDocTitleByThemeId" parameterType="java.lang.String" >
+    delete from doc_title
+    where docThemeId = #{docThemeId,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_title
+    where docTitleId = #{docTitleId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocTitle" >
+    insert into doc_title (docTitleId, docThemeId, title, 
+      tableName, fieldName, fieldType, 
+      maxdoc, mindoc, maxlength, 
+      ismast, other, plugins, 
+      groupName, conHtml, dataUrl, 
+      dataParam, keyValue, isDynamicSql, 
+      dynamicSql)
+    values (#{docTitleId,jdbcType=VARCHAR}, #{docThemeId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{tableName,jdbcType=VARCHAR}, #{fieldName,jdbcType=VARCHAR}, #{fieldType,jdbcType=VARCHAR}, 
+      #{maxdoc,jdbcType=REAL}, #{mindoc,jdbcType=REAL}, #{maxlength,jdbcType=INTEGER}, 
+      #{ismast,jdbcType=INTEGER}, #{other,jdbcType=VARCHAR}, #{plugins,jdbcType=VARCHAR}, 
+      #{groupName,jdbcType=VARCHAR}, #{conHtml,jdbcType=VARCHAR}, #{dataUrl,jdbcType=VARCHAR}, 
+      #{dataParam,jdbcType=VARCHAR}, #{keyValue,jdbcType=VARCHAR}, #{isDynamicSql,jdbcType=INTEGER}, 
+      #{dynamicSql,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocTitle" >
+    insert into doc_title
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="docTitleId != null" >
+        docTitleId,
+      </if>
+      <if test="docThemeId != null" >
+        docThemeId,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="tableName != null" >
+        tableName,
+      </if>
+      <if test="fieldName != null" >
+        fieldName,
+      </if>
+      <if test="fieldType != null" >
+        fieldType,
+      </if>
+      <if test="maxdoc != null" >
+        maxdoc,
+      </if>
+      <if test="mindoc != null" >
+        mindoc,
+      </if>
+      <if test="maxlength != null" >
+        maxlength,
+      </if>
+      <if test="ismast != null" >
+        ismast,
+      </if>
+      <if test="other != null" >
+        other,
+      </if>
+      <if test="plugins != null" >
+        plugins,
+      </if>
+      <if test="groupName != null" >
+        groupName,
+      </if>
+      <if test="conHtml != null" >
+        conHtml,
+      </if>
+      <if test="dataUrl != null" >
+        dataUrl,
+      </if>
+      <if test="dataParam != null" >
+        dataParam,
+      </if>
+      <if test="keyValue != null" >
+        keyValue,
+      </if>
+      <if test="isDynamicSql != null" >
+        isDynamicSql,
+      </if>
+      <if test="dynamicSql != null" >
+        dynamicSql,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="docTitleId != null" >
+        #{docTitleId,jdbcType=VARCHAR},
+      </if>
+      <if test="docThemeId != null" >
+        #{docThemeId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null" >
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldName != null" >
+        #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldType != null" >
+        #{fieldType,jdbcType=VARCHAR},
+      </if>
+      <if test="maxdoc != null" >
+        #{maxdoc,jdbcType=REAL},
+      </if>
+      <if test="mindoc != null" >
+        #{mindoc,jdbcType=REAL},
+      </if>
+      <if test="maxlength != null" >
+        #{maxlength,jdbcType=INTEGER},
+      </if>
+      <if test="ismast != null" >
+        #{ismast,jdbcType=INTEGER},
+      </if>
+      <if test="other != null" >
+        #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="plugins != null" >
+        #{plugins,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="conHtml != null" >
+        #{conHtml,jdbcType=VARCHAR},
+      </if>
+      <if test="dataUrl != null" >
+        #{dataUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="dataParam != null" >
+        #{dataParam,jdbcType=VARCHAR},
+      </if>
+      <if test="keyValue != null" >
+        #{keyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isDynamicSql != null" >
+        #{isDynamicSql,jdbcType=INTEGER},
+      </if>
+      <if test="dynamicSql != null" >
+        #{dynamicSql,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocTitle" >
+    update doc_title
+    <set >
+      <if test="docThemeId != null" >
+        docThemeId = #{docThemeId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null" >
+        tableName = #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldName != null" >
+        fieldName = #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldType != null" >
+        fieldType = #{fieldType,jdbcType=VARCHAR},
+      </if>
+      <if test="maxdoc != null" >
+        maxdoc = #{maxdoc,jdbcType=REAL},
+      </if>
+      <if test="mindoc != null" >
+        mindoc = #{mindoc,jdbcType=REAL},
+      </if>
+      <if test="maxlength != null" >
+        maxlength = #{maxlength,jdbcType=INTEGER},
+      </if>
+      <if test="ismast != null" >
+        ismast = #{ismast,jdbcType=INTEGER},
+      </if>
+      <if test="other != null" >
+        other = #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="plugins != null" >
+        plugins = #{plugins,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        groupName = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="conHtml != null" >
+        conHtml = #{conHtml,jdbcType=VARCHAR},
+      </if>
+      <if test="dataUrl != null" >
+        dataUrl = #{dataUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="dataParam != null" >
+        dataParam = #{dataParam,jdbcType=VARCHAR},
+      </if>
+      <if test="keyValue != null" >
+        keyValue = #{keyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isDynamicSql != null" >
+        isDynamicSql = #{isDynamicSql,jdbcType=INTEGER},
+      </if>
+      <if test="dynamicSql != null" >
+        dynamicSql = #{dynamicSql,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where docTitleId = #{docTitleId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocTitle" >
+    update doc_title
+    set docThemeId = #{docThemeId,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      tableName = #{tableName,jdbcType=VARCHAR},
+      fieldName = #{fieldName,jdbcType=VARCHAR},
+      fieldType = #{fieldType,jdbcType=VARCHAR},
+      maxdoc = #{maxdoc,jdbcType=REAL},
+      mindoc = #{mindoc,jdbcType=REAL},
+      maxlength = #{maxlength,jdbcType=INTEGER},
+      ismast = #{ismast,jdbcType=INTEGER},
+      other = #{other,jdbcType=VARCHAR},
+      plugins = #{plugins,jdbcType=VARCHAR},
+      groupName = #{groupName,jdbcType=VARCHAR},
+      conHtml = #{conHtml,jdbcType=VARCHAR},
+      dataUrl = #{dataUrl,jdbcType=VARCHAR},
+      dataParam = #{dataParam,jdbcType=VARCHAR},
+      keyValue = #{keyValue,jdbcType=VARCHAR},
+      isDynamicSql = #{isDynamicSql,jdbcType=INTEGER},
+      dynamicSql = #{dynamicSql,jdbcType=VARCHAR}
+    where docTitleId = #{docTitleId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

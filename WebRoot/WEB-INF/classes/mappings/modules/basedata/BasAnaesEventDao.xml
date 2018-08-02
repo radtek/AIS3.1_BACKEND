@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.basedata.dao.BasAnaesEventDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.basedata.po.BasAnaesEvent" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="eventValue" property="eventValue" jdbcType="INTEGER" />
+    <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, name, eventValue, pinyin, enable, beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_anaes_event
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bas_anaes_event
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent" >
+    insert into bas_anaes_event (id, name, eventValue, 
+      pinyin, enable, beid)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{eventValue,jdbcType=INTEGER}, 
+      #{pinyin,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent" >
+    insert into bas_anaes_event
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="eventValue != null" >
+        eventValue,
+      </if>
+      <if test="pinyin != null" >
+        pinyin,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="eventValue != null" >
+        #{eventValue,jdbcType=INTEGER},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent" >
+    update bas_anaes_event
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="eventValue != null" >
+        eventValue = #{eventValue,jdbcType=INTEGER},
+      </if>
+      <if test="pinyin != null" >
+        pinyin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+       <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent" >
+    update bas_anaes_event
+    set name = #{name,jdbcType=VARCHAR},
+      eventValue = #{eventValue,jdbcType=INTEGER},
+      pinyin = #{pinyin,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      beid = #{beid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectAllAnaesEvent" resultType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent">
+   		select * from bas_anaes_event
+   		where 1 = 1
+   		and beid = #{systemSearchFormBean.beid} ${filter} 
+		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+		<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		 	 limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+		 </if>
+    </select>
+    
+    <select id="selectAnaesEventTotal" resultType="java.lang.Integer">
+   		select count(*) from bas_anaes_event where 1 = 1 and beid = #{systemSearchFormBean.beid} ${filter} 
+    </select>
+    
+      <select id="selectMaxEventValue" resultType="java.lang.Integer">
+   		select max(eventValue) from bas_anaes_event
+   		where beid = #{beid} 
+    </select>
+    
+    <select id="selectAnaesEventByCode" resultType="com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean">
+   		select eventValue codeValue, name codeName from bas_anaes_event 
+   		where enable = 1 and beid = #{beid}
+   		<if test="code != null" >
+        and eventValue = #{code}
+      </if>
+    </select>
+    
+    <select id="findAllAnaesEvent" resultType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent">
+		select * from bas_anaes_event
+		where enable = 1 and beid = #{baseQuery.beid}
+		<if test="baseQuery.pinyin != null and baseQuery.pinyin != ''">
+			AND pinyin LIKE CONCAT(CONCAT('%',#{baseQuery.pinyin}),'%')
+		</if>
+		order by eventValue asc;
+	</select>
+	
+	
+	<select id="queryCommonUseList" resultType="com.digihealth.anesthesia.basedata.po.BasAnaesEvent">
+	
+		select x2.* from (
+			 select code From evt_anaesevent t,doc_anaes_record r,bas_reg_opt b 
+				where t.docId = r.anaRecordId and r.regOptId = b.regOptId and b.beid = #{baseQuery.beid}
+				and code not in (1,2,4,5,8,9)	
+				GROUP BY t.code ORDER BY COUNT(1) DESC LIMIT 8
+			) x1  LEFT JOIN   
+			(
+				select * from bas_anaes_event
+					where enable = 1 and beid = #{baseQuery.beid}
+					<if test="baseQuery.pinyin != null and baseQuery.pinyin != ''">
+						AND pinyin LIKE CONCAT(CONCAT('%',#{baseQuery.pinyin}),'%')
+					</if>
+					
+			) x2 on x1.code = x2.eventValue
+	
+		order by eventValue asc
+	</select>
+	
+	
+</mapper>

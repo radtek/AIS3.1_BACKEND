@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocOperBeforeSafeCheckDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck" >
+    <id column="operBeforeId" property="operBeforeId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="patientInfoConfirm" property="patientInfoConfirm" jdbcType="VARCHAR" />
+    <result column="operBeDiagConfirm" property="operBeDiagConfirm" jdbcType="VARCHAR" />
+    <result column="desigedOperConfirm" property="desigedOperConfirm" jdbcType="VARCHAR" />
+    <result column="operSiteLogoConfirm" property="operSiteLogoConfirm" jdbcType="VARCHAR" />
+    <result column="anaesRiskConfirm" property="anaesRiskConfirm" jdbcType="VARCHAR" />
+    <result column="operBeReadyConfirm" property="operBeReadyConfirm" jdbcType="VARCHAR" />
+    <result column="operBeEmphasisConfirm" property="operBeEmphasisConfirm" jdbcType="VARCHAR" />
+    <result column="operBeOther" property="operBeOther" jdbcType="VARCHAR" />
+    <result column="anaesBeReadyConfirm" property="anaesBeReadyConfirm" jdbcType="VARCHAR" />
+    <result column="anaesBeEmphasisConfirm" property="anaesBeEmphasisConfirm" jdbcType="VARCHAR" />
+    <result column="anaesBeOther" property="anaesBeOther" jdbcType="VARCHAR" />
+    <result column="operThingConfirm" property="operThingConfirm" jdbcType="VARCHAR" />
+    <result column="thingSterilizationConfirm" property="thingSterilizationConfirm" jdbcType="VARCHAR" />
+    <result column="operMedConfirm" property="operMedConfirm" jdbcType="VARCHAR" />
+    <result column="operMedOther" property="operMedOther" jdbcType="VARCHAR" />
+    <result column="imageDataConfirm" property="imageDataConfirm" jdbcType="VARCHAR" />
+    <result column="other" property="other" jdbcType="VARCHAR" />
+    <result column="anesthetistId" property="anesthetistId" jdbcType="VARCHAR" />
+    <result column="operatorId" property="operatorId" jdbcType="VARCHAR" />
+    <result column="circuNurseId" property="circuNurseId" jdbcType="VARCHAR" />
+    <result column="instrumentConfirm" property="instrumentConfirm" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="sssxl" property="sssxl" jdbcType="VARCHAR" />
+    <result column="wristStrapConfirm" property="wristStrapConfirm" jdbcType="VARCHAR" />
+    <result column="expectedSurgeryTime" property="expectedSurgeryTime" jdbcType="VARCHAR" />
+    <result column="expectedBloodLoss" property="expectedBloodLoss" jdbcType="VARCHAR" />
+    <result column="surgeryConcerns" property="surgeryConcerns" jdbcType="VARCHAR" />
+    <result column="other1" property="other1" jdbcType="VARCHAR" />
+    <result column="anaesConcerns" property="anaesConcerns" jdbcType="VARCHAR" />
+    <result column="other2" property="other2" jdbcType="VARCHAR" />
+    <result column="equipment" property="equipment" jdbcType="VARCHAR" />
+    <result column="specialMedical" property="specialMedical" jdbcType="VARCHAR" />
+    <result column="other3" property="other3" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    operBeforeId, regOptId, patientInfoConfirm, operBeDiagConfirm, desigedOperConfirm, 
+    operSiteLogoConfirm, anaesRiskConfirm, operBeReadyConfirm, operBeEmphasisConfirm, 
+    operBeOther, anaesBeReadyConfirm, anaesBeEmphasisConfirm, anaesBeOther, operThingConfirm, 
+    thingSterilizationConfirm, operMedConfirm, operMedOther, imageDataConfirm, other, 
+    anesthetistId, operatorId, circuNurseId, instrumentConfirm, processState, sssxl, 
+    wristStrapConfirm, expectedSurgeryTime, expectedBloodLoss, surgeryConcerns, other1, 
+    anaesConcerns, other2, equipment, specialMedical, other3
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_oper_before_safe_check
+    where operBeforeId = #{operBeforeId,jdbcType=VARCHAR}
+  </select>
+
+	<select id="searchOperBeCheckByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck">
+		SELECT DISTINCT *
+		FROM doc_oper_before_safe_check d
+		WHERE d.regOptId = #{regOptId}
+	</select>
+	
+	<select id="searchOperBeCheckById" resultType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck">
+		SELECT DISTINCT *
+		FROM doc_oper_before_safe_check d
+		WHERE d.operBeforeId = #{id}
+	</select>
+	
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_oper_before_safe_check
+    where operBeforeId = #{operBeforeId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck" >
+    insert into doc_oper_before_safe_check (operBeforeId, regOptId, patientInfoConfirm, 
+      operBeDiagConfirm, desigedOperConfirm, 
+      operSiteLogoConfirm, anaesRiskConfirm, 
+      operBeReadyConfirm, operBeEmphasisConfirm, 
+      operBeOther, anaesBeReadyConfirm, anaesBeEmphasisConfirm, 
+      anaesBeOther, operThingConfirm, thingSterilizationConfirm, 
+      operMedConfirm, operMedOther, imageDataConfirm, 
+      other, anesthetistId, operatorId, 
+      circuNurseId, instrumentConfirm, processState, 
+      sssxl, wristStrapConfirm, expectedSurgeryTime, 
+      expectedBloodLoss, surgeryConcerns, other1, 
+      anaesConcerns, other2, equipment, 
+      specialMedical, other3)
+    values (#{operBeforeId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{patientInfoConfirm,jdbcType=VARCHAR}, 
+      #{operBeDiagConfirm,jdbcType=VARCHAR}, #{desigedOperConfirm,jdbcType=VARCHAR}, 
+      #{operSiteLogoConfirm,jdbcType=VARCHAR}, #{anaesRiskConfirm,jdbcType=VARCHAR}, 
+      #{operBeReadyConfirm,jdbcType=VARCHAR}, #{operBeEmphasisConfirm,jdbcType=VARCHAR}, 
+      #{operBeOther,jdbcType=VARCHAR}, #{anaesBeReadyConfirm,jdbcType=VARCHAR}, #{anaesBeEmphasisConfirm,jdbcType=VARCHAR}, 
+      #{anaesBeOther,jdbcType=VARCHAR}, #{operThingConfirm,jdbcType=VARCHAR}, #{thingSterilizationConfirm,jdbcType=VARCHAR}, 
+      #{operMedConfirm,jdbcType=VARCHAR}, #{operMedOther,jdbcType=VARCHAR}, #{imageDataConfirm,jdbcType=VARCHAR}, 
+      #{other,jdbcType=VARCHAR}, #{anesthetistId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, 
+      #{circuNurseId,jdbcType=VARCHAR}, #{instrumentConfirm,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{sssxl,jdbcType=VARCHAR}, #{wristStrapConfirm,jdbcType=VARCHAR}, #{expectedSurgeryTime,jdbcType=VARCHAR}, 
+      #{expectedBloodLoss,jdbcType=VARCHAR}, #{surgeryConcerns,jdbcType=VARCHAR}, #{other1,jdbcType=VARCHAR}, 
+      #{anaesConcerns,jdbcType=VARCHAR}, #{other2,jdbcType=VARCHAR}, #{equipment,jdbcType=VARCHAR}, 
+      #{specialMedical,jdbcType=VARCHAR}, #{other3,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck" >
+    insert into doc_oper_before_safe_check
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operBeforeId != null" >
+        operBeforeId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="patientInfoConfirm != null" >
+        patientInfoConfirm,
+      </if>
+      <if test="operBeDiagConfirm != null" >
+        operBeDiagConfirm,
+      </if>
+      <if test="desigedOperConfirm != null" >
+        desigedOperConfirm,
+      </if>
+      <if test="operSiteLogoConfirm != null" >
+        operSiteLogoConfirm,
+      </if>
+      <if test="anaesRiskConfirm != null" >
+        anaesRiskConfirm,
+      </if>
+      <if test="operBeReadyConfirm != null" >
+        operBeReadyConfirm,
+      </if>
+      <if test="operBeEmphasisConfirm != null" >
+        operBeEmphasisConfirm,
+      </if>
+      <if test="operBeOther != null" >
+        operBeOther,
+      </if>
+      <if test="anaesBeReadyConfirm != null" >
+        anaesBeReadyConfirm,
+      </if>
+      <if test="anaesBeEmphasisConfirm != null" >
+        anaesBeEmphasisConfirm,
+      </if>
+      <if test="anaesBeOther != null" >
+        anaesBeOther,
+      </if>
+      <if test="operThingConfirm != null" >
+        operThingConfirm,
+      </if>
+      <if test="thingSterilizationConfirm != null" >
+        thingSterilizationConfirm,
+      </if>
+      <if test="operMedConfirm != null" >
+        operMedConfirm,
+      </if>
+      <if test="operMedOther != null" >
+        operMedOther,
+      </if>
+      <if test="imageDataConfirm != null" >
+        imageDataConfirm,
+      </if>
+      <if test="other != null" >
+        other,
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId,
+      </if>
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="circuNurseId != null" >
+        circuNurseId,
+      </if>
+      <if test="instrumentConfirm != null" >
+        instrumentConfirm,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="sssxl != null" >
+        sssxl,
+      </if>
+      <if test="wristStrapConfirm != null" >
+        wristStrapConfirm,
+      </if>
+      <if test="expectedSurgeryTime != null" >
+        expectedSurgeryTime,
+      </if>
+      <if test="expectedBloodLoss != null" >
+        expectedBloodLoss,
+      </if>
+      <if test="surgeryConcerns != null" >
+        surgeryConcerns,
+      </if>
+      <if test="other1 != null" >
+        other1,
+      </if>
+      <if test="anaesConcerns != null" >
+        anaesConcerns,
+      </if>
+      <if test="other2 != null" >
+        other2,
+      </if>
+      <if test="equipment != null" >
+        equipment,
+      </if>
+      <if test="specialMedical != null" >
+        specialMedical,
+      </if>
+      <if test="other3 != null" >
+        other3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operBeforeId != null" >
+        #{operBeforeId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="patientInfoConfirm != null" >
+        #{patientInfoConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeDiagConfirm != null" >
+        #{operBeDiagConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="desigedOperConfirm != null" >
+        #{desigedOperConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operSiteLogoConfirm != null" >
+        #{operSiteLogoConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesRiskConfirm != null" >
+        #{anaesRiskConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeReadyConfirm != null" >
+        #{operBeReadyConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeEmphasisConfirm != null" >
+        #{operBeEmphasisConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeOther != null" >
+        #{operBeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeReadyConfirm != null" >
+        #{anaesBeReadyConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeEmphasisConfirm != null" >
+        #{anaesBeEmphasisConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeOther != null" >
+        #{anaesBeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="operThingConfirm != null" >
+        #{operThingConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="thingSterilizationConfirm != null" >
+        #{thingSterilizationConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operMedConfirm != null" >
+        #{operMedConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operMedOther != null" >
+        #{operMedOther,jdbcType=VARCHAR},
+      </if>
+      <if test="imageDataConfirm != null" >
+        #{imageDataConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="other != null" >
+        #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="circuNurseId != null" >
+        #{circuNurseId,jdbcType=VARCHAR},
+      </if>
+      <if test="instrumentConfirm != null" >
+        #{instrumentConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="sssxl != null" >
+        #{sssxl,jdbcType=VARCHAR},
+      </if>
+      <if test="wristStrapConfirm != null" >
+        #{wristStrapConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedSurgeryTime != null" >
+        #{expectedSurgeryTime,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedBloodLoss != null" >
+        #{expectedBloodLoss,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryConcerns != null" >
+        #{surgeryConcerns,jdbcType=VARCHAR},
+      </if>
+      <if test="other1 != null" >
+        #{other1,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesConcerns != null" >
+        #{anaesConcerns,jdbcType=VARCHAR},
+      </if>
+      <if test="other2 != null" >
+        #{other2,jdbcType=VARCHAR},
+      </if>
+      <if test="equipment != null" >
+        #{equipment,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMedical != null" >
+        #{specialMedical,jdbcType=VARCHAR},
+      </if>
+      <if test="other3 != null" >
+        #{other3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck" >
+    update doc_oper_before_safe_check
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="patientInfoConfirm != null" >
+        patientInfoConfirm = #{patientInfoConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeDiagConfirm != null" >
+        operBeDiagConfirm = #{operBeDiagConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="desigedOperConfirm != null" >
+        desigedOperConfirm = #{desigedOperConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operSiteLogoConfirm != null" >
+        operSiteLogoConfirm = #{operSiteLogoConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesRiskConfirm != null" >
+        anaesRiskConfirm = #{anaesRiskConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeReadyConfirm != null" >
+        operBeReadyConfirm = #{operBeReadyConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeEmphasisConfirm != null" >
+        operBeEmphasisConfirm = #{operBeEmphasisConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeOther != null" >
+        operBeOther = #{operBeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeReadyConfirm != null" >
+        anaesBeReadyConfirm = #{anaesBeReadyConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeEmphasisConfirm != null" >
+        anaesBeEmphasisConfirm = #{anaesBeEmphasisConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesBeOther != null" >
+        anaesBeOther = #{anaesBeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="operThingConfirm != null" >
+        operThingConfirm = #{operThingConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="thingSterilizationConfirm != null" >
+        thingSterilizationConfirm = #{thingSterilizationConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operMedConfirm != null" >
+        operMedConfirm = #{operMedConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="operMedOther != null" >
+        operMedOther = #{operMedOther,jdbcType=VARCHAR},
+      </if>
+      <if test="imageDataConfirm != null" >
+        imageDataConfirm = #{imageDataConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="other != null" >
+        other = #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="circuNurseId != null" >
+        circuNurseId = #{circuNurseId,jdbcType=VARCHAR},
+      </if>
+      <if test="instrumentConfirm != null" >
+        instrumentConfirm = #{instrumentConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="sssxl != null" >
+        sssxl = #{sssxl,jdbcType=VARCHAR},
+      </if>
+      <if test="wristStrapConfirm != null" >
+        wristStrapConfirm = #{wristStrapConfirm,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedSurgeryTime != null" >
+        expectedSurgeryTime = #{expectedSurgeryTime,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedBloodLoss != null" >
+        expectedBloodLoss = #{expectedBloodLoss,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryConcerns != null" >
+        surgeryConcerns = #{surgeryConcerns,jdbcType=VARCHAR},
+      </if>
+      <if test="other1 != null" >
+        other1 = #{other1,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesConcerns != null" >
+        anaesConcerns = #{anaesConcerns,jdbcType=VARCHAR},
+      </if>
+      <if test="other2 != null" >
+        other2 = #{other2,jdbcType=VARCHAR},
+      </if>
+      <if test="equipment != null" >
+        equipment = #{equipment,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMedical != null" >
+        specialMedical = #{specialMedical,jdbcType=VARCHAR},
+      </if>
+      <if test="other3 != null" >
+        other3 = #{other3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where operBeforeId = #{operBeforeId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck" >
+    update doc_oper_before_safe_check
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      patientInfoConfirm = #{patientInfoConfirm,jdbcType=VARCHAR},
+      operBeDiagConfirm = #{operBeDiagConfirm,jdbcType=VARCHAR},
+      desigedOperConfirm = #{desigedOperConfirm,jdbcType=VARCHAR},
+      operSiteLogoConfirm = #{operSiteLogoConfirm,jdbcType=VARCHAR},
+      anaesRiskConfirm = #{anaesRiskConfirm,jdbcType=VARCHAR},
+      operBeReadyConfirm = #{operBeReadyConfirm,jdbcType=VARCHAR},
+      operBeEmphasisConfirm = #{operBeEmphasisConfirm,jdbcType=VARCHAR},
+      operBeOther = #{operBeOther,jdbcType=VARCHAR},
+      anaesBeReadyConfirm = #{anaesBeReadyConfirm,jdbcType=VARCHAR},
+      anaesBeEmphasisConfirm = #{anaesBeEmphasisConfirm,jdbcType=VARCHAR},
+      anaesBeOther = #{anaesBeOther,jdbcType=VARCHAR},
+      operThingConfirm = #{operThingConfirm,jdbcType=VARCHAR},
+      thingSterilizationConfirm = #{thingSterilizationConfirm,jdbcType=VARCHAR},
+      operMedConfirm = #{operMedConfirm,jdbcType=VARCHAR},
+      operMedOther = #{operMedOther,jdbcType=VARCHAR},
+      imageDataConfirm = #{imageDataConfirm,jdbcType=VARCHAR},
+      other = #{other,jdbcType=VARCHAR},
+      anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      circuNurseId = #{circuNurseId,jdbcType=VARCHAR},
+      instrumentConfirm = #{instrumentConfirm,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      sssxl = #{sssxl,jdbcType=VARCHAR},
+      wristStrapConfirm = #{wristStrapConfirm,jdbcType=VARCHAR},
+      expectedSurgeryTime = #{expectedSurgeryTime,jdbcType=VARCHAR},
+      expectedBloodLoss = #{expectedBloodLoss,jdbcType=VARCHAR},
+      surgeryConcerns = #{surgeryConcerns,jdbcType=VARCHAR},
+      other1 = #{other1,jdbcType=VARCHAR},
+      anaesConcerns = #{anaesConcerns,jdbcType=VARCHAR},
+      other2 = #{other2,jdbcType=VARCHAR},
+      equipment = #{equipment,jdbcType=VARCHAR},
+      specialMedical = #{specialMedical,jdbcType=VARCHAR},
+      other3 = #{other3,jdbcType=VARCHAR}
+    where operBeforeId = #{operBeforeId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

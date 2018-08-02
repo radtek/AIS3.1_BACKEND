@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocDifficultCaseDiscussDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="host" property="host" jdbcType="VARCHAR" />
+    <result column="jobTitle" property="jobTitle" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="discussTime" property="discussTime" jdbcType="TIMESTAMP" />
+    <result column="discussPlace" property="discussPlace" jdbcType="VARCHAR" />
+    <result column="discussants" property="discussants" jdbcType="VARCHAR" />
+    <result column="diseaseSummary" property="diseaseSummary" jdbcType="VARCHAR" />
+    <result column="diagnosis" property="diagnosis" jdbcType="VARCHAR" />
+    <result column="discussPurpose" property="discussPurpose" jdbcType="VARCHAR" />
+    <result column="opinion" property="opinion" jdbcType="VARCHAR" />
+    <result column="hostSummary" property="hostSummary" jdbcType="VARCHAR" />
+    <result column="recordDate" property="recordDate" jdbcType="DATE" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, processState, host, jobTitle, position, discussTime, discussPlace, 
+    discussants, diseaseSummary, diagnosis, discussPurpose, opinion, hostSummary, recordDate
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_difficult_case_discuss
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_difficult_case_discuss
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss" >
+    insert into doc_difficult_case_discuss (id, regOptId, processState, 
+      host, jobTitle, position, 
+      discussTime, discussPlace, discussants, 
+      diseaseSummary, diagnosis, discussPurpose, 
+      opinion, hostSummary, recordDate
+      )
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{host,jdbcType=VARCHAR}, #{jobTitle,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, 
+      #{discussTime,jdbcType=TIMESTAMP}, #{discussPlace,jdbcType=VARCHAR}, #{discussants,jdbcType=VARCHAR}, 
+      #{diseaseSummary,jdbcType=VARCHAR}, #{diagnosis,jdbcType=VARCHAR}, #{discussPurpose,jdbcType=VARCHAR}, 
+      #{opinion,jdbcType=VARCHAR}, #{hostSummary,jdbcType=VARCHAR}, #{recordDate,jdbcType=DATE}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss" >
+    insert into doc_difficult_case_discuss
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="host != null" >
+        host,
+      </if>
+      <if test="jobTitle != null" >
+        jobTitle,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="discussTime != null" >
+        discussTime,
+      </if>
+      <if test="discussPlace != null" >
+        discussPlace,
+      </if>
+      <if test="discussants != null" >
+        discussants,
+      </if>
+      <if test="diseaseSummary != null" >
+        diseaseSummary,
+      </if>
+      <if test="diagnosis != null" >
+        diagnosis,
+      </if>
+      <if test="discussPurpose != null" >
+        discussPurpose,
+      </if>
+      <if test="opinion != null" >
+        opinion,
+      </if>
+      <if test="hostSummary != null" >
+        hostSummary,
+      </if>
+      <if test="recordDate != null" >
+        recordDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null" >
+        #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null" >
+        #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discussPlace != null" >
+        #{discussPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="discussants != null" >
+        #{discussants,jdbcType=VARCHAR},
+      </if>
+      <if test="diseaseSummary != null" >
+        #{diseaseSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="diagnosis != null" >
+        #{diagnosis,jdbcType=VARCHAR},
+      </if>
+      <if test="discussPurpose != null" >
+        #{discussPurpose,jdbcType=VARCHAR},
+      </if>
+      <if test="opinion != null" >
+        #{opinion,jdbcType=VARCHAR},
+      </if>
+      <if test="hostSummary != null" >
+        #{hostSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        #{recordDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss" >
+    update doc_difficult_case_discuss
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null" >
+        jobTitle = #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null" >
+        discussTime = #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discussPlace != null" >
+        discussPlace = #{discussPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="discussants != null" >
+        discussants = #{discussants,jdbcType=VARCHAR},
+      </if>
+      <if test="diseaseSummary != null" >
+        diseaseSummary = #{diseaseSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="diagnosis != null" >
+        diagnosis = #{diagnosis,jdbcType=VARCHAR},
+      </if>
+      <if test="discussPurpose != null" >
+        discussPurpose = #{discussPurpose,jdbcType=VARCHAR},
+      </if>
+      <if test="opinion != null" >
+        opinion = #{opinion,jdbcType=VARCHAR},
+      </if>
+      <if test="hostSummary != null" >
+        hostSummary = #{hostSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        recordDate = #{recordDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss" >
+    update doc_difficult_case_discuss
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      host = #{host,jdbcType=VARCHAR},
+      jobTitle = #{jobTitle,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      discussTime = #{discussTime,jdbcType=TIMESTAMP},
+      discussPlace = #{discussPlace,jdbcType=VARCHAR},
+      discussants = #{discussants,jdbcType=VARCHAR},
+      diseaseSummary = #{diseaseSummary,jdbcType=VARCHAR},
+      diagnosis = #{diagnosis,jdbcType=VARCHAR},
+      discussPurpose = #{discussPurpose,jdbcType=VARCHAR},
+      opinion = #{opinion,jdbcType=VARCHAR},
+      hostSummary = #{hostSummary,jdbcType=VARCHAR},
+      recordDate = #{recordDate,jdbcType=DATE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_difficult_case_discuss
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocVeinAccedeDao" >
+ <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocVeinAccede" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="anaesDoctor" property="anaesDoctor" jdbcType="VARCHAR" />
+    <result column="other" property="other" jdbcType="VARCHAR" />
+    <result column="highRisk" property="highRisk" jdbcType="VARCHAR" />
+    <result column="checkContent" property="checkContent" jdbcType="VARCHAR" />
+    <result column="briefHis" property="briefHis" jdbcType="VARCHAR" />
+    <result column="nervous" property="nervous" jdbcType="INTEGER" />
+    <result column="nervousDetail" property="nervousDetail" jdbcType="VARCHAR" />
+    <result column="nervousOther" property="nervousOther" jdbcType="VARCHAR" />
+    <result column="breath" property="breath" jdbcType="INTEGER" />
+    <result column="breathDetail" property="breathDetail" jdbcType="VARCHAR" />
+    <result column="breathOther" property="breathOther" jdbcType="VARCHAR" />
+    <result column="smokingFreq" property="smokingFreq" jdbcType="INTEGER" />
+    <result column="smokingTime" property="smokingTime" jdbcType="INTEGER" />
+    <result column="heartBool" property="heartBool" jdbcType="INTEGER" />
+    <result column="heartBoolDetail" property="heartBoolDetail" jdbcType="VARCHAR" />
+    <result column="hereditary" property="hereditary" jdbcType="INTEGER" />
+    <result column="hereditaryDetail" property="hereditaryDetail" jdbcType="VARCHAR" />
+    <result column="hereditaryOther" property="hereditaryOther" jdbcType="VARCHAR" />
+    <result column="otherDetail" property="otherDetail" jdbcType="VARCHAR" />
+    <result column="anaes" property="anaes" jdbcType="INTEGER" />
+    <result column="anaesDate" property="anaesDate" jdbcType="VARCHAR" />
+    <result column="specialCase" property="specialCase" jdbcType="INTEGER" />
+    <result column="drugTaking" property="drugTaking" jdbcType="INTEGER" />
+    <result column="allergic" property="allergic" jdbcType="INTEGER" />
+    <result column="height" property="height" jdbcType="REAL" />
+    <result column="weight" property="weight" jdbcType="REAL" />
+    <result column="breatheTract" property="breatheTract" jdbcType="INTEGER" />
+    <result column="breatheTractDetail" property="breatheTractDetail" jdbcType="VARCHAR" />
+    <result column="toothDetail" property="toothDetail" jdbcType="VARCHAR" />
+    <result column="mallampatis" property="mallampatis" jdbcType="INTEGER" />
+    <result column="nervousSys" property="nervousSys" jdbcType="INTEGER" />
+    <result column="nervousSysDetail" property="nervousSysDetail" jdbcType="VARCHAR" />
+    <result column="breathSys" property="breathSys" jdbcType="INTEGER" />
+    <result column="breathSysDetail" property="breathSysDetail" jdbcType="VARCHAR" />
+    <result column="heartBoolSys" property="heartBoolSys" jdbcType="INTEGER" />
+    <result column="heartBoolSysDetail" property="heartBoolSysDetail" jdbcType="VARCHAR" />
+    <result column="heartrate" property="heartrate" jdbcType="INTEGER" />
+    <result column="bloodPre" property="bloodPre" jdbcType="VARCHAR" />
+    <result column="laboratCheck" property="laboratCheck" jdbcType="INTEGER" />
+    <result column="laboratCheckDetail" property="laboratCheckDetail" jdbcType="VARCHAR" />
+    <result column="ecg" property="ecg" jdbcType="INTEGER" />
+    <result column="ecgDetail" property="ecgDetail" jdbcType="VARCHAR" />
+    <result column="rabat" property="rabat" jdbcType="INTEGER" />
+    <result column="rabatDetail" property="rabatDetail" jdbcType="VARCHAR" />
+    <result column="asa" property="asa" jdbcType="INTEGER" />
+    <result column="asaE" property="asaE" jdbcType="INTEGER" />
+    <result column="visitDoctor" property="visitDoctor" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, processState, anaesDoctor, other, highRisk, checkContent, briefHis, 
+    nervous, nervousDetail, nervousOther, breath, breathDetail, breathOther, smokingFreq, 
+    smokingTime, heartBool, heartBoolDetail, hereditary, hereditaryDetail, hereditaryOther, 
+    otherDetail, anaes, anaesDate, specialCase, drugTaking, allergic, height, weight, 
+    breatheTract, breatheTractDetail, toothDetail, mallampatis, nervousSys, nervousSysDetail, 
+    breathSys, breathSysDetail, heartBoolSys, heartBoolSysDetail, heartrate, bloodPre, 
+    laboratCheck, laboratCheckDetail, ecg, ecgDetail, rabat, rabatDetail, asa, asaE, 
+    visitDoctor, date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_vein_accede
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_vein_accede
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocVeinAccede" >
+    insert into doc_vein_accede (id, regOptId, processState, 
+      anaesDoctor, other, highRisk, 
+      checkContent, briefHis, nervous, 
+      nervousDetail, nervousOther, breath, 
+      breathDetail, breathOther, smokingFreq, 
+      smokingTime, heartBool, heartBoolDetail, 
+      hereditary, hereditaryDetail, hereditaryOther, 
+      otherDetail, anaes, anaesDate, 
+      specialCase, drugTaking, allergic, 
+      height, weight, breatheTract, 
+      breatheTractDetail, toothDetail, mallampatis, 
+      nervousSys, nervousSysDetail, breathSys, 
+      breathSysDetail, heartBoolSys, heartBoolSysDetail, 
+      heartrate, bloodPre, laboratCheck, 
+      laboratCheckDetail, ecg, ecgDetail, 
+      rabat, rabatDetail, asa, 
+      asaE, visitDoctor, date
+      )
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{anaesDoctor,jdbcType=VARCHAR}, #{other,jdbcType=VARCHAR}, #{highRisk,jdbcType=VARCHAR}, 
+      #{checkContent,jdbcType=VARCHAR}, #{briefHis,jdbcType=VARCHAR}, #{nervous,jdbcType=INTEGER}, 
+      #{nervousDetail,jdbcType=VARCHAR}, #{nervousOther,jdbcType=VARCHAR}, #{breath,jdbcType=INTEGER}, 
+      #{breathDetail,jdbcType=VARCHAR}, #{breathOther,jdbcType=VARCHAR}, #{smokingFreq,jdbcType=INTEGER}, 
+      #{smokingTime,jdbcType=INTEGER}, #{heartBool,jdbcType=INTEGER}, #{heartBoolDetail,jdbcType=VARCHAR}, 
+      #{hereditary,jdbcType=INTEGER}, #{hereditaryDetail,jdbcType=VARCHAR}, #{hereditaryOther,jdbcType=VARCHAR}, 
+      #{otherDetail,jdbcType=VARCHAR}, #{anaes,jdbcType=INTEGER}, #{anaesDate,jdbcType=VARCHAR}, 
+      #{specialCase,jdbcType=INTEGER}, #{drugTaking,jdbcType=INTEGER}, #{allergic,jdbcType=INTEGER}, 
+      #{height,jdbcType=REAL}, #{weight,jdbcType=REAL}, #{breatheTract,jdbcType=INTEGER}, 
+      #{breatheTractDetail,jdbcType=VARCHAR}, #{toothDetail,jdbcType=VARCHAR}, #{mallampatis,jdbcType=INTEGER}, 
+      #{nervousSys,jdbcType=INTEGER}, #{nervousSysDetail,jdbcType=VARCHAR}, #{breathSys,jdbcType=INTEGER}, 
+      #{breathSysDetail,jdbcType=VARCHAR}, #{heartBoolSys,jdbcType=INTEGER}, #{heartBoolSysDetail,jdbcType=VARCHAR}, 
+      #{heartrate,jdbcType=INTEGER}, #{bloodPre,jdbcType=VARCHAR}, #{laboratCheck,jdbcType=INTEGER}, 
+      #{laboratCheckDetail,jdbcType=VARCHAR}, #{ecg,jdbcType=INTEGER}, #{ecgDetail,jdbcType=VARCHAR}, 
+      #{rabat,jdbcType=INTEGER}, #{rabatDetail,jdbcType=VARCHAR}, #{asa,jdbcType=INTEGER}, 
+      #{asaE,jdbcType=INTEGER}, #{visitDoctor,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocVeinAccede" >
+    insert into doc_vein_accede
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="anaesDoctor != null" >
+        anaesDoctor,
+      </if>
+      <if test="other != null" >
+        other,
+      </if>
+      <if test="highRisk != null" >
+        highRisk,
+      </if>
+      <if test="checkContent != null" >
+        checkContent,
+      </if>
+      <if test="briefHis != null" >
+        briefHis,
+      </if>
+      <if test="nervous != null" >
+        nervous,
+      </if>
+      <if test="nervousDetail != null" >
+        nervousDetail,
+      </if>
+      <if test="nervousOther != null" >
+        nervousOther,
+      </if>
+      <if test="breath != null" >
+        breath,
+      </if>
+      <if test="breathDetail != null" >
+        breathDetail,
+      </if>
+      <if test="breathOther != null" >
+        breathOther,
+      </if>
+      <if test="smokingFreq != null" >
+        smokingFreq,
+      </if>
+      <if test="smokingTime != null" >
+        smokingTime,
+      </if>
+      <if test="heartBool != null" >
+        heartBool,
+      </if>
+      <if test="heartBoolDetail != null" >
+        heartBoolDetail,
+      </if>
+      <if test="hereditary != null" >
+        hereditary,
+      </if>
+      <if test="hereditaryDetail != null" >
+        hereditaryDetail,
+      </if>
+      <if test="hereditaryOther != null" >
+        hereditaryOther,
+      </if>
+      <if test="otherDetail != null" >
+        otherDetail,
+      </if>
+      <if test="anaes != null" >
+        anaes,
+      </if>
+      <if test="anaesDate != null" >
+        anaesDate,
+      </if>
+      <if test="specialCase != null" >
+        specialCase,
+      </if>
+      <if test="drugTaking != null" >
+        drugTaking,
+      </if>
+      <if test="allergic != null" >
+        allergic,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="breatheTract != null" >
+        breatheTract,
+      </if>
+      <if test="breatheTractDetail != null" >
+        breatheTractDetail,
+      </if>
+      <if test="toothDetail != null" >
+        toothDetail,
+      </if>
+      <if test="mallampatis != null" >
+        mallampatis,
+      </if>
+      <if test="nervousSys != null" >
+        nervousSys,
+      </if>
+      <if test="nervousSysDetail != null" >
+        nervousSysDetail,
+      </if>
+      <if test="breathSys != null" >
+        breathSys,
+      </if>
+      <if test="breathSysDetail != null" >
+        breathSysDetail,
+      </if>
+      <if test="heartBoolSys != null" >
+        heartBoolSys,
+      </if>
+      <if test="heartBoolSysDetail != null" >
+        heartBoolSysDetail,
+      </if>
+      <if test="heartrate != null" >
+        heartrate,
+      </if>
+      <if test="bloodPre != null" >
+        bloodPre,
+      </if>
+      <if test="laboratCheck != null" >
+        laboratCheck,
+      </if>
+      <if test="laboratCheckDetail != null" >
+        laboratCheckDetail,
+      </if>
+      <if test="ecg != null" >
+        ecg,
+      </if>
+      <if test="ecgDetail != null" >
+        ecgDetail,
+      </if>
+      <if test="rabat != null" >
+        rabat,
+      </if>
+      <if test="rabatDetail != null" >
+        rabatDetail,
+      </if>
+      <if test="asa != null" >
+        asa,
+      </if>
+      <if test="asaE != null" >
+        asaE,
+      </if>
+      <if test="visitDoctor != null" >
+        visitDoctor,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesDoctor != null" >
+        #{anaesDoctor,jdbcType=VARCHAR},
+      </if>
+      <if test="other != null" >
+        #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="highRisk != null" >
+        #{highRisk,jdbcType=VARCHAR},
+      </if>
+      <if test="checkContent != null" >
+        #{checkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="briefHis != null" >
+        #{briefHis,jdbcType=VARCHAR},
+      </if>
+      <if test="nervous != null" >
+        #{nervous,jdbcType=INTEGER},
+      </if>
+      <if test="nervousDetail != null" >
+        #{nervousDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="nervousOther != null" >
+        #{nervousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="breath != null" >
+        #{breath,jdbcType=INTEGER},
+      </if>
+      <if test="breathDetail != null" >
+        #{breathDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="breathOther != null" >
+        #{breathOther,jdbcType=VARCHAR},
+      </if>
+      <if test="smokingFreq != null" >
+        #{smokingFreq,jdbcType=INTEGER},
+      </if>
+      <if test="smokingTime != null" >
+        #{smokingTime,jdbcType=INTEGER},
+      </if>
+      <if test="heartBool != null" >
+        #{heartBool,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolDetail != null" >
+        #{heartBoolDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="hereditary != null" >
+        #{hereditary,jdbcType=INTEGER},
+      </if>
+      <if test="hereditaryDetail != null" >
+        #{hereditaryDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="hereditaryOther != null" >
+        #{hereditaryOther,jdbcType=VARCHAR},
+      </if>
+      <if test="otherDetail != null" >
+        #{otherDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="anaes != null" >
+        #{anaes,jdbcType=INTEGER},
+      </if>
+      <if test="anaesDate != null" >
+        #{anaesDate,jdbcType=VARCHAR},
+      </if>
+      <if test="specialCase != null" >
+        #{specialCase,jdbcType=INTEGER},
+      </if>
+      <if test="drugTaking != null" >
+        #{drugTaking,jdbcType=INTEGER},
+      </if>
+      <if test="allergic != null" >
+        #{allergic,jdbcType=INTEGER},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=REAL},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=REAL},
+      </if>
+      <if test="breatheTract != null" >
+        #{breatheTract,jdbcType=INTEGER},
+      </if>
+      <if test="breatheTractDetail != null" >
+        #{breatheTractDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="toothDetail != null" >
+        #{toothDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="mallampatis != null" >
+        #{mallampatis,jdbcType=INTEGER},
+      </if>
+      <if test="nervousSys != null" >
+        #{nervousSys,jdbcType=INTEGER},
+      </if>
+      <if test="nervousSysDetail != null" >
+        #{nervousSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="breathSys != null" >
+        #{breathSys,jdbcType=INTEGER},
+      </if>
+      <if test="breathSysDetail != null" >
+        #{breathSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="heartBoolSys != null" >
+        #{heartBoolSys,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolSysDetail != null" >
+        #{heartBoolSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="heartrate != null" >
+        #{heartrate,jdbcType=INTEGER},
+      </if>
+      <if test="bloodPre != null" >
+        #{bloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="laboratCheck != null" >
+        #{laboratCheck,jdbcType=INTEGER},
+      </if>
+      <if test="laboratCheckDetail != null" >
+        #{laboratCheckDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="ecg != null" >
+        #{ecg,jdbcType=INTEGER},
+      </if>
+      <if test="ecgDetail != null" >
+        #{ecgDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="rabat != null" >
+        #{rabat,jdbcType=INTEGER},
+      </if>
+      <if test="rabatDetail != null" >
+        #{rabatDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="asa != null" >
+        #{asa,jdbcType=INTEGER},
+      </if>
+      <if test="asaE != null" >
+        #{asaE,jdbcType=INTEGER},
+      </if>
+      <if test="visitDoctor != null" >
+        #{visitDoctor,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocVeinAccede" >
+    update doc_vein_accede
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesDoctor != null" >
+        anaesDoctor = #{anaesDoctor,jdbcType=VARCHAR},
+      </if>
+      <if test="other != null" >
+        other = #{other,jdbcType=VARCHAR},
+      </if>
+      <if test="highRisk != null" >
+        highRisk = #{highRisk,jdbcType=VARCHAR},
+      </if>
+      <if test="checkContent != null" >
+        checkContent = #{checkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="briefHis != null" >
+        briefHis = #{briefHis,jdbcType=VARCHAR},
+      </if>
+      <if test="nervous != null" >
+        nervous = #{nervous,jdbcType=INTEGER},
+      </if>
+      <if test="nervousDetail != null" >
+        nervousDetail = #{nervousDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="nervousOther != null" >
+        nervousOther = #{nervousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="breath != null" >
+        breath = #{breath,jdbcType=INTEGER},
+      </if>
+      <if test="breathDetail != null" >
+        breathDetail = #{breathDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="breathOther != null" >
+        breathOther = #{breathOther,jdbcType=VARCHAR},
+      </if>
+      <if test="smokingFreq != null" >
+        smokingFreq = #{smokingFreq,jdbcType=INTEGER},
+      </if>
+      <if test="smokingTime != null" >
+        smokingTime = #{smokingTime,jdbcType=INTEGER},
+      </if>
+      <if test="heartBool != null" >
+        heartBool = #{heartBool,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolDetail != null" >
+        heartBoolDetail = #{heartBoolDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="hereditary != null" >
+        hereditary = #{hereditary,jdbcType=INTEGER},
+      </if>
+      <if test="hereditaryDetail != null" >
+        hereditaryDetail = #{hereditaryDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="hereditaryOther != null" >
+        hereditaryOther = #{hereditaryOther,jdbcType=VARCHAR},
+      </if>
+      <if test="otherDetail != null" >
+        otherDetail = #{otherDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="anaes != null" >
+        anaes = #{anaes,jdbcType=INTEGER},
+      </if>
+      <if test="anaesDate != null" >
+        anaesDate = #{anaesDate,jdbcType=VARCHAR},
+      </if>
+      <if test="specialCase != null" >
+        specialCase = #{specialCase,jdbcType=INTEGER},
+      </if>
+      <if test="drugTaking != null" >
+        drugTaking = #{drugTaking,jdbcType=INTEGER},
+      </if>
+      <if test="allergic != null" >
+        allergic = #{allergic,jdbcType=INTEGER},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=REAL},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=REAL},
+      </if>
+      <if test="breatheTract != null" >
+        breatheTract = #{breatheTract,jdbcType=INTEGER},
+      </if>
+      <if test="breatheTractDetail != null" >
+        breatheTractDetail = #{breatheTractDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="toothDetail != null" >
+        toothDetail = #{toothDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="mallampatis != null" >
+        mallampatis = #{mallampatis,jdbcType=INTEGER},
+      </if>
+      <if test="nervousSys != null" >
+        nervousSys = #{nervousSys,jdbcType=INTEGER},
+      </if>
+      <if test="nervousSysDetail != null" >
+        nervousSysDetail = #{nervousSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="breathSys != null" >
+        breathSys = #{breathSys,jdbcType=INTEGER},
+      </if>
+      <if test="breathSysDetail != null" >
+        breathSysDetail = #{breathSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="heartBoolSys != null" >
+        heartBoolSys = #{heartBoolSys,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolSysDetail != null" >
+        heartBoolSysDetail = #{heartBoolSysDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="heartrate != null" >
+        heartrate = #{heartrate,jdbcType=INTEGER},
+      </if>
+      <if test="bloodPre != null" >
+        bloodPre = #{bloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="laboratCheck != null" >
+        laboratCheck = #{laboratCheck,jdbcType=INTEGER},
+      </if>
+      <if test="laboratCheckDetail != null" >
+        laboratCheckDetail = #{laboratCheckDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="ecg != null" >
+        ecg = #{ecg,jdbcType=INTEGER},
+      </if>
+      <if test="ecgDetail != null" >
+        ecgDetail = #{ecgDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="rabat != null" >
+        rabat = #{rabat,jdbcType=INTEGER},
+      </if>
+      <if test="rabatDetail != null" >
+        rabatDetail = #{rabatDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="asa != null" >
+        asa = #{asa,jdbcType=INTEGER},
+      </if>
+      <if test="asaE != null" >
+        asaE = #{asaE,jdbcType=INTEGER},
+      </if>
+      <if test="visitDoctor != null" >
+        visitDoctor = #{visitDoctor,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocVeinAccede" >
+    update doc_vein_accede
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      anaesDoctor = #{anaesDoctor,jdbcType=VARCHAR},
+      other = #{other,jdbcType=VARCHAR},
+      highRisk = #{highRisk,jdbcType=VARCHAR},
+      checkContent = #{checkContent,jdbcType=VARCHAR},
+      briefHis = #{briefHis,jdbcType=VARCHAR},
+      nervous = #{nervous,jdbcType=INTEGER},
+      nervousDetail = #{nervousDetail,jdbcType=VARCHAR},
+      nervousOther = #{nervousOther,jdbcType=VARCHAR},
+      breath = #{breath,jdbcType=INTEGER},
+      breathDetail = #{breathDetail,jdbcType=VARCHAR},
+      breathOther = #{breathOther,jdbcType=VARCHAR},
+      smokingFreq = #{smokingFreq,jdbcType=INTEGER},
+      smokingTime = #{smokingTime,jdbcType=INTEGER},
+      heartBool = #{heartBool,jdbcType=INTEGER},
+      heartBoolDetail = #{heartBoolDetail,jdbcType=VARCHAR},
+      hereditary = #{hereditary,jdbcType=INTEGER},
+      hereditaryDetail = #{hereditaryDetail,jdbcType=VARCHAR},
+      hereditaryOther = #{hereditaryOther,jdbcType=VARCHAR},
+      otherDetail = #{otherDetail,jdbcType=VARCHAR},
+      anaes = #{anaes,jdbcType=INTEGER},
+      anaesDate = #{anaesDate,jdbcType=VARCHAR},
+      specialCase = #{specialCase,jdbcType=INTEGER},
+      drugTaking = #{drugTaking,jdbcType=INTEGER},
+      allergic = #{allergic,jdbcType=INTEGER},
+      height = #{height,jdbcType=REAL},
+      weight = #{weight,jdbcType=REAL},
+      breatheTract = #{breatheTract,jdbcType=INTEGER},
+      breatheTractDetail = #{breatheTractDetail,jdbcType=VARCHAR},
+      toothDetail = #{toothDetail,jdbcType=VARCHAR},
+      mallampatis = #{mallampatis,jdbcType=INTEGER},
+      nervousSys = #{nervousSys,jdbcType=INTEGER},
+      nervousSysDetail = #{nervousSysDetail,jdbcType=VARCHAR},
+      breathSys = #{breathSys,jdbcType=INTEGER},
+      breathSysDetail = #{breathSysDetail,jdbcType=VARCHAR},
+      heartBoolSys = #{heartBoolSys,jdbcType=INTEGER},
+      heartBoolSysDetail = #{heartBoolSysDetail,jdbcType=VARCHAR},
+      heartrate = #{heartrate,jdbcType=INTEGER},
+      bloodPre = #{bloodPre,jdbcType=VARCHAR},
+      laboratCheck = #{laboratCheck,jdbcType=INTEGER},
+      laboratCheckDetail = #{laboratCheckDetail,jdbcType=VARCHAR},
+      ecg = #{ecg,jdbcType=INTEGER},
+      ecgDetail = #{ecgDetail,jdbcType=VARCHAR},
+      rabat = #{rabat,jdbcType=INTEGER},
+      rabatDetail = #{rabatDetail,jdbcType=VARCHAR},
+      asa = #{asa,jdbcType=INTEGER},
+      asaE = #{asaE,jdbcType=INTEGER},
+      visitDoctor = #{visitDoctor,jdbcType=VARCHAR},
+      date = #{date,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="searchByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_vein_accede
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.tmp.dao.TmpPacuLiquidTempDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    <id column="tempId" property="tempId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="tempContent" property="tempContent" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="createName" property="createName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="tempName" property="tempName" jdbcType="VARCHAR" />
+    <result column="tempType" property="tempType" jdbcType="INTEGER" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    tempId, createTime, pinyin, tempContent, createUser, createName, type, remark, tempName, 
+    tempType, beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pacu_liquid_temp
+    where tempId = #{tempId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tmp_pacu_liquid_temp
+    where tempId = #{tempId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    insert into tmp_pacu_liquid_temp (tempId, createTime, pinyin, 
+      tempContent, createUser, createName, 
+      type, remark, tempName, 
+      tempType, beid)
+    values (#{tempId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{pinyin,jdbcType=VARCHAR}, 
+      #{tempContent,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{tempName,jdbcType=VARCHAR}, 
+      #{tempType,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    insert into tmp_pacu_liquid_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tempId != null" >
+        tempId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="pinyin != null" >
+        pinyin,
+      </if>
+      <if test="tempContent != null" >
+        tempContent,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="createName != null" >
+        createName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="tempName != null" >
+        tempName,
+      </if>
+      <if test="tempType != null" >
+        tempType,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tempId != null" >
+        #{tempId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="tempContent != null" >
+        #{tempContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="tempName != null" >
+        #{tempName,jdbcType=VARCHAR},
+      </if>
+      <if test="tempType != null" >
+        #{tempType,jdbcType=INTEGER},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    update tmp_pacu_liquid_temp
+    <set >
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pinyin != null" >
+        pinyin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="tempContent != null" >
+        tempContent = #{tempContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        createName = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="tempName != null" >
+        tempName = #{tempName,jdbcType=VARCHAR},
+      </if>
+      <if test="tempType != null" >
+        tempType = #{tempType,jdbcType=INTEGER},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where tempId = #{tempId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    update tmp_pacu_liquid_temp
+    set createTime = #{createTime,jdbcType=TIMESTAMP},
+      pinyin = #{pinyin,jdbcType=VARCHAR},
+      tempContent = #{tempContent,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createName = #{createName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      tempName = #{tempName,jdbcType=VARCHAR},
+      tempType = #{tempType,jdbcType=INTEGER},
+      beid = #{beid,jdbcType=VARCHAR}
+    where tempId = #{tempId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectLiquidTempByFormBean" resultMap="BaseResultMap" parameterType="com.digihealth.anesthesia.tmp.po.TmpPacuLiquidTemp" >
+    select * from(
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pacu_liquid_temp
+    where 1 = 1 and beid = #{searchLiquidTempFormBean.beid}
+    <if test="searchLiquidTempFormBean.roleType == 'ANAES_DOCTOR' or searchLiquidTempFormBean.roleType == 'NURSE'" >
+        and ((createUser = #{searchLiquidTempFormBean.createUser,jdbcType=VARCHAR} and type = '1') or type = '2')
+    </if> ) a where 1 = 1
+    <if test="filters != null">
+		<foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+		  	<if test="filter.value != null and filter.value != '' ">
+				 AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+			</if>
+		  </if>
+		</foreach>
+	</if>
+  	order by ${searchLiquidTempFormBean.sort} ${searchLiquidTempFormBean.orderBy}
+  	<if test="searchLiquidTempFormBean.pageSize != null" >
+	      limit #{searchLiquidTempFormBean.pageNo},#{searchLiquidTempFormBean.pageSize}
+	</if>
+  </select>
+  
+  <select id="selectLiquidTempTotalByFormBean" resultType="java.lang.Integer">
+  	select count(*) from(
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_pacu_liquid_temp
+    where 1 = 1 and beid = #{searchLiquidTempFormBean.beid}
+    <if test="searchLiquidTempFormBean.roleType == 'ANAES_DOCTOR' or searchLiquidTempFormBean.roleType == 'NURSE'" >
+        and ((createUser = #{searchLiquidTempFormBean.createUser,jdbcType=VARCHAR} and type = '1') or type = '2')
+    </if> ) a where 1 = 1
+    <if test="filters != null">
+		<foreach collection="filters" item="filter" open=" " close=" " >
+		   <if test="filter.field != null and filter.field != '' ">
+		  	<if test="filter.value != null and filter.value != '' ">
+				 AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+			</if>
+		  </if>
+		</foreach>
+	</if>
+  </select>
+
+</mapper>

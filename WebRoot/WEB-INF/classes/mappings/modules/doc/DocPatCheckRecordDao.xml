@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPatCheckRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPatCheckRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="checkId" property="checkId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="checkTime" property="checkTime" jdbcType="TIMESTAMP" />
+    <result column="dep" property="dep" jdbcType="VARCHAR" />
+    <result column="samp" property="samp" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="checkName" property="checkName" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="reportDate" property="reportDate" jdbcType="TIMESTAMP" />
+    <result column="reqDoctorId" property="reqDoctorId" jdbcType="VARCHAR" />
+    <result column="auditor" property="auditor" jdbcType="VARCHAR" />
+    <result column="examTime" property="examTime" jdbcType="TIMESTAMP" />
+    <result column="exeDept" property="exeDept" jdbcType="VARCHAR" />
+    <result column="reporter" property="reporter" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, checkId, regOptId, no, checkTime, dep, samp, type, remark, checkName, state, 
+    reportDate, reqDoctorId, auditor, examTime, exeDept, reporter
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_check_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_pat_check_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPatCheckRecord" >
+    insert into doc_pat_check_record (id, checkId, regOptId, 
+      no, checkTime, dep, 
+      samp, type, remark, 
+      checkName, state, reportDate, 
+      reqDoctorId, auditor, examTime, 
+      exeDept, reporter)
+    values (#{id,jdbcType=VARCHAR}, #{checkId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, 
+      #{no,jdbcType=VARCHAR}, #{checkTime,jdbcType=TIMESTAMP}, #{dep,jdbcType=VARCHAR}, 
+      #{samp,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{checkName,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{reportDate,jdbcType=TIMESTAMP}, 
+      #{reqDoctorId,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{examTime,jdbcType=TIMESTAMP}, 
+      #{exeDept,jdbcType=VARCHAR}, #{reporter,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatCheckRecord" >
+    insert into doc_pat_check_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="checkId != null" >
+        checkId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="no != null" >
+        no,
+      </if>
+      <if test="checkTime != null" >
+        checkTime,
+      </if>
+      <if test="dep != null" >
+        dep,
+      </if>
+      <if test="samp != null" >
+        samp,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="checkName != null" >
+        checkName,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="reportDate != null" >
+        reportDate,
+      </if>
+      <if test="reqDoctorId != null" >
+        reqDoctorId,
+      </if>
+      <if test="auditor != null" >
+        auditor,
+      </if>
+      <if test="examTime != null" >
+        examTime,
+      </if>
+      <if test="exeDept != null" >
+        exeDept,
+      </if>
+      <if test="reporter != null" >
+        reporter,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId != null" >
+        #{checkId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null" >
+        #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dep != null" >
+        #{dep,jdbcType=VARCHAR},
+      </if>
+      <if test="samp != null" >
+        #{samp,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkName != null" >
+        #{checkName,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="reportDate != null" >
+        #{reportDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqDoctorId != null" >
+        #{reqDoctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="examTime != null" >
+        #{examTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exeDept != null" >
+        #{exeDept,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        #{reporter,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatCheckRecord" >
+    update doc_pat_check_record
+    <set >
+      <if test="checkId != null" >
+        checkId = #{checkId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        no = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null" >
+        checkTime = #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dep != null" >
+        dep = #{dep,jdbcType=VARCHAR},
+      </if>
+      <if test="samp != null" >
+        samp = #{samp,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkName != null" >
+        checkName = #{checkName,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="reportDate != null" >
+        reportDate = #{reportDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqDoctorId != null" >
+        reqDoctorId = #{reqDoctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        auditor = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="examTime != null" >
+        examTime = #{examTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exeDept != null" >
+        exeDept = #{exeDept,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        reporter = #{reporter,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPatCheckRecord" >
+    update doc_pat_check_record
+    set checkId = #{checkId,jdbcType=VARCHAR},
+      regOptId = #{regOptId,jdbcType=VARCHAR},
+      no = #{no,jdbcType=VARCHAR},
+      checkTime = #{checkTime,jdbcType=TIMESTAMP},
+      dep = #{dep,jdbcType=VARCHAR},
+      samp = #{samp,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      checkName = #{checkName,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      reportDate = #{reportDate,jdbcType=TIMESTAMP},
+      reqDoctorId = #{reqDoctorId,jdbcType=VARCHAR},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      examTime = #{examTime,jdbcType=TIMESTAMP},
+      exeDept = #{exeDept,jdbcType=VARCHAR},
+      reporter = #{reporter,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectRecordByCheckId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_check_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR} and checkId = #{checkId,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="getPatCheckRecordList" resultType="com.digihealth.anesthesia.doc.po.DocPatCheckRecord">
+	select *
+ 		 from doc_pat_check_record 
+		where 1 = 1
+		<if test="filters != null">
+		 <foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+		     <choose>
+				 <when test="filter.field == 'starttime' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND date &gt;=  #{filter.value,jdbcType=TIMESTAMP}
+					</if>
+				</when>
+				<when test="filter.field == 'endtime' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND date &lt;= #{filter.value,jdbcType=TIMESTAMP}
+					</if>
+				</when>
+				<otherwise>
+				<if test="filter.field != null and filter.field != '' ">
+					AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+				</if>
+				</otherwise>
+		     </choose>
+			</if>
+		 </foreach>
+		</if>
+  		order by ${searchFormBean.sort} ${searchFormBean.orderBy}
+  		<if test="searchFormBean.pageSize != null" >
+	       limit #{searchFormBean.pageNo},#{searchFormBean.pageSize}
+	    </if>
+	</select>
+	
+<select id="getTotalPatCheckRecordList" resultType="java.lang.Integer">
+	select 
+     count(*)
+    from doc_pat_check_record where 1=1
+		<if test="filters != null">
+		 <foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+		     <choose>
+				 <when test="filter.field == 'starttime' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND date &gt;=  #{filter.value,jdbcType=TIMESTAMP}
+					</if>
+				</when>
+				<when test="filter.field == 'endtime' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND date &lt;= #{filter.value,jdbcType=TIMESTAMP}
+					</if>
+				</when>
+				<otherwise>
+				<if test="filter.field != null and filter.field != '' ">
+					AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+				</if>
+				</otherwise>
+		     </choose>
+			</if>
+		 </foreach>
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocBloodTransRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocBloodTransRecord" >
+    <id column="bloodTransId" property="bloodTransId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="bloodType" property="bloodType" jdbcType="VARCHAR" />
+    <result column="rhType" property="rhType" jdbcType="VARCHAR" />
+    <result column="antScr" property="antScr" jdbcType="VARCHAR" />
+    <result column="antGlo" property="antGlo" jdbcType="VARCHAR" />
+    <result column="sendUser" property="sendUser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="pcs" property="pcs" jdbcType="INTEGER" />
+    <result column="getUser" property="getUser" jdbcType="VARCHAR" />
+    <result column="bloodHis" property="bloodHis" jdbcType="INTEGER" />
+    <result column="transTime" property="transTime" jdbcType="VARCHAR" />
+    <result column="composition1" property="composition1" jdbcType="VARCHAR" />
+    <result column="dosage1" property="dosage1" jdbcType="VARCHAR" />
+    <result column="composition2" property="composition2" jdbcType="VARCHAR" />
+    <result column="dosage2" property="dosage2" jdbcType="VARCHAR" />
+    <result column="reactTime" property="reactTime" jdbcType="VARCHAR" />
+    <result column="isReact" property="isReact" jdbcType="INTEGER" />
+    <result column="hemolysisReact1" property="hemolysisReact1" jdbcType="VARCHAR" />
+    <result column="hemolysisReact2" property="hemolysisReact2" jdbcType="VARCHAR" />
+    <result column="hemolysisReact3" property="hemolysisReact3" jdbcType="VARCHAR" />
+    <result column="allergicReact" property="allergicReact" jdbcType="VARCHAR" />
+    <result column="feverReact" property="feverReact" jdbcType="VARCHAR" />
+    <result column="otherReact" property="otherReact" jdbcType="VARCHAR" />
+    <result column="anaestheitistId" property="anaestheitistId" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    bloodTransId, regOptId, bloodType, rhType, antScr, antGlo, sendUser, createTime, 
+    processState, pcs, getUser, bloodHis, transTime, composition1, dosage1, composition2, 
+    dosage2, reactTime, isReact, hemolysisReact1, hemolysisReact2, hemolysisReact3, allergicReact, 
+    feverReact, otherReact, anaestheitistId
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_blood_trans_record
+    where bloodTransId = #{bloodTransId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_blood_trans_record
+    where bloodTransId = #{bloodTransId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransRecord" >
+    insert into doc_blood_trans_record (bloodTransId, regOptId, bloodType, 
+      rhType, antScr, antGlo, 
+      sendUser, createTime, processState, 
+      pcs, getUser, bloodHis, 
+      transTime, composition1, dosage1, 
+      composition2, dosage2, reactTime, 
+      isReact, hemolysisReact1, hemolysisReact2, 
+      hemolysisReact3, allergicReact, feverReact, 
+      otherReact, anaestheitistId)
+    values (#{bloodTransId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{bloodType,jdbcType=VARCHAR}, 
+      #{rhType,jdbcType=VARCHAR}, #{antScr,jdbcType=VARCHAR}, #{antGlo,jdbcType=VARCHAR}, 
+      #{sendUser,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{pcs,jdbcType=INTEGER}, #{getUser,jdbcType=VARCHAR}, #{bloodHis,jdbcType=INTEGER}, 
+      #{transTime,jdbcType=VARCHAR}, #{composition1,jdbcType=VARCHAR}, #{dosage1,jdbcType=VARCHAR}, 
+      #{composition2,jdbcType=VARCHAR}, #{dosage2,jdbcType=VARCHAR}, #{reactTime,jdbcType=VARCHAR}, 
+      #{isReact,jdbcType=INTEGER}, #{hemolysisReact1,jdbcType=VARCHAR}, #{hemolysisReact2,jdbcType=VARCHAR}, 
+      #{hemolysisReact3,jdbcType=VARCHAR}, #{allergicReact,jdbcType=VARCHAR}, #{feverReact,jdbcType=VARCHAR}, 
+      #{otherReact,jdbcType=VARCHAR}, #{anaestheitistId,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransRecord" >
+    insert into doc_blood_trans_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bloodTransId != null" >
+        bloodTransId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="bloodType != null" >
+        bloodType,
+      </if>
+      <if test="rhType != null" >
+        rhType,
+      </if>
+      <if test="antScr != null" >
+        antScr,
+      </if>
+      <if test="antGlo != null" >
+        antGlo,
+      </if>
+      <if test="sendUser != null" >
+        sendUser,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="pcs != null" >
+        pcs,
+      </if>
+      <if test="getUser != null" >
+        getUser,
+      </if>
+      <if test="bloodHis != null" >
+        bloodHis,
+      </if>
+      <if test="transTime != null" >
+        transTime,
+      </if>
+      <if test="composition1 != null" >
+        composition1,
+      </if>
+      <if test="dosage1 != null" >
+        dosage1,
+      </if>
+      <if test="composition2 != null" >
+        composition2,
+      </if>
+      <if test="dosage2 != null" >
+        dosage2,
+      </if>
+      <if test="reactTime != null" >
+        reactTime,
+      </if>
+      <if test="isReact != null" >
+        isReact,
+      </if>
+      <if test="hemolysisReact1 != null" >
+        hemolysisReact1,
+      </if>
+      <if test="hemolysisReact2 != null" >
+        hemolysisReact2,
+      </if>
+      <if test="hemolysisReact3 != null" >
+        hemolysisReact3,
+      </if>
+      <if test="allergicReact != null" >
+        allergicReact,
+      </if>
+      <if test="feverReact != null" >
+        feverReact,
+      </if>
+      <if test="otherReact != null" >
+        otherReact,
+      </if>
+      <if test="anaestheitistId != null" >
+        anaestheitistId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bloodTransId != null" >
+        #{bloodTransId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="rhType != null" >
+        #{rhType,jdbcType=VARCHAR},
+      </if>
+      <if test="antScr != null" >
+        #{antScr,jdbcType=VARCHAR},
+      </if>
+      <if test="antGlo != null" >
+        #{antGlo,jdbcType=VARCHAR},
+      </if>
+      <if test="sendUser != null" >
+        #{sendUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="pcs != null" >
+        #{pcs,jdbcType=INTEGER},
+      </if>
+      <if test="getUser != null" >
+        #{getUser,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodHis != null" >
+        #{bloodHis,jdbcType=INTEGER},
+      </if>
+      <if test="transTime != null" >
+        #{transTime,jdbcType=VARCHAR},
+      </if>
+      <if test="composition1 != null" >
+        #{composition1,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage1 != null" >
+        #{dosage1,jdbcType=VARCHAR},
+      </if>
+      <if test="composition2 != null" >
+        #{composition2,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage2 != null" >
+        #{dosage2,jdbcType=VARCHAR},
+      </if>
+      <if test="reactTime != null" >
+        #{reactTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isReact != null" >
+        #{isReact,jdbcType=INTEGER},
+      </if>
+      <if test="hemolysisReact1 != null" >
+        #{hemolysisReact1,jdbcType=VARCHAR},
+      </if>
+      <if test="hemolysisReact2 != null" >
+        #{hemolysisReact2,jdbcType=VARCHAR},
+      </if>
+      <if test="hemolysisReact3 != null" >
+        #{hemolysisReact3,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicReact != null" >
+        #{allergicReact,jdbcType=VARCHAR},
+      </if>
+      <if test="feverReact != null" >
+        #{feverReact,jdbcType=VARCHAR},
+      </if>
+      <if test="otherReact != null" >
+        #{otherReact,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistId != null" >
+        #{anaestheitistId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransRecord" >
+    update doc_blood_trans_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        bloodType = #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="rhType != null" >
+        rhType = #{rhType,jdbcType=VARCHAR},
+      </if>
+      <if test="antScr != null" >
+        antScr = #{antScr,jdbcType=VARCHAR},
+      </if>
+      <if test="antGlo != null" >
+        antGlo = #{antGlo,jdbcType=VARCHAR},
+      </if>
+      <if test="sendUser != null" >
+        sendUser = #{sendUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="pcs != null" >
+        pcs = #{pcs,jdbcType=INTEGER},
+      </if>
+      <if test="getUser != null" >
+        getUser = #{getUser,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodHis != null" >
+        bloodHis = #{bloodHis,jdbcType=INTEGER},
+      </if>
+      <if test="transTime != null" >
+        transTime = #{transTime,jdbcType=VARCHAR},
+      </if>
+      <if test="composition1 != null" >
+        composition1 = #{composition1,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage1 != null" >
+        dosage1 = #{dosage1,jdbcType=VARCHAR},
+      </if>
+      <if test="composition2 != null" >
+        composition2 = #{composition2,jdbcType=VARCHAR},
+      </if>
+      <if test="dosage2 != null" >
+        dosage2 = #{dosage2,jdbcType=VARCHAR},
+      </if>
+      <if test="reactTime != null" >
+        reactTime = #{reactTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isReact != null" >
+        isReact = #{isReact,jdbcType=INTEGER},
+      </if>
+      <if test="hemolysisReact1 != null" >
+        hemolysisReact1 = #{hemolysisReact1,jdbcType=VARCHAR},
+      </if>
+      <if test="hemolysisReact2 != null" >
+        hemolysisReact2 = #{hemolysisReact2,jdbcType=VARCHAR},
+      </if>
+      <if test="hemolysisReact3 != null" >
+        hemolysisReact3 = #{hemolysisReact3,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicReact != null" >
+        allergicReact = #{allergicReact,jdbcType=VARCHAR},
+      </if>
+      <if test="feverReact != null" >
+        feverReact = #{feverReact,jdbcType=VARCHAR},
+      </if>
+      <if test="otherReact != null" >
+        otherReact = #{otherReact,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistId != null" >
+        anaestheitistId = #{anaestheitistId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where bloodTransId = #{bloodTransId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocBloodTransRecord" >
+    update doc_blood_trans_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      bloodType = #{bloodType,jdbcType=VARCHAR},
+      rhType = #{rhType,jdbcType=VARCHAR},
+      antScr = #{antScr,jdbcType=VARCHAR},
+      antGlo = #{antGlo,jdbcType=VARCHAR},
+      sendUser = #{sendUser,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      pcs = #{pcs,jdbcType=INTEGER},
+      getUser = #{getUser,jdbcType=VARCHAR},
+      bloodHis = #{bloodHis,jdbcType=INTEGER},
+      transTime = #{transTime,jdbcType=VARCHAR},
+      composition1 = #{composition1,jdbcType=VARCHAR},
+      dosage1 = #{dosage1,jdbcType=VARCHAR},
+      composition2 = #{composition2,jdbcType=VARCHAR},
+      dosage2 = #{dosage2,jdbcType=VARCHAR},
+      reactTime = #{reactTime,jdbcType=VARCHAR},
+      isReact = #{isReact,jdbcType=INTEGER},
+      hemolysisReact1 = #{hemolysisReact1,jdbcType=VARCHAR},
+      hemolysisReact2 = #{hemolysisReact2,jdbcType=VARCHAR},
+      hemolysisReact3 = #{hemolysisReact3,jdbcType=VARCHAR},
+      allergicReact = #{allergicReact,jdbcType=VARCHAR},
+      feverReact = #{feverReact,jdbcType=VARCHAR},
+      otherReact = #{otherReact,jdbcType=VARCHAR},
+      anaestheitistId = #{anaestheitistId,jdbcType=VARCHAR}
+    where bloodTransId = #{bloodTransId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="searchOptBloodTransRecordByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_blood_trans_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

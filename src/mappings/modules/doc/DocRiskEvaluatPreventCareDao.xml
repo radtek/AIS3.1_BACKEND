@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocRiskEvaluatPreventCareDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="surgeryPosition" property="surgeryPosition" jdbcType="VARCHAR" />
+    <result column="conscious" property="conscious" jdbcType="INTEGER" />
+    <result column="consciousOther" property="consciousOther" jdbcType="VARCHAR" />
+    <result column="mental" property="mental" jdbcType="INTEGER" />
+    <result column="implant" property="implant" jdbcType="INTEGER" />
+    <result column="implantDetail" property="implantDetail" jdbcType="VARCHAR" />
+    <result column="implantOther" property="implantOther" jdbcType="VARCHAR" />
+    <result column="pipeline" property="pipeline" jdbcType="INTEGER" />
+    <result column="pipelineDetail" property="pipelineDetail" jdbcType="VARCHAR" />
+    <result column="pipelineStatus" property="pipelineStatus" jdbcType="INTEGER" />
+    <result column="lowTemp" property="lowTemp" jdbcType="VARCHAR" />
+    <result column="lowTempOther" property="lowTempOther" jdbcType="VARCHAR" />
+    <result column="disengage" property="disengage" jdbcType="VARCHAR" />
+    <result column="disengageOther" property="disengageOther" jdbcType="VARCHAR" />
+    <result column="braden" property="braden" jdbcType="INTEGER" />
+    <result column="bmi" property="bmi" jdbcType="VARCHAR" />
+    <result column="bmiSco" property="bmiSco" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="skinType" property="skinType" jdbcType="VARCHAR" />
+    <result column="optBody" property="optBody" jdbcType="VARCHAR" />
+    <result column="expectForce" property="expectForce" jdbcType="VARCHAR" />
+    <result column="expectTime" property="expectTime" jdbcType="VARCHAR" />
+    <result column="specialReason" property="specialReason" jdbcType="VARCHAR" />
+    <result column="generalCond" property="generalCond" jdbcType="VARCHAR" />
+    <result column="bradenDate" property="bradenDate" jdbcType="VARCHAR" />
+    <result column="isBraden" property="isBraden" jdbcType="INTEGER" />
+    <result column="bradenPosition" property="bradenPosition" jdbcType="VARCHAR" />
+    <result column="bradenCare" property="bradenCare" jdbcType="VARCHAR" />
+    <result column="bradenCareOther" property="bradenCareOther" jdbcType="VARCHAR" />
+    <result column="fall" property="fall" jdbcType="INTEGER" />
+    <result column="fallAge" property="fallAge" jdbcType="INTEGER" />
+    <result column="fallHis" property="fallHis" jdbcType="VARCHAR" />
+    <result column="balance" property="balance" jdbcType="VARCHAR" />
+    <result column="awareness" property="awareness" jdbcType="VARCHAR" />
+    <result column="vision" property="vision" jdbcType="VARCHAR" />
+    <result column="specialMed" property="specialMed" jdbcType="VARCHAR" />
+    <result column="chronic" property="chronic" jdbcType="VARCHAR" />
+    <result column="symptoms" property="symptoms" jdbcType="VARCHAR" />
+    <result column="incontinence" property="incontinence" jdbcType="VARCHAR" />
+    <result column="accompany" property="accompany" jdbcType="VARCHAR" />
+    <result column="fallDate" property="fallDate" jdbcType="VARCHAR" />
+    <result column="fallCare" property="fallCare" jdbcType="VARCHAR" />
+    <result column="fallCareOther" property="fallCareOther" jdbcType="VARCHAR" />
+    <result column="evaluatNurse" property="evaluatNurse" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, processState, surgeryPosition, conscious, consciousOther, mental, implant, 
+    implantDetail, implantOther, pipeline, pipelineDetail, pipelineStatus, lowTemp, lowTempOther, 
+    disengage, disengageOther, braden, bmi, bmiSco, sex, age, skinType, optBody, expectForce, 
+    expectTime, specialReason, generalCond, bradenDate, isBraden, bradenPosition, bradenCare, 
+    bradenCareOther, fall, fallAge, fallHis, balance, awareness, vision, specialMed, 
+    chronic, symptoms, incontinence, accompany, fallDate, fallCare, fallCareOther, evaluatNurse, 
+    date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_risk_evaluat_prevent_care
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_risk_evaluat_prevent_care
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare" >
+    insert into doc_risk_evaluat_prevent_care (id, regOptId, processState, 
+      surgeryPosition, conscious, consciousOther, 
+      mental, implant, implantDetail, 
+      implantOther, pipeline, pipelineDetail, 
+      pipelineStatus, lowTemp, lowTempOther, 
+      disengage, disengageOther, braden, 
+      bmi, bmiSco, sex, age, 
+      skinType, optBody, expectForce, 
+      expectTime, specialReason, generalCond, 
+      bradenDate, isBraden, bradenPosition, 
+      bradenCare, bradenCareOther, fall, 
+      fallAge, fallHis, balance, 
+      awareness, vision, specialMed, 
+      chronic, symptoms, incontinence, 
+      accompany, fallDate, fallCare, 
+      fallCareOther, evaluatNurse, date
+      )
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{surgeryPosition,jdbcType=VARCHAR}, #{conscious,jdbcType=INTEGER}, #{consciousOther,jdbcType=VARCHAR}, 
+      #{mental,jdbcType=INTEGER}, #{implant,jdbcType=INTEGER}, #{implantDetail,jdbcType=VARCHAR}, 
+      #{implantOther,jdbcType=VARCHAR}, #{pipeline,jdbcType=INTEGER}, #{pipelineDetail,jdbcType=VARCHAR}, 
+      #{pipelineStatus,jdbcType=INTEGER}, #{lowTemp,jdbcType=VARCHAR}, #{lowTempOther,jdbcType=VARCHAR}, 
+      #{disengage,jdbcType=VARCHAR}, #{disengageOther,jdbcType=VARCHAR}, #{braden,jdbcType=INTEGER}, 
+      #{bmi,jdbcType=VARCHAR}, #{bmiSco,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{age,jdbcType=INTEGER}, 
+      #{skinType,jdbcType=VARCHAR}, #{optBody,jdbcType=VARCHAR}, #{expectForce,jdbcType=VARCHAR}, 
+      #{expectTime,jdbcType=VARCHAR}, #{specialReason,jdbcType=VARCHAR}, #{generalCond,jdbcType=VARCHAR}, 
+      #{bradenDate,jdbcType=VARCHAR}, #{isBraden,jdbcType=INTEGER}, #{bradenPosition,jdbcType=VARCHAR}, 
+      #{bradenCare,jdbcType=VARCHAR}, #{bradenCareOther,jdbcType=VARCHAR}, #{fall,jdbcType=INTEGER}, 
+      #{fallAge,jdbcType=INTEGER}, #{fallHis,jdbcType=VARCHAR}, #{balance,jdbcType=VARCHAR}, 
+      #{awareness,jdbcType=VARCHAR}, #{vision,jdbcType=VARCHAR}, #{specialMed,jdbcType=VARCHAR}, 
+      #{chronic,jdbcType=VARCHAR}, #{symptoms,jdbcType=VARCHAR}, #{incontinence,jdbcType=VARCHAR}, 
+      #{accompany,jdbcType=VARCHAR}, #{fallDate,jdbcType=VARCHAR}, #{fallCare,jdbcType=VARCHAR}, 
+      #{fallCareOther,jdbcType=VARCHAR}, #{evaluatNurse,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare" >
+    insert into doc_risk_evaluat_prevent_care
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="surgeryPosition != null" >
+        surgeryPosition,
+      </if>
+      <if test="conscious != null" >
+        conscious,
+      </if>
+      <if test="consciousOther != null" >
+        consciousOther,
+      </if>
+      <if test="mental != null" >
+        mental,
+      </if>
+      <if test="implant != null" >
+        implant,
+      </if>
+      <if test="implantDetail != null" >
+        implantDetail,
+      </if>
+      <if test="implantOther != null" >
+        implantOther,
+      </if>
+      <if test="pipeline != null" >
+        pipeline,
+      </if>
+      <if test="pipelineDetail != null" >
+        pipelineDetail,
+      </if>
+      <if test="pipelineStatus != null" >
+        pipelineStatus,
+      </if>
+      <if test="lowTemp != null" >
+        lowTemp,
+      </if>
+      <if test="lowTempOther != null" >
+        lowTempOther,
+      </if>
+      <if test="disengage != null" >
+        disengage,
+      </if>
+      <if test="disengageOther != null" >
+        disengageOther,
+      </if>
+      <if test="braden != null" >
+        braden,
+      </if>
+      <if test="bmi != null" >
+        bmi,
+      </if>
+      <if test="bmiSco != null" >
+        bmiSco,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="skinType != null" >
+        skinType,
+      </if>
+      <if test="optBody != null" >
+        optBody,
+      </if>
+      <if test="expectForce != null" >
+        expectForce,
+      </if>
+      <if test="expectTime != null" >
+        expectTime,
+      </if>
+      <if test="specialReason != null" >
+        specialReason,
+      </if>
+      <if test="generalCond != null" >
+        generalCond,
+      </if>
+      <if test="bradenDate != null" >
+        bradenDate,
+      </if>
+      <if test="isBraden != null" >
+        isBraden,
+      </if>
+      <if test="bradenPosition != null" >
+        bradenPosition,
+      </if>
+      <if test="bradenCare != null" >
+        bradenCare,
+      </if>
+      <if test="bradenCareOther != null" >
+        bradenCareOther,
+      </if>
+      <if test="fall != null" >
+        fall,
+      </if>
+      <if test="fallAge != null" >
+        fallAge,
+      </if>
+      <if test="fallHis != null" >
+        fallHis,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="awareness != null" >
+        awareness,
+      </if>
+      <if test="vision != null" >
+        vision,
+      </if>
+      <if test="specialMed != null" >
+        specialMed,
+      </if>
+      <if test="chronic != null" >
+        chronic,
+      </if>
+      <if test="symptoms != null" >
+        symptoms,
+      </if>
+      <if test="incontinence != null" >
+        incontinence,
+      </if>
+      <if test="accompany != null" >
+        accompany,
+      </if>
+      <if test="fallDate != null" >
+        fallDate,
+      </if>
+      <if test="fallCare != null" >
+        fallCare,
+      </if>
+      <if test="fallCareOther != null" >
+        fallCareOther,
+      </if>
+      <if test="evaluatNurse != null" >
+        evaluatNurse,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryPosition != null" >
+        #{surgeryPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="conscious != null" >
+        #{conscious,jdbcType=INTEGER},
+      </if>
+      <if test="consciousOther != null" >
+        #{consciousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="mental != null" >
+        #{mental,jdbcType=INTEGER},
+      </if>
+      <if test="implant != null" >
+        #{implant,jdbcType=INTEGER},
+      </if>
+      <if test="implantDetail != null" >
+        #{implantDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="implantOther != null" >
+        #{implantOther,jdbcType=VARCHAR},
+      </if>
+      <if test="pipeline != null" >
+        #{pipeline,jdbcType=INTEGER},
+      </if>
+      <if test="pipelineDetail != null" >
+        #{pipelineDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="pipelineStatus != null" >
+        #{pipelineStatus,jdbcType=INTEGER},
+      </if>
+      <if test="lowTemp != null" >
+        #{lowTemp,jdbcType=VARCHAR},
+      </if>
+      <if test="lowTempOther != null" >
+        #{lowTempOther,jdbcType=VARCHAR},
+      </if>
+      <if test="disengage != null" >
+        #{disengage,jdbcType=VARCHAR},
+      </if>
+      <if test="disengageOther != null" >
+        #{disengageOther,jdbcType=VARCHAR},
+      </if>
+      <if test="braden != null" >
+        #{braden,jdbcType=INTEGER},
+      </if>
+      <if test="bmi != null" >
+        #{bmi,jdbcType=VARCHAR},
+      </if>
+      <if test="bmiSco != null" >
+        #{bmiSco,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="skinType != null" >
+        #{skinType,jdbcType=VARCHAR},
+      </if>
+      <if test="optBody != null" >
+        #{optBody,jdbcType=VARCHAR},
+      </if>
+      <if test="expectForce != null" >
+        #{expectForce,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        #{expectTime,jdbcType=VARCHAR},
+      </if>
+      <if test="specialReason != null" >
+        #{specialReason,jdbcType=VARCHAR},
+      </if>
+      <if test="generalCond != null" >
+        #{generalCond,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenDate != null" >
+        #{bradenDate,jdbcType=VARCHAR},
+      </if>
+      <if test="isBraden != null" >
+        #{isBraden,jdbcType=INTEGER},
+      </if>
+      <if test="bradenPosition != null" >
+        #{bradenPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenCare != null" >
+        #{bradenCare,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenCareOther != null" >
+        #{bradenCareOther,jdbcType=VARCHAR},
+      </if>
+      <if test="fall != null" >
+        #{fall,jdbcType=INTEGER},
+      </if>
+      <if test="fallAge != null" >
+        #{fallAge,jdbcType=INTEGER},
+      </if>
+      <if test="fallHis != null" >
+        #{fallHis,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=VARCHAR},
+      </if>
+      <if test="awareness != null" >
+        #{awareness,jdbcType=VARCHAR},
+      </if>
+      <if test="vision != null" >
+        #{vision,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMed != null" >
+        #{specialMed,jdbcType=VARCHAR},
+      </if>
+      <if test="chronic != null" >
+        #{chronic,jdbcType=VARCHAR},
+      </if>
+      <if test="symptoms != null" >
+        #{symptoms,jdbcType=VARCHAR},
+      </if>
+      <if test="incontinence != null" >
+        #{incontinence,jdbcType=VARCHAR},
+      </if>
+      <if test="accompany != null" >
+        #{accompany,jdbcType=VARCHAR},
+      </if>
+      <if test="fallDate != null" >
+        #{fallDate,jdbcType=VARCHAR},
+      </if>
+      <if test="fallCare != null" >
+        #{fallCare,jdbcType=VARCHAR},
+      </if>
+      <if test="fallCareOther != null" >
+        #{fallCareOther,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluatNurse != null" >
+        #{evaluatNurse,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare" >
+    update doc_risk_evaluat_prevent_care
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryPosition != null" >
+        surgeryPosition = #{surgeryPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="conscious != null" >
+        conscious = #{conscious,jdbcType=INTEGER},
+      </if>
+      <if test="consciousOther != null" >
+        consciousOther = #{consciousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="mental != null" >
+        mental = #{mental,jdbcType=INTEGER},
+      </if>
+      <if test="implant != null" >
+        implant = #{implant,jdbcType=INTEGER},
+      </if>
+      <if test="implantDetail != null" >
+        implantDetail = #{implantDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="implantOther != null" >
+        implantOther = #{implantOther,jdbcType=VARCHAR},
+      </if>
+      <if test="pipeline != null" >
+        pipeline = #{pipeline,jdbcType=INTEGER},
+      </if>
+      <if test="pipelineDetail != null" >
+        pipelineDetail = #{pipelineDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="pipelineStatus != null" >
+        pipelineStatus = #{pipelineStatus,jdbcType=INTEGER},
+      </if>
+      <if test="lowTemp != null" >
+        lowTemp = #{lowTemp,jdbcType=VARCHAR},
+      </if>
+      <if test="lowTempOther != null" >
+        lowTempOther = #{lowTempOther,jdbcType=VARCHAR},
+      </if>
+      <if test="disengage != null" >
+        disengage = #{disengage,jdbcType=VARCHAR},
+      </if>
+      <if test="disengageOther != null" >
+        disengageOther = #{disengageOther,jdbcType=VARCHAR},
+      </if>
+      <if test="braden != null" >
+        braden = #{braden,jdbcType=INTEGER},
+      </if>
+      <if test="bmi != null" >
+        bmi = #{bmi,jdbcType=VARCHAR},
+      </if>
+      <if test="bmiSco != null" >
+        bmiSco = #{bmiSco,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="skinType != null" >
+        skinType = #{skinType,jdbcType=VARCHAR},
+      </if>
+      <if test="optBody != null" >
+        optBody = #{optBody,jdbcType=VARCHAR},
+      </if>
+      <if test="expectForce != null" >
+        expectForce = #{expectForce,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        expectTime = #{expectTime,jdbcType=VARCHAR},
+      </if>
+      <if test="specialReason != null" >
+        specialReason = #{specialReason,jdbcType=VARCHAR},
+      </if>
+      <if test="generalCond != null" >
+        generalCond = #{generalCond,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenDate != null" >
+        bradenDate = #{bradenDate,jdbcType=VARCHAR},
+      </if>
+      <if test="isBraden != null" >
+        isBraden = #{isBraden,jdbcType=INTEGER},
+      </if>
+      <if test="bradenPosition != null" >
+        bradenPosition = #{bradenPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenCare != null" >
+        bradenCare = #{bradenCare,jdbcType=VARCHAR},
+      </if>
+      <if test="bradenCareOther != null" >
+        bradenCareOther = #{bradenCareOther,jdbcType=VARCHAR},
+      </if>
+      <if test="fall != null" >
+        fall = #{fall,jdbcType=INTEGER},
+      </if>
+      <if test="fallAge != null" >
+        fallAge = #{fallAge,jdbcType=INTEGER},
+      </if>
+      <if test="fallHis != null" >
+        fallHis = #{fallHis,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=VARCHAR},
+      </if>
+      <if test="awareness != null" >
+        awareness = #{awareness,jdbcType=VARCHAR},
+      </if>
+      <if test="vision != null" >
+        vision = #{vision,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMed != null" >
+        specialMed = #{specialMed,jdbcType=VARCHAR},
+      </if>
+      <if test="chronic != null" >
+        chronic = #{chronic,jdbcType=VARCHAR},
+      </if>
+      <if test="symptoms != null" >
+        symptoms = #{symptoms,jdbcType=VARCHAR},
+      </if>
+      <if test="incontinence != null" >
+        incontinence = #{incontinence,jdbcType=VARCHAR},
+      </if>
+      <if test="accompany != null" >
+        accompany = #{accompany,jdbcType=VARCHAR},
+      </if>
+      <if test="fallDate != null" >
+        fallDate = #{fallDate,jdbcType=VARCHAR},
+      </if>
+      <if test="fallCare != null" >
+        fallCare = #{fallCare,jdbcType=VARCHAR},
+      </if>
+      <if test="fallCareOther != null" >
+        fallCareOther = #{fallCareOther,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluatNurse != null" >
+        evaluatNurse = #{evaluatNurse,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare" >
+    update doc_risk_evaluat_prevent_care
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      surgeryPosition = #{surgeryPosition,jdbcType=VARCHAR},
+      conscious = #{conscious,jdbcType=INTEGER},
+      consciousOther = #{consciousOther,jdbcType=VARCHAR},
+      mental = #{mental,jdbcType=INTEGER},
+      implant = #{implant,jdbcType=INTEGER},
+      implantDetail = #{implantDetail,jdbcType=VARCHAR},
+      implantOther = #{implantOther,jdbcType=VARCHAR},
+      pipeline = #{pipeline,jdbcType=INTEGER},
+      pipelineDetail = #{pipelineDetail,jdbcType=VARCHAR},
+      pipelineStatus = #{pipelineStatus,jdbcType=INTEGER},
+      lowTemp = #{lowTemp,jdbcType=VARCHAR},
+      lowTempOther = #{lowTempOther,jdbcType=VARCHAR},
+      disengage = #{disengage,jdbcType=VARCHAR},
+      disengageOther = #{disengageOther,jdbcType=VARCHAR},
+      braden = #{braden,jdbcType=INTEGER},
+      bmi = #{bmi,jdbcType=VARCHAR},
+      bmiSco = #{bmiSco,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      age = #{age,jdbcType=INTEGER},
+      skinType = #{skinType,jdbcType=VARCHAR},
+      optBody = #{optBody,jdbcType=VARCHAR},
+      expectForce = #{expectForce,jdbcType=VARCHAR},
+      expectTime = #{expectTime,jdbcType=VARCHAR},
+      specialReason = #{specialReason,jdbcType=VARCHAR},
+      generalCond = #{generalCond,jdbcType=VARCHAR},
+      bradenDate = #{bradenDate,jdbcType=VARCHAR},
+      isBraden = #{isBraden,jdbcType=INTEGER},
+      bradenPosition = #{bradenPosition,jdbcType=VARCHAR},
+      bradenCare = #{bradenCare,jdbcType=VARCHAR},
+      bradenCareOther = #{bradenCareOther,jdbcType=VARCHAR},
+      fall = #{fall,jdbcType=INTEGER},
+      fallAge = #{fallAge,jdbcType=INTEGER},
+      fallHis = #{fallHis,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=VARCHAR},
+      awareness = #{awareness,jdbcType=VARCHAR},
+      vision = #{vision,jdbcType=VARCHAR},
+      specialMed = #{specialMed,jdbcType=VARCHAR},
+      chronic = #{chronic,jdbcType=VARCHAR},
+      symptoms = #{symptoms,jdbcType=VARCHAR},
+      incontinence = #{incontinence,jdbcType=VARCHAR},
+      accompany = #{accompany,jdbcType=VARCHAR},
+      fallDate = #{fallDate,jdbcType=VARCHAR},
+      fallCare = #{fallCare,jdbcType=VARCHAR},
+      fallCareOther = #{fallCareOther,jdbcType=VARCHAR},
+      evaluatNurse = #{evaluatNurse,jdbcType=VARCHAR},
+      date = #{date,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="searchByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_risk_evaluat_prevent_care
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

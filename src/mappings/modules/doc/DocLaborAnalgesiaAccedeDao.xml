@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocLaborAnalgesiaAccedeDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede" >
+    <id column="laborId" property="laborId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="anaestheitistId" property="anaestheitistId" jdbcType="VARCHAR" />
+    <result column="anaestheitistSignTime" property="anaestheitistSignTime" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="patientRelationship" property="patientRelationship" jdbcType="VARCHAR" />
+    <result column="patientSignTime" property="patientSignTime" jdbcType="VARCHAR" />
+    <result column="talkLocation" property="talkLocation" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    laborId, regOptId, anaestheitistId, anaestheitistSignTime,processState,patientRelationship, 
+    patientSignTime, talkLocation
+  </sql>
+
+	<select id="searchLaborAccedeByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede">
+		SELECT DISTINCT *
+		FROM doc_labor_analgesia_accede d
+		WHERE d.regOptId = #{regOptId} 
+	</select>
+	
+	<select id="searchLaborAccedeById" resultType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede">
+		SELECT DISTINCT *
+		FROM doc_labor_analgesia_accede d
+		WHERE d.laborId = #{id} 
+	</select>
+	
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_labor_analgesia_accede
+    where laborId = #{laborId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_labor_analgesia_accede
+    where laborId = #{laborId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede" >
+    insert into doc_labor_analgesia_accede (laborId, regOptId, 
+      anaestheitistId, anaestheitistSignTime, processState,patientRelationship, 
+    	patientSignTime, talkLocation
+      )
+    values (#{laborId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, 
+      #{anaestheitistId,jdbcType=VARCHAR}, #{anaestheitistSignTime,jdbcType=VARCHAR}, 
+      #{processState,jdbcType=VARCHAR}, #{patientRelationship,jdbcType=VARCHAR}, #{patientSignTime,jdbcType=VARCHAR}, 
+      #{talkLocation,jdbcType=VARCHAR}
+     )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede" >
+    insert into doc_labor_analgesia_accede
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="laborId != null" >
+        laborId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="anaestheitistId != null" >
+        anaestheitistId,
+      </if>
+      <if test="anaestheitistSignTime != null" >
+        anaestheitistSignTime,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="patientRelationship != null" >
+        patientRelationship,
+      </if>
+      <if test="patientSignTime != null" >
+        patientSignTime,
+      </if>
+      <if test="talkLocation != null" >
+        talkLocation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="laborId != null" >
+        #{laborId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistId != null" >
+        #{anaestheitistId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistSignTime != null" >
+        #{anaestheitistSignTime,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="patientRelationship != null" >
+        #{patientRelationship,jdbcType=VARCHAR},
+      </if>
+      <if test="patientSignTime != null" >
+        #{patientSignTime,jdbcType=VARCHAR},
+      </if>
+      <if test="talkLocation != null" >
+        #{talkLocation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede" >
+    update doc_labor_analgesia_accede
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistId != null" >
+        anaestheitistId = #{anaestheitistId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaestheitistSignTime != null" >
+        anaestheitistSignTime = #{anaestheitistSignTime,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="patientRelationship != null" >
+        patientRelationship = #{patientRelationship,jdbcType=VARCHAR},
+      </if>
+      <if test="patientSignTime != null" >
+        patientSignTime = #{patientSignTime,jdbcType=VARCHAR},
+      </if>
+      <if test="talkLocation != null" >
+        talkLocation = #{talkLocation,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where laborId = #{laborId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateAccede" parameterType="com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede" >
+    update doc_labor_analgesia_accede
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      anaestheitistId = #{anaestheitistId,jdbcType=VARCHAR},
+      anaestheitistSignTime = #{anaestheitistSignTime,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      patientRelationship = #{patientRelationship,jdbcType=VARCHAR},
+      patientSignTime = #{patientSignTime,jdbcType=VARCHAR},
+      talkLocation = #{talkLocation,jdbcType=VARCHAR}
+    where laborId = #{laborId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

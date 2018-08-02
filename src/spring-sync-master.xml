@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		 http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.0.xsd"
+	default-lazy-init="true">
+
+	<description>master</description>
+    
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <!--<bean id="msgProcessReceiver" class="com.digihealth.anesthesia.common.task.MsgProcessReceiver"/>-->
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" />
+	
+	<!-- <task:scheduler id="dataSyncScheduler" pool-size="1"/>  
+    <task:scheduled-tasks scheduler="dataSyncScheduler">   
+        <task:scheduled ref="msgProcessReceiver" method="job" cron="0 * * * * ?" />  
+    </task:scheduled-tasks> --> 
+    
+    
+   <!--  <task:scheduler id="autoArchiveDocument" pool-size="1"/>  
+    <task:scheduled-tasks scheduler="autoArchiveDocument">   
+            <task:scheduled ref="basRegOptService" method="autoArchiveDocuments" cron="0 51 15 * * ?" />   
+    </task:scheduled-tasks>   -->
+    
+    <!-- 每天凌晨1点启动定时任务，将不在有效期的公告设置为无效   0 0 1 * * ? -->
+    <!-- <task:scheduler id="announcement" pool-size="1"/>  
+    <task:scheduled-tasks scheduler="announcement">   
+            <task:scheduled ref="basAnnouncementTask" method="job"  cron="0 0 1 * * ?"/> 
+    </task:scheduled-tasks>  
+    <bean id="basAnnouncementTask" class="com.digihealth.anesthesia.common.task.BasAnnouncementTask"/> -->
+    
+    <!--每月最后一天23点59分 去盘点毒麻药库存-->
+    <!-- <task:scheduler id="medicineStorage" pool-size="1"/>  
+    <task:scheduled-tasks scheduler="medicineStorage">   
+            <task:scheduled ref="medicineStorageTask" method="job"  cron=" 0 00 00 1 * ?"/> 
+    </task:scheduled-tasks>  
+    <bean id="medicineStorageTask" class="com.digihealth.anesthesia.common.task.MedicineStorageTask"/> -->
+    
+    <!-- <import resource="spring-sync-master-qnz.xml"/> -->  <!-- 贵州黔南州的视图接口 -->
+</beans>

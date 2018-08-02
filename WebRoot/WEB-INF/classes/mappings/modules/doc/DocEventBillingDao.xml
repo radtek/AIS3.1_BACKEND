@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocEventBillingDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocEventBilling" >
+    <id column="ebId" property="ebId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="objectId" property="objectId" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="otherName" property="otherName" jdbcType="VARCHAR" />
+    <result column="spec" property="spec" jdbcType="VARCHAR" />
+    <result column="firm" property="firm" jdbcType="VARCHAR" />
+    <result column="pharmaciesCode" property="pharmaciesCode" jdbcType="VARCHAR" />
+    <result column="pharmaciesName" property="pharmaciesName" jdbcType="VARCHAR" />
+    <result column="packageDosageAmount" property="packageDosageAmount" jdbcType="REAL" />
+    <result column="dosageTotalAmount" property="dosageTotalAmount" jdbcType="REAL" />
+    <result column="dosageUnit" property="dosageUnit" jdbcType="VARCHAR" />
+    <result column="packageTotalAmount" property="packageTotalAmount" jdbcType="REAL" />
+    <result column="minPackageUnit" property="minPackageUnit" jdbcType="VARCHAR" />
+    <result column="priceMinPackage" property="priceMinPackage" jdbcType="REAL" />
+    <result column="discount" property="discount" jdbcType="REAL" />
+    <result column="shouldCost" property="shouldCost" jdbcType="REAL" />
+    <result column="realCost" property="realCost" jdbcType="REAL" />
+    <result column="isCharged" property="isCharged" jdbcType="INTEGER" />
+    <result column="chargedType" property="chargedType" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="userType" property="userType" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="costType" property="costType" jdbcType="VARCHAR" />
+    <result column="firmId" property="firmId" jdbcType="VARCHAR" />
+    <result column="chargeDate" property="chargeDate" jdbcType="TIMESTAMP" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ebId, regOptId, objectId, code, name, otherName, spec, firm, pharmaciesCode, pharmaciesName, 
+    packageDosageAmount, dosageTotalAmount, dosageUnit, packageTotalAmount, minPackageUnit, 
+    priceMinPackage, discount, shouldCost, realCost, isCharged, chargedType, createUser, 
+    state, userType, source, createTime,costType,firmId,chargeDate,seq
+  </sql>
+
+	<select id="searchEventBillingList" resultType="com.digihealth.anesthesia.doc.po.DocEventBilling">
+		SELECT  *
+		FROM doc_event_billing d
+		WHERE 1 = 1
+		${filter}
+		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+		<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		 	 limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+		 </if>
+	</select>
+	
+	<select id="selectEventBillingBySource" resultType="com.digihealth.anesthesia.doc.po.DocEventBilling">
+		select a.* from doc_event_billing a left join bas_reg_opt b on a.regOptId = b.regOptId where a.regOptId = #{regOptId} and  b.beid = #{beid} and a.source = #{source} and costType = #{costType}
+	</select>
+	
+	<select id="searchEventBillingListTotal" resultType="java.lang.Integer">
+		SELECT count(*) FROM doc_event_billing
+		WHERE 1 = 1
+		${filter}
+		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+	</select>
+	
+	<select id="checkEventBillingSyn" resultType="java.lang.Integer">
+		SELECT count(*) FROM doc_event_billing
+		WHERE regOptId = #{regOptId} and state = 'FINISH' and isCharged = 1 and source !='2'
+			and costType = #{costType}
+	</select>
+	
+	
+	<select id="searchEventBillingById" resultType="com.digihealth.anesthesia.doc.po.DocEventBilling">
+		SELECT *
+		FROM doc_event_billing d left join bas_reg_opt b on d.regOptId = b.regOptId
+		WHERE d.ebId = #{ebId}
+	</select>
+
+	<select id="queryMedicaleventInBill" resultType="com.digihealth.anesthesia.doc.po.DocEventBilling">
+		SELECT x.docId,x.medEventId objectId,m.medicineId CODE,m.name,m.briefName otherName,
+			p.firm,p.firmId,p.spec,p.pharmaciesCode,p.pharmaciesName, 
+			m.packageDosageAmount, dosage AS dosageTotalAmount,
+			dosageUnit, minPackageUnit, priceMinPackage,x.createuser createUser,'1' source,'1' chargedType,1 AS discount,1 isCharged,starttime AS createTime
+		 FROM (
+				SELECT 
+					a.*
+				FROM evt_medicalevent  a WHERE docId=#{baseQuery.docId}) x 
+		LEFT JOIN bas_medicine m ON m.medicineId = x.medicineId
+		LEFT JOIN bas_price p ON x.priceId = p.priceId
+			WHERE 1=1 
+			AND p.beid = #{beid}
+			AND m.beid = #{beid}
+			<if test="baseQuery.userType != null and baseQuery.userType != ''">
+			AND userType = #{baseQuery.userType} 
+		</if>
+		<if test="baseQuery.id != null and baseQuery.id != ''">
+			AND m.medicineId = #{baseQuery.id} 
+		</if>
+		order by medEventId ASC
+		<if test="baseQuery.pageSize !=null and baseQuery.pageSize!=''">
+		    limit #{baseQuery.pageNo},#{baseQuery.pageSize}
+		</if>
+	</select>		
+			
+	<select id="queryIoeventInBill" resultType="com.digihealth.anesthesia.doc.po.DocEventBilling">
+		SELECT x.docId,x.ineventId objectId,m.code CODE,m.name,m.briefName otherName,
+			p.firm,p.spec,p.pharmaciesCode,p.pharmaciesName, 
+			m.packageDosageAmount, 
+			dosageAmount AS dosageTotalAmount,
+			dosageUnit, minPackageUnit, priceMinPackage,
+			x.createuser createUser,'1' source,'I' chargedType,1 AS discount,1 isCharged,starttime AS createTime
+			 FROM (
+			SELECT 
+						a.*
+					FROM evt_inevent a WHERE docId=#{baseQuery.docId}) x left join bas_user  b on x.createuser=b.userName
+			LEFT JOIN bas_io_defination m ON m.ioDefId = x.ioDefId
+			LEFT JOIN bas_price p ON x.priceId = p.priceId
+		WHERE 1=1 
+		AND b.beid = #{beid}
+		AND m.beid = #{beid}
+		AND p.beid = #{beid}
+		<if test="baseQuery.userType != null and baseQuery.userType != ''">
+			AND b.userType = #{baseQuery.userType} 
+		</if>
+		<if test="baseQuery.id != null and baseQuery.id != ''">
+			AND m.ioDefId = #{baseQuery.id} 
+		</if>
+		order by x.ineventId ASC
+		<if test="baseQuery.pageSize !=null and baseQuery.pageSize!=''">
+		    limit #{baseQuery.pageNo},#{baseQuery.pageSize}
+		</if>
+	</select>
+	
+	<select id="searchBillGroupByMedicode" resultType="com.digihealth.anesthesia.doc.formbean.EventBillingFormBean">
+		select b.`name`as regName ,tol.*  FROM (
+			SELECT
+				regOptId,code,NAME,firm,firmId,spec,doc_event_billing.state,ebId,doc_event_billing.seq,
+				doc_event_billing.packageDosageAmount,
+				priceMinPackage,
+				dosageTotalAmount,
+				packageTotalAmount,
+				#concat(CEIL(dosageTotalAmount / packageTotalAmount),minPackageUnit) totalAmountUnit,
+				discount,
+				shouldCost,
+				#CEIL(packageTotalAmount / packageDosageAmount) * discount * priceMinPackage realCost,
+				isCharged,
+				chargedType,dosageUnit,minPackageUnit
+			FROM	doc_event_billing
+			WHERE
+				1 = 1 ${filter} 
+			) tol left join bas_reg_opt b on tol.regOptId=b.regOptId 
+
+			order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+			
+			<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		 	 	limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+		 </if>
+	</select>
+	
+	<delete id="deleteBilling">
+		delete from doc_event_billing where ebId = #{ebId}
+	</delete>
+	
+	<delete id="deleteBillingByRegOptId">
+		delete from doc_event_billing  where source = '1'
+		<if test="baseQuery.regOptId != null and baseQuery.regOptId != ''">
+			AND regOptId = #{baseQuery.regOptId}
+		</if>
+		<if test="baseQuery.userType != null and baseQuery.userType != ''">
+			AND userType = #{baseQuery.userType} 
+		</if>
+	</delete>
+	
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_event_billing
+    where ebId = #{ebId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_event_billing
+    where ebId = #{ebId,jdbcType=VARCHAR}
+  </delete>
+  
+  	<select id="queryUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow">
+		SELECT a.regOptId,b.code price_id,a.packageTotalAmount amount,a.ebId operjzxh,t.hid blh,'24010121' act_dept,'0' his_priceid,'2' xmlb,a.createTime act_time,a.createUser recorder
+				,b.packageDosageAmount dwxs,p.minPackageUnit ypdw,p.priceMinPackage xmdj,t.hid oper_id
+			from doc_event_billing a,bas_reg_opt t,bas_medicine b ,bas_price p
+				where a.regOptId = t.regOptId
+				and a.`code`=b.medicineId
+				and t.beid = b.beid
+				and b.code = p.code
+				and t.beid = p.beid
+				and  a.regOptId = #{regOptId} 
+				and a.state = 'NO_FINISH' 
+				and isCharged = 1
+				and costType = #{costType}
+				and b.`enable` = 1
+				and a.packageTotalAmount &gt; 0
+	</select>
+	
+	<select id="queryUnChargMedByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.po.ChargItem">
+	SELECT a.`packageTotalAmount` itemQty, b.`code` itemCode, b.`name` itemName, '1' itemType, a.ebId itemId
+			FROM doc_event_billing a,(select * From bas_medicine where beid = #{beid}) b 
+			WHERE a.`code`=b.medicineId
+			AND regOptId = #{regOptId} 
+			AND state = 'NO_FINISH' 
+			AND isCharged = 1
+	</select>
+	
+	<update id="updateChargeState">
+		UPDATE doc_event_billing set state = 'FINISH',chargeDate = NOW()  where ebId = #{ebId}
+	</update>
+	
+	<update id="updateChargeStateByMedId">
+		UPDATE doc_event_billing set state = 'FINISH'  where code = #{medId} and regOptId = #{regOptId}
+	</update>
+	
+	<select id="queryShouldCostByRegOptId" resultType="java.lang.Float">
+		select SUM(shouldCost) from (
+		select ROUND(sum(shouldCost),2) shouldCost from doc_event_billing where regOptId = #{regOptId}
+		and costType = #{costType}
+		UNION 
+		select ROUND(IFNULL(sum(a.chargeAmount*b.price*a.discount),0),2) shouldCost 
+		from doc_packages_item a,bas_charge_item b where a.regOptId = #{regOptId}
+		and a.chargeItemId = b.chargeItemId
+		and costType = #{costType}
+		) x
+	</select>
+  
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocEventBilling" >
+    insert into doc_event_billing (ebId, regOptId, objectId, 
+      code, name, otherName, 
+      spec, firm, pharmaciesCode, 
+      pharmaciesName, packageDosageAmount, dosageTotalAmount, 
+      dosageUnit, packageTotalAmount, minPackageUnit, 
+      priceMinPackage, discount, shouldCost, 
+      realCost, isCharged, chargedType, 
+      createUser, state, userType, 
+      source, createTime,costType,firmId,seq)
+    values (#{ebId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{objectId,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{otherName,jdbcType=VARCHAR}, 
+      #{spec,jdbcType=VARCHAR}, #{firm,jdbcType=VARCHAR}, #{pharmaciesCode,jdbcType=VARCHAR}, 
+      #{pharmaciesName,jdbcType=VARCHAR}, #{packageDosageAmount,jdbcType=REAL}, #{dosageTotalAmount,jdbcType=REAL}, 
+      #{dosageUnit,jdbcType=VARCHAR}, #{packageTotalAmount,jdbcType=REAL}, #{minPackageUnit,jdbcType=VARCHAR}, 
+      #{priceMinPackage,jdbcType=REAL}, #{discount,jdbcType=REAL}, #{shouldCost,jdbcType=REAL}, 
+      #{realCost,jdbcType=REAL}, #{isCharged,jdbcType=INTEGER}, #{chargedType,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, 
+      #{source,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{costType,jdbcType=VARCHAR}, #{firmId,jdbcType=VARCHAR},
+      #{seq,jdbcType=INTEGER})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocEventBilling" >
+    insert into doc_event_billing
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ebId != null" >
+        ebId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="objectId != null" >
+        objectId,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="otherName != null" >
+        otherName,
+      </if>
+      <if test="spec != null" >
+        spec,
+      </if>
+      <if test="firm != null" >
+        firm,
+      </if>
+      <if test="pharmaciesCode != null" >
+        pharmaciesCode,
+      </if>
+      <if test="pharmaciesName != null" >
+        pharmaciesName,
+      </if>
+      <if test="packageDosageAmount != null" >
+        packageDosageAmount,
+      </if>
+      <if test="dosageTotalAmount != null" >
+        dosageTotalAmount,
+      </if>
+      <if test="dosageUnit != null" >
+        dosageUnit,
+      </if>
+      <if test="packageTotalAmount != null" >
+        packageTotalAmount,
+      </if>
+      <if test="minPackageUnit != null" >
+        minPackageUnit,
+      </if>
+      <if test="priceMinPackage != null" >
+        priceMinPackage,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="shouldCost != null" >
+        shouldCost,
+      </if>
+      <if test="realCost != null" >
+        realCost,
+      </if>
+      <if test="isCharged != null" >
+        isCharged,
+      </if>
+      <if test="chargedType != null" >
+        chargedType,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="costType != null" >
+        costType,
+      </if>
+       <if test="firmId != null" >
+        firmId,
+      </if>
+      <if test="seq != null" >
+        seq,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ebId != null" >
+        #{ebId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="objectId != null" >
+        #{objectId,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="otherName != null" >
+        #{otherName,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null" >
+        #{spec,jdbcType=VARCHAR},
+      </if>
+      <if test="firm != null" >
+        #{firm,jdbcType=VARCHAR},
+      </if>
+      <if test="pharmaciesCode != null" >
+        #{pharmaciesCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pharmaciesName != null" >
+        #{pharmaciesName,jdbcType=VARCHAR},
+      </if>
+      <if test="packageDosageAmount != null" >
+        #{packageDosageAmount,jdbcType=REAL},
+      </if>
+      <if test="dosageTotalAmount != null" >
+        #{dosageTotalAmount,jdbcType=REAL},
+      </if>
+      <if test="dosageUnit != null" >
+        #{dosageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="packageTotalAmount != null" >
+        #{packageTotalAmount,jdbcType=REAL},
+      </if>
+      <if test="minPackageUnit != null" >
+        #{minPackageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="priceMinPackage != null" >
+        #{priceMinPackage,jdbcType=REAL},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=REAL},
+      </if>
+      <if test="shouldCost != null" >
+        #{shouldCost,jdbcType=REAL},
+      </if>
+      <if test="realCost != null" >
+        #{realCost,jdbcType=REAL},
+      </if>
+      <if test="isCharged != null" >
+        #{isCharged,jdbcType=INTEGER},
+      </if>
+      <if test="chargedType != null" >
+        #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="costType != null" >
+        #{costType,jdbcType=VARCHAR},
+      </if>
+      <if test="firmId != null" >
+        #{firmId,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        #{seq,jdbcType=INTEGER},
+      </if>
+      
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocEventBilling" >
+    update doc_event_billing
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="objectId != null" >
+        objectId = #{objectId,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="otherName != null" >
+        otherName = #{otherName,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null" >
+        spec = #{spec,jdbcType=VARCHAR},
+      </if>
+      <if test="firm != null" >
+        firm = #{firm,jdbcType=VARCHAR},
+      </if>
+      <if test="pharmaciesCode != null" >
+        pharmaciesCode = #{pharmaciesCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pharmaciesName != null" >
+        pharmaciesName = #{pharmaciesName,jdbcType=VARCHAR},
+      </if>
+      <if test="packageDosageAmount != null" >
+        packageDosageAmount = #{packageDosageAmount,jdbcType=REAL},
+      </if>
+      <if test="dosageTotalAmount != null" >
+        dosageTotalAmount = #{dosageTotalAmount,jdbcType=REAL},
+      </if>
+      <if test="dosageUnit != null" >
+        dosageUnit = #{dosageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="packageTotalAmount != null" >
+        packageTotalAmount = #{packageTotalAmount,jdbcType=REAL},
+      </if>
+      <if test="minPackageUnit != null" >
+        minPackageUnit = #{minPackageUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="priceMinPackage != null" >
+        priceMinPackage = #{priceMinPackage,jdbcType=REAL},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=REAL},
+      </if>
+      <if test="shouldCost != null" >
+        shouldCost = #{shouldCost,jdbcType=REAL},
+      </if>
+      <if test="realCost != null" >
+        realCost = #{realCost,jdbcType=REAL},
+      </if>
+      <if test="isCharged != null" >
+        isCharged = #{isCharged,jdbcType=INTEGER},
+      </if>
+      <if test="chargedType != null" >
+        chargedType = #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="costType != null" >
+        costType = #{costType,jdbcType=VARCHAR},
+      </if>
+      <if test="firmId != null" >
+        firmId = #{firmId,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        seq = #{seq,jdbcType=INTEGER},
+      </if>
+      
+    </set>
+    where ebId = #{ebId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocEventBilling" >
+    update doc_event_billing
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      objectId = #{objectId,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      otherName = #{otherName,jdbcType=VARCHAR},
+      spec = #{spec,jdbcType=VARCHAR},
+      firm = #{firm,jdbcType=VARCHAR},
+      pharmaciesCode = #{pharmaciesCode,jdbcType=VARCHAR},
+      pharmaciesName = #{pharmaciesName,jdbcType=VARCHAR},
+      packageDosageAmount = #{packageDosageAmount,jdbcType=REAL},
+      dosageTotalAmount = #{dosageTotalAmount,jdbcType=REAL},
+      dosageUnit = #{dosageUnit,jdbcType=VARCHAR},
+      packageTotalAmount = #{packageTotalAmount,jdbcType=REAL},
+      minPackageUnit = #{minPackageUnit,jdbcType=VARCHAR},
+      priceMinPackage = #{priceMinPackage,jdbcType=REAL},
+      discount = #{discount,jdbcType=REAL},
+      shouldCost = #{shouldCost,jdbcType=REAL},
+      realCost = #{realCost,jdbcType=REAL},
+      isCharged = #{isCharged,jdbcType=INTEGER},
+      chargedType = #{chargedType,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=VARCHAR},
+      source = #{source,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      costType = #{costType,jdbcType=VARCHAR},
+      firmId = #{firmId,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=INTEGER}
+    where ebId = #{ebId,jdbcType=VARCHAR}
+  </update>
+
+
+  <select id="getMaxSeq" resultType="java.lang.Integer">
+		select IFNULL(MAX(seq)+1,1) From doc_event_billing 
+		where regOptId = #{regOptId,jdbcType=VARCHAR} and costType = #{costType,jdbcType=VARCHAR} 
+		and chargedType = #{chargedType,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.basedata.dao.BasAnaesDoctorAmountDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount" >
+    <id column="recordMonth" property="recordMonth" jdbcType="VARCHAR" />
+    <id column="beid" property="beid" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    recordMonth, beid, amount
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_anaes_doctor_amount
+    where recordMonth = #{recordMonth,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from bas_anaes_doctor_amount
+    where recordMonth = #{recordMonth,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount" >
+    insert into bas_anaes_doctor_amount (recordMonth, beid, amount
+      )
+    values (#{recordMonth,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR}, #{amount,jdbcType=INTEGER}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount" >
+    insert into bas_anaes_doctor_amount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordMonth != null" >
+        recordMonth,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordMonth != null" >
+        #{recordMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount" >
+    update bas_anaes_doctor_amount
+    <set >
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where recordMonth = #{recordMonth,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount" >
+    update bas_anaes_doctor_amount
+    set amount = #{amount,jdbcType=INTEGER}
+    where recordMonth = #{recordMonth,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectAllAnaesDoctorAmount" resultType="com.digihealth.anesthesia.basedata.po.BasAnaesDoctorAmount">
+   		select * from bas_anaes_doctor_amount
+   		where 1 = 1
+   		and beid = #{systemSearchFormBean.beid}
+		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+		<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		 	 limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+		 </if>
+    </select>
+    
+    <select id="selectAnaesDoctorAmountTotal" resultType="java.lang.Integer">
+   		select count(*) from bas_anaes_doctor_amount where 1 = 1 and beid = #{systemSearchFormBean.beid}
+    </select>
+</mapper>

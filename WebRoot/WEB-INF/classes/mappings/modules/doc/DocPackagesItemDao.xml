@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPackagesItemDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    <id column="pkItId" property="pkItId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="chargePkgId" property="chargePkgId" jdbcType="VARCHAR" />
+    <result column="chargeItemId" property="chargeItemId" jdbcType="VARCHAR" />
+    <result column="chargeAmount" property="chargeAmount" jdbcType="REAL" />
+    <result column="isCharge" property="isCharge" jdbcType="BIT" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
+    <result column="discount" property="discount" jdbcType="REAL" />
+    <result column="userType" property="userType" jdbcType="VARCHAR" />
+    <result column="priceMinPackage" property="priceMinPackage" jdbcType="REAL" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="costType" property="costType" jdbcType="VARCHAR" />
+    <result column="chargedType" property="chargedType" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="chargeDate" property="chargeDate" jdbcType="TIMESTAMP" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    pkItId, regOptId, chargePkgId, chargeItemId, chargeAmount, isCharge, flag, discount, 
+    userType, priceMinPackage, unit, state, createUser, createTime,costType,chargedType,chargeDate,seq
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_packages_item
+    where pkItId = #{pkItId,jdbcType=VARCHAR}
+  </select>
+  
+  	<select id="queryUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow">
+		SELECT b.chargeItemCode price_id,a.chargeAmount amount,pkItId as operjzxh,t.hid blh,'21050211' act_dept,'0' his_priceid,'1' xmlb,a.createTime act_time,a.createUser recorder
+			,b.price xmdj,b.unit ypdw,1 dwxs,t.hid oper_id
+			from doc_packages_item a ,bas_reg_opt t ,bas_charge_item b 
+			where a.regOptId = t.regOptId
+			and a.chargeItemId = b.chargeItemId  
+			and t.beid = b.beid
+			and b.`enable` = 1
+			and a.chargeAmount &gt; 0
+			and  a.regOptId = #{regOptId} and a.state = 'NO_FINISH' and isCharge = 1
+			and a.costType = #{costType}
+	</select>
+	
+	<select id="queryUnChargItemByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.po.ChargItem">
+		SELECT a.`chargeAmount` itemQty, b.`chargeItemCode` itemCode, b.`chargeItemName` itemName, '0' itemType, a.pkItId itemId
+			FROM doc_packages_item a ,bas_charge_item b 
+			WHERE a.chargeItemId = b.chargeItemId 
+			AND  regOptId = #{regOptId} 
+			AND state = 'NO_FINISH' AND isCharge = 1
+	</select>
+
+	<select id="queryPackagesItemList" resultType="com.digihealth.anesthesia.doc.po.DocPackagesItem">
+		SELECT a.*,ck.`enable` FROM doc_packages_item a left join bas_reg_opt b on a.regOptId = b.regOptId
+			LEFT JOIN bas_charge_item ck  on a.chargeItemId = ck.chargeItemId
+		where 1 = 1 
+	 		${filter} 
+			and b.beid = #{beid}
+			order by seq
+	</select>
+	
+	<select id="searchPackagesItemById" resultType="com.digihealth.anesthesia.doc.po.DocPackagesItem">
+		SELECT doc_packages_item.*,bas_charge_item.isSpecial FROM doc_packages_item,bas_charge_item  
+		where doc_packages_item.chargeItemId = bas_charge_item.chargeItemId
+		and pkItId = #{pkItId} order by pkItId
+	</select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_packages_item
+    where pkItId = #{pkItId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    insert into doc_packages_item (pkItId, regOptId, chargePkgId, 
+      chargeItemId, chargeAmount, isCharge, 
+      flag, discount, userType, 
+      priceMinPackage, unit, state, 
+      createUser, createTime,costType,chargedType,seq)
+    values (#{pkItId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{chargePkgId,jdbcType=VARCHAR}, 
+      #{chargeItemId,jdbcType=VARCHAR}, #{chargeAmount,jdbcType=REAL}, #{isCharge,jdbcType=BIT}, 
+      #{flag,jdbcType=VARCHAR}, #{discount,jdbcType=REAL}, #{userType,jdbcType=VARCHAR}, 
+      #{priceMinPackage,jdbcType=REAL}, #{unit,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{costType,jdbcType=VARCHAR}, #{chargedType,jdbcType=VARCHAR},
+      #{seq,jdbcType=INTEGER})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    insert into doc_packages_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkItId != null" >
+        pkItId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="chargePkgId != null" >
+        chargePkgId,
+      </if>
+      <if test="chargeItemId != null" >
+        chargeItemId,
+      </if>
+      <if test="chargeAmount != null" >
+        chargeAmount,
+      </if>
+      <if test="isCharge != null" >
+        isCharge,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="priceMinPackage != null" >
+        priceMinPackage,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="costType != null" >
+        costType,
+      </if>
+      <if test="chargedType != null" >
+        chargedType,
+      </if>
+      <if test="seq != null" >
+        seq,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkItId != null" >
+        #{pkItId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargePkgId != null" >
+        #{chargePkgId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeItemId != null" >
+        #{chargeItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeAmount != null" >
+        #{chargeAmount,jdbcType=REAL},
+      </if>
+      <if test="isCharge != null" >
+        #{isCharge,jdbcType=BIT},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=REAL},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="priceMinPackage != null" >
+        #{priceMinPackage,jdbcType=REAL},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="costType != null" >
+         #{costType,jdbcType=VARCHAR},
+      </if>
+      <if test="chargedType != null" >
+         #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        #{seq,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    update doc_packages_item
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargePkgId != null" >
+        chargePkgId = #{chargePkgId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeItemId != null" >
+        chargeItemId = #{chargeItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeAmount != null" >
+        chargeAmount = #{chargeAmount,jdbcType=REAL},
+      </if>
+      <if test="isCharge != null" >
+        isCharge = #{isCharge,jdbcType=BIT},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=REAL},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="priceMinPackage != null" >
+        priceMinPackage = #{priceMinPackage,jdbcType=REAL},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+     <if test="costType != null" >
+        costType = #{costType,jdbcType=VARCHAR},
+      </if>
+      <if test="chargedType != null" >
+        chargedType =  #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        seq = #{seq,jdbcType=INTEGER},
+      </if>
+    </set>
+    where pkItId = #{pkItId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    update doc_packages_item
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      chargePkgId = #{chargePkgId,jdbcType=VARCHAR},
+      chargeItemId = #{chargeItemId,jdbcType=VARCHAR},
+      chargeAmount = #{chargeAmount,jdbcType=REAL},
+      isCharge = #{isCharge,jdbcType=BIT},
+      flag = #{flag,jdbcType=VARCHAR},
+      discount = #{discount,jdbcType=REAL},
+      userType = #{userType,jdbcType=VARCHAR},
+      priceMinPackage = #{priceMinPackage,jdbcType=REAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      costType = #{costType,jdbcType=VARCHAR},
+      chargedType =  #{chargedType,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=INTEGER}
+    where pkItId = #{pkItId,jdbcType=VARCHAR}
+  </update>
+
+	<update id="update">
+		UPDATE doc_packages_item set 
+		chargeAmount = #{chargeAmount},
+		isCharge = #{isCharge},
+		discount = #{discount}
+		where pkItId = #{pkItId}
+	</update>
+	
+	<update id="updateIsCharge">
+		UPDATE doc_packages_item set isCharge = #{packagesItem.isCharge} where pkItId = #{packagesItem.pkItId}
+	</update>
+	
+	<update id="updateChargeState">
+		UPDATE doc_packages_item set state = 'FINISH',chargeDate = NOW()  where pkItId = #{pkItId}
+	</update>
+	
+	<update id="updateChargeStateByChargeItemId">
+		UPDATE doc_packages_item set state = 'FINISH'  where chargeItemId = #{chargeItemId} and regOptId = #{regOptId}
+	</update>
+	
+	<select id="getMaxSeq" resultType="java.lang.Integer">
+		select IFNULL(MAX(seq)+1,1) From doc_packages_item 
+		where regOptId = #{regOptId,jdbcType=VARCHAR} and costType = #{costType,jdbcType=VARCHAR} 
+		and chargedType = #{chargedType,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.sysMng.dao.BasDictGroupDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="groupId" property="groupId" jdbcType="VARCHAR" />
+    <result column="groupName" property="groupName" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="BIT" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, groupId, groupName, `enable`, beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_sys_dict_group
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getDictItemGroups" resultType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+     select * from (
+     select 
+     d.id,d.groupId,d.groupName,d.beid,b.`name` as beName
+    from bas_sys_dict_group d,bas_bus_entity b 
+    where d.beid = b.beid
+    ) x where 1=1
+	<if test="filters != null">
+	  <foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+				AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+		  </if>
+	  </foreach>
+	</if>
+  	order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+  	<if test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+		limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+	</if>
+  </select>
+  
+  <select id="getDictItemGroupsNum" resultType="java.lang.Integer" >
+     select count(id)from (
+        select * from (
+     select 
+     d.id,d.groupId,d.groupName,d.beid,b.`name` as beName
+    from bas_sys_dict_group d,bas_bus_entity b 
+    where d.beid = b.beid
+    ) x where 1=1
+	<if test="filters != null">
+	  <foreach collection="filters" item="filter" open=" " close=" " >
+		  <if test="filter.field != null and filter.field != '' ">
+				AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+		  </if>
+	  </foreach>
+	</if>
+	) c
+  </select>
+  
+  <select id="getDictGroupByGroupId" resultType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+     select 
+    <include refid="Base_Column_List" />
+    from bas_sys_dict_group
+    where 1=1 
+    <if test="groupId != null and groupId != ''" >
+    and groupId = #{groupId,jdbcType=VARCHAR}
+    </if>
+    <if test="beid != null and beid !=''" >
+     and beid = #{beid,jdbcType=VARCHAR}
+    </if>
+  </select>
+  
+  <select id="getDictItemByBeid" resultType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+     select 
+    <include refid="Base_Column_List" />
+    from bas_sys_dict_group
+    where beid = #{beid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bas_sys_dict_group
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <delete id="deleteBasDictGroupByBeid" parameterType="java.lang.String" >
+    delete from bas_sys_dict_group
+    where beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+    insert into bas_sys_dict_group (id, groupId, groupName, 
+      `enable`, beid)
+    values (#{id,jdbcType=INTEGER}, #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, 
+      #{enable,jdbcType=BIT}, #{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+    insert into bas_sys_dict_group
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="groupId != null" >
+        groupId,
+      </if>
+      <if test="groupName != null" >
+        groupName,
+      </if>
+      <if test="enable != null" >
+        `enable`,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=BIT},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+    update bas_sys_dict_group
+    <set >
+      <if test="groupId != null" >
+        groupId = #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        groupName = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        `enable` = #{enable,jdbcType=BIT},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.sysMng.po.BasDictGroup" >
+    update bas_sys_dict_group
+    set groupId = #{groupId,jdbcType=VARCHAR},
+      groupName = #{groupName,jdbcType=VARCHAR},
+      `enable` = #{enable,jdbcType=BIT},
+      beid = #{beid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

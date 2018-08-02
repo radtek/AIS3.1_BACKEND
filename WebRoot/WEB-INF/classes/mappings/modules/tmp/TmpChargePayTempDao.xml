@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.tmp.dao.TmpChargePayTempDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+    <id column="chargePayTempId" property="chargePayTempId" jdbcType="VARCHAR" />
+    <result column="valamt" property="valamt" jdbcType="REAL" />
+    <result column="chargeItemId" property="chargeItemId" jdbcType="INTEGER" />
+    <result column="chargeMedTempId" property="chargeMedTempId" jdbcType="VARCHAR" />
+    <result column="chargedType" property="chargedType" jdbcType="VARCHAR" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    chargePayTempId, valamt, chargeItemId, chargeMedTempId,chargedType,beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tmp_charge_pay_temp
+    where chargePayTempId = #{chargePayTempId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryItemListByChargeMedTempId"  resultType="com.digihealth.anesthesia.doc.po.DocPackagesItem" >
+    select t.chargeItemName name,m.chargeItemId,t.unit,t.pinyin,t.price as priceMinPackage, IFNULL(m.valamt,0) chargeAmount,
+	ROUND(IFNULL(m.valamt,0)* t.price,2) as shouldcost,'NO_FINISH' state,m.chargedType
+	from tmp_charge_pay_temp m, bas_charge_item t 
+	where m.chargeItemId = t.chargeItemId
+    and chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </select>
+  
+  
+    <select id="searchChargePayListById"  resultType="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+	    select t.chargeItemName name,m.chargeItemId,t.price as priceMinPackage, IFNULL(m.valamt,0) chargeAmount,m.chargedType,m.chargePayTempId,t.`enable`,t.spec
+		from tmp_charge_pay_temp m, bas_charge_item t 
+		where m.chargeItemId = t.chargeItemId
+	    and chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+	    <if test="chargedType != null and chargedType!=''" >
+	        and chargedType = #{chargedType}
+	     </if>
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tmp_charge_pay_temp
+    where chargePayTempId = #{chargePayTempId,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByChargeMedTempId" parameterType="java.lang.String" >
+    delete from tmp_charge_pay_temp
+    where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
+  </delete>
+  
+  
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+    insert into tmp_charge_pay_temp (chargePayTempId, valamt, chargeItemId, 
+      chargeMedTempId,chargedType,beid)
+    values (#{chargePayTempId,jdbcType=VARCHAR}, #{valamt,jdbcType=REAL}, #{chargeItemId,jdbcType=INTEGER}, 
+      #{chargeMedTempId,jdbcType=VARCHAR},#{chargedType,jdbcType=VARCHAR},#{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+    insert into tmp_charge_pay_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="chargePayTempId != null" >
+        chargePayTempId,
+      </if>
+      <if test="valamt != null" >
+        valamt,
+      </if>
+      <if test="chargeItemId != null" >
+        chargeItemId,
+      </if>
+      <if test="chargeMedTempId != null" >
+        chargeMedTempId,
+      </if>
+      <if test="chargedType != null" >
+        chargedType,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="chargePayTempId != null" >
+        #{chargePayTempId,jdbcType=VARCHAR},
+      </if>
+      <if test="valamt != null" >
+        #{valamt,jdbcType=REAL},
+      </if>
+      <if test="chargeItemId != null" >
+        #{chargeItemId,jdbcType=INTEGER},
+      </if>
+      <if test="chargeMedTempId != null" >
+        #{chargeMedTempId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargedType != null" >
+        #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+    update tmp_charge_pay_temp
+    <set >
+      <if test="valamt != null" >
+        valamt = #{valamt,jdbcType=REAL},
+      </if>
+      <if test="chargeItemId != null" >
+        chargeItemId = #{chargeItemId,jdbcType=INTEGER},
+      </if>
+      <if test="chargeMedTempId != null" >
+        chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargedType != null" >
+        chargedType = #{chargedType,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where chargePayTempId = #{chargePayTempId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.tmp.po.TmpChargePayTemp" >
+    update tmp_charge_pay_temp
+    set valamt = #{valamt,jdbcType=REAL},
+      chargeItemId = #{chargeItemId,jdbcType=INTEGER},
+      chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR},
+      chargedType = #{chargedType,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR}
+    where chargePayTempId = #{chargePayTempId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digihealth.anesthesia.evt.dao.EvtElectDiogDataDao">
+    
+	
+	<select id="searchElectDiogDataList" resultType="com.digihealth.anesthesia.evt.po.EvtElectDiogData">
+		SELECT 
+			a.*
+		FROM evt_elect_diog_data a where 1 = 1
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		 order by a.time asc
+	</select>
+	
+	<!-- 插入检验检测-->
+	<insert id="insert">
+		INSERT INTO evt_elect_diog_data(
+			docId,
+			time,
+			operaDate,
+			useType,
+			value,
+			position,
+			observeName
+		) VALUES (
+			#{docId},
+			#{time},
+			#{operaDate},
+			#{useType},
+			#{value},
+			#{position},
+			#{observeName}
+		)
+	</insert>
+	
+	<delete id="delete">
+		delete From evt_elect_diog_data
+		WHERE docId = #{docId} and time = #{time}
+	</delete>
+	
+	
+	<!-- 插入检验检测-->
+	<insert id="insertElectDiogDataHis">
+		INSERT INTO evt_elect_diog_data_his(
+			docId,
+			time,
+			operaDate,
+			useType,
+			value,
+			position,
+			observeName
+		) VALUES (
+			#{electDiogData.docId},
+			#{electDiogData.time},
+			#{electDiogData.operaDate},
+			#{electDiogData.useType},
+			#{electDiogData.value},
+			#{electDiogData.position},
+			#{electDiogData.observeName}
+		)
+	</insert>
+</mapper>

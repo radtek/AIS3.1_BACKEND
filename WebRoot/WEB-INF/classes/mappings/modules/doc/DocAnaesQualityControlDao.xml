@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocAnaesQualityControlDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocAnaesQualityControl" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="asa" property="asa" jdbcType="INTEGER" />
+    <result column="surgeryType" property="surgeryType" jdbcType="INTEGER" />
+    <result column="anesType" property="anesType" jdbcType="INTEGER" />
+    <result column="spinalAnaesComplication" property="spinalAnaesComplication" jdbcType="INTEGER" />
+    <result column="complicationTime" property="complicationTime" jdbcType="TIMESTAMP" />
+    <result column="complicationDetail" property="complicationDetail" jdbcType="VARCHAR" />
+    <result column="surgeryCancle" property="surgeryCancle" jdbcType="INTEGER" />
+    <result column="pacuDuration" property="pacuDuration" jdbcType="INTEGER" />
+    <result column="pacuTemp" property="pacuTemp" jdbcType="REAL" />
+    <result column="unplanToPacu" property="unplanToPacu" jdbcType="INTEGER" />
+    <result column="unplanSecondIntuba" property="unplanSecondIntuba" jdbcType="INTEGER" />
+    <result column="transBlood400" property="transBlood400" jdbcType="INTEGER" />
+    <result column="transSelfBlood400" property="transSelfBlood400" jdbcType="INTEGER" />
+    <result column="anaesBeginDeath" property="anaesBeginDeath" jdbcType="INTEGER" />
+    <result column="deathTime" property="deathTime" jdbcType="TIMESTAMP" />
+    <result column="anaesBeginSCA" property="anaesBeginSCA" jdbcType="INTEGER" />
+    <result column="scaTime" property="scaTime" jdbcType="TIMESTAMP" />
+    <result column="anaesAllergic" property="anaesAllergic" jdbcType="INTEGER" />
+    <result column="allergicTime" property="allergicTime" jdbcType="TIMESTAMP" />
+    <result column="allergicDetail" property="allergicDetail" jdbcType="VARCHAR" />
+    <result column="venipuncTreat" property="venipuncTreat" jdbcType="INTEGER" />
+    <result column="venipuncComplica" property="venipuncComplica" jdbcType="INTEGER" />
+    <result column="venipuncComplicaTime" property="venipuncComplicaTime" jdbcType="TIMESTAMP" />
+    <result column="venipuncComplicaDetail" property="venipuncComplicaDetail" jdbcType="VARCHAR" />
+    <result column="genAnesHoarse" property="genAnesHoarse" jdbcType="INTEGER" />
+    <result column="anesComa" property="anesComa" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, asa, surgeryType, anesType, spinalAnaesComplication, complicationTime, 
+    complicationDetail, surgeryCancle, pacuDuration, pacuTemp, unplanToPacu, unplanSecondIntuba, 
+    transBlood400, transSelfBlood400, anaesBeginDeath, deathTime, anaesBeginSCA, scaTime, 
+    anaesAllergic, allergicTime, allergicDetail, venipuncTreat, venipuncComplica, venipuncComplicaTime, 
+    venipuncComplicaDetail, genAnesHoarse, anesComa
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_quality_control
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_anaes_quality_control
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesQualityControl" >
+    insert into doc_anaes_quality_control (id, regOptId, asa, 
+      surgeryType, anesType, spinalAnaesComplication, 
+      complicationTime, complicationDetail, surgeryCancle, 
+      pacuDuration, pacuTemp, unplanToPacu, 
+      unplanSecondIntuba, transBlood400, transSelfBlood400, 
+      anaesBeginDeath, deathTime, anaesBeginSCA, 
+      scaTime, anaesAllergic, allergicTime, 
+      allergicDetail, venipuncTreat, venipuncComplica, 
+      venipuncComplicaTime, venipuncComplicaDetail, 
+      genAnesHoarse, anesComa)
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{asa,jdbcType=INTEGER}, 
+      #{surgeryType,jdbcType=INTEGER}, #{anesType,jdbcType=INTEGER}, #{spinalAnaesComplication,jdbcType=INTEGER}, 
+      #{complicationTime,jdbcType=TIMESTAMP}, #{complicationDetail,jdbcType=VARCHAR}, #{surgeryCancle,jdbcType=INTEGER}, 
+      #{pacuDuration,jdbcType=INTEGER}, #{pacuTemp,jdbcType=REAL}, #{unplanToPacu,jdbcType=INTEGER}, 
+      #{unplanSecondIntuba,jdbcType=INTEGER}, #{transBlood400,jdbcType=INTEGER}, #{transSelfBlood400,jdbcType=INTEGER}, 
+      #{anaesBeginDeath,jdbcType=INTEGER}, #{deathTime,jdbcType=TIMESTAMP}, #{anaesBeginSCA,jdbcType=INTEGER}, 
+      #{scaTime,jdbcType=TIMESTAMP}, #{anaesAllergic,jdbcType=INTEGER}, #{allergicTime,jdbcType=TIMESTAMP}, 
+      #{allergicDetail,jdbcType=VARCHAR}, #{venipuncTreat,jdbcType=INTEGER}, #{venipuncComplica,jdbcType=INTEGER}, 
+      #{venipuncComplicaTime,jdbcType=TIMESTAMP}, #{venipuncComplicaDetail,jdbcType=VARCHAR}, 
+      #{genAnesHoarse,jdbcType=INTEGER}, #{anesComa,jdbcType=INTEGER})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesQualityControl" >
+    insert into doc_anaes_quality_control
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="asa != null" >
+        asa,
+      </if>
+      <if test="surgeryType != null" >
+        surgeryType,
+      </if>
+      <if test="anesType != null" >
+        anesType,
+      </if>
+      <if test="spinalAnaesComplication != null" >
+        spinalAnaesComplication,
+      </if>
+      <if test="complicationTime != null" >
+        complicationTime,
+      </if>
+      <if test="complicationDetail != null" >
+        complicationDetail,
+      </if>
+      <if test="surgeryCancle != null" >
+        surgeryCancle,
+      </if>
+      <if test="pacuDuration != null" >
+        pacuDuration,
+      </if>
+      <if test="pacuTemp != null" >
+        pacuTemp,
+      </if>
+      <if test="unplanToPacu != null" >
+        unplanToPacu,
+      </if>
+      <if test="unplanSecondIntuba != null" >
+        unplanSecondIntuba,
+      </if>
+      <if test="transBlood400 != null" >
+        transBlood400,
+      </if>
+      <if test="transSelfBlood400 != null" >
+        transSelfBlood400,
+      </if>
+      <if test="anaesBeginDeath != null" >
+        anaesBeginDeath,
+      </if>
+      <if test="deathTime != null" >
+        deathTime,
+      </if>
+      <if test="anaesBeginSCA != null" >
+        anaesBeginSCA,
+      </if>
+      <if test="scaTime != null" >
+        scaTime,
+      </if>
+      <if test="anaesAllergic != null" >
+        anaesAllergic,
+      </if>
+      <if test="allergicTime != null" >
+        allergicTime,
+      </if>
+      <if test="allergicDetail != null" >
+        allergicDetail,
+      </if>
+      <if test="venipuncTreat != null" >
+        venipuncTreat,
+      </if>
+      <if test="venipuncComplica != null" >
+        venipuncComplica,
+      </if>
+      <if test="venipuncComplicaTime != null" >
+        venipuncComplicaTime,
+      </if>
+      <if test="venipuncComplicaDetail != null" >
+        venipuncComplicaDetail,
+      </if>
+      <if test="genAnesHoarse != null" >
+        genAnesHoarse,
+      </if>
+      <if test="anesComa != null" >
+        anesComa,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="asa != null" >
+        #{asa,jdbcType=INTEGER},
+      </if>
+      <if test="surgeryType != null" >
+        #{surgeryType,jdbcType=INTEGER},
+      </if>
+      <if test="anesType != null" >
+        #{anesType,jdbcType=INTEGER},
+      </if>
+      <if test="spinalAnaesComplication != null" >
+        #{spinalAnaesComplication,jdbcType=INTEGER},
+      </if>
+      <if test="complicationTime != null" >
+        #{complicationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="complicationDetail != null" >
+        #{complicationDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryCancle != null" >
+        #{surgeryCancle,jdbcType=INTEGER},
+      </if>
+      <if test="pacuDuration != null" >
+        #{pacuDuration,jdbcType=INTEGER},
+      </if>
+      <if test="pacuTemp != null" >
+        #{pacuTemp,jdbcType=REAL},
+      </if>
+      <if test="unplanToPacu != null" >
+        #{unplanToPacu,jdbcType=INTEGER},
+      </if>
+      <if test="unplanSecondIntuba != null" >
+        #{unplanSecondIntuba,jdbcType=INTEGER},
+      </if>
+      <if test="transBlood400 != null" >
+        #{transBlood400,jdbcType=INTEGER},
+      </if>
+      <if test="transSelfBlood400 != null" >
+        #{transSelfBlood400,jdbcType=INTEGER},
+      </if>
+      <if test="anaesBeginDeath != null" >
+        #{anaesBeginDeath,jdbcType=INTEGER},
+      </if>
+      <if test="deathTime != null" >
+        #{deathTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anaesBeginSCA != null" >
+        #{anaesBeginSCA,jdbcType=INTEGER},
+      </if>
+      <if test="scaTime != null" >
+        #{scaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anaesAllergic != null" >
+        #{anaesAllergic,jdbcType=INTEGER},
+      </if>
+      <if test="allergicTime != null" >
+        #{allergicTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="allergicDetail != null" >
+        #{allergicDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="venipuncTreat != null" >
+        #{venipuncTreat,jdbcType=INTEGER},
+      </if>
+      <if test="venipuncComplica != null" >
+        #{venipuncComplica,jdbcType=INTEGER},
+      </if>
+      <if test="venipuncComplicaTime != null" >
+        #{venipuncComplicaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="venipuncComplicaDetail != null" >
+        #{venipuncComplicaDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="genAnesHoarse != null" >
+        #{genAnesHoarse,jdbcType=INTEGER},
+      </if>
+      <if test="anesComa != null" >
+        #{anesComa,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesQualityControl" >
+    update doc_anaes_quality_control
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="asa != null" >
+        asa = #{asa,jdbcType=INTEGER},
+      </if>
+      <if test="surgeryType != null" >
+        surgeryType = #{surgeryType,jdbcType=INTEGER},
+      </if>
+      <if test="anesType != null" >
+        anesType = #{anesType,jdbcType=INTEGER},
+      </if>
+      <if test="spinalAnaesComplication != null" >
+        spinalAnaesComplication = #{spinalAnaesComplication,jdbcType=INTEGER},
+      </if>
+      <if test="complicationTime != null" >
+        complicationTime = #{complicationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="complicationDetail != null" >
+        complicationDetail = #{complicationDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryCancle != null" >
+        surgeryCancle = #{surgeryCancle,jdbcType=INTEGER},
+      </if>
+      <if test="pacuDuration != null" >
+        pacuDuration = #{pacuDuration,jdbcType=INTEGER},
+      </if>
+      <if test="pacuTemp != null" >
+        pacuTemp = #{pacuTemp,jdbcType=REAL},
+      </if>
+      <if test="unplanToPacu != null" >
+        unplanToPacu = #{unplanToPacu,jdbcType=INTEGER},
+      </if>
+      <if test="unplanSecondIntuba != null" >
+        unplanSecondIntuba = #{unplanSecondIntuba,jdbcType=INTEGER},
+      </if>
+      <if test="transBlood400 != null" >
+        transBlood400 = #{transBlood400,jdbcType=INTEGER},
+      </if>
+      <if test="transSelfBlood400 != null" >
+        transSelfBlood400 = #{transSelfBlood400,jdbcType=INTEGER},
+      </if>
+      <if test="anaesBeginDeath != null" >
+        anaesBeginDeath = #{anaesBeginDeath,jdbcType=INTEGER},
+      </if>
+      <if test="deathTime != null" >
+        deathTime = #{deathTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anaesBeginSCA != null" >
+        anaesBeginSCA = #{anaesBeginSCA,jdbcType=INTEGER},
+      </if>
+      <if test="scaTime != null" >
+        scaTime = #{scaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anaesAllergic != null" >
+        anaesAllergic = #{anaesAllergic,jdbcType=INTEGER},
+      </if>
+      <if test="allergicTime != null" >
+        allergicTime = #{allergicTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="allergicDetail != null" >
+        allergicDetail = #{allergicDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="venipuncTreat != null" >
+        venipuncTreat = #{venipuncTreat,jdbcType=INTEGER},
+      </if>
+      <if test="venipuncComplica != null" >
+        venipuncComplica = #{venipuncComplica,jdbcType=INTEGER},
+      </if>
+      <if test="venipuncComplicaTime != null" >
+        venipuncComplicaTime = #{venipuncComplicaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="venipuncComplicaDetail != null" >
+        venipuncComplicaDetail = #{venipuncComplicaDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="genAnesHoarse != null" >
+        genAnesHoarse = #{genAnesHoarse,jdbcType=INTEGER},
+      </if>
+      <if test="anesComa != null" >
+        anesComa = #{anesComa,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesQualityControl" >
+    update doc_anaes_quality_control
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      asa = #{asa,jdbcType=INTEGER},
+      surgeryType = #{surgeryType,jdbcType=INTEGER},
+      anesType = #{anesType,jdbcType=INTEGER},
+      spinalAnaesComplication = #{spinalAnaesComplication,jdbcType=INTEGER},
+      complicationTime = #{complicationTime,jdbcType=TIMESTAMP},
+      complicationDetail = #{complicationDetail,jdbcType=VARCHAR},
+      surgeryCancle = #{surgeryCancle,jdbcType=INTEGER},
+      pacuDuration = #{pacuDuration,jdbcType=INTEGER},
+      pacuTemp = #{pacuTemp,jdbcType=REAL},
+      unplanToPacu = #{unplanToPacu,jdbcType=INTEGER},
+      unplanSecondIntuba = #{unplanSecondIntuba,jdbcType=INTEGER},
+      transBlood400 = #{transBlood400,jdbcType=INTEGER},
+      transSelfBlood400 = #{transSelfBlood400,jdbcType=INTEGER},
+      anaesBeginDeath = #{anaesBeginDeath,jdbcType=INTEGER},
+      deathTime = #{deathTime,jdbcType=TIMESTAMP},
+      anaesBeginSCA = #{anaesBeginSCA,jdbcType=INTEGER},
+      scaTime = #{scaTime,jdbcType=TIMESTAMP},
+      anaesAllergic = #{anaesAllergic,jdbcType=INTEGER},
+      allergicTime = #{allergicTime,jdbcType=TIMESTAMP},
+      allergicDetail = #{allergicDetail,jdbcType=VARCHAR},
+      venipuncTreat = #{venipuncTreat,jdbcType=INTEGER},
+      venipuncComplica = #{venipuncComplica,jdbcType=INTEGER},
+      venipuncComplicaTime = #{venipuncComplicaTime,jdbcType=TIMESTAMP},
+      venipuncComplicaDetail = #{venipuncComplicaDetail,jdbcType=VARCHAR},
+      genAnesHoarse = #{genAnesHoarse,jdbcType=INTEGER},
+      anesComa = #{anesComa,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectAnaesQualityControlByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_quality_control
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.basedata.dao.BasCustomConfigureDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    <id column="configureId" property="configureId" jdbcType="VARCHAR" />
+    <result column="modularType" property="modularType" jdbcType="VARCHAR" />
+    <result column="modularName" property="modularName" jdbcType="VARCHAR" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="ResultMapWithBLOBs" type="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" extends="BaseResultMap" >
+    <result column="configureValue" property="configureValue" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    configureId, modularType, modularName, beid, enable
+  </sql>
+
+  <sql id="Blob_Column_List" >
+    configureValue
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bas_custom_configure
+    where configureId = #{configureId,jdbcType=VARCHAR}
+  </select>
+  
+    <select id="getConfigureValueByModularType" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Blob_Column_List" />
+    from bas_custom_configure
+    where enable = 1 and modularType = #{modularType,jdbcType=VARCHAR} and beid = #{beid,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+   <select id="searchBasCustomConfigureList" resultType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    select	*   from bas_custom_configure a
+   	 where a.beid = #{beid,jdbcType=VARCHAR}
+    <if test="baseQuery.modularType != null and baseQuery.modularType != ''">
+			AND a.modularType = #{baseQuery.modularType}
+	</if>
+	<if test="baseQuery.configureId != null and baseQuery.configureId != ''">
+			AND a.configureId = #{baseQuery.configureId}
+	</if>
+	<if test="baseQuery.enable != null and baseQuery.enable != ''">
+			AND a.enable = #{baseQuery.enable}
+	</if>
+	order by modularType
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bas_custom_configure
+    where configureId = #{configureId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    insert into bas_custom_configure (configureId, modularType, modularName, 
+      beid, enable, configureValue
+      )
+    values (#{configureId,jdbcType=VARCHAR}, #{modularType,jdbcType=VARCHAR}, #{modularName,jdbcType=VARCHAR}, 
+      #{beid,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{configureValue,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    insert into bas_custom_configure
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="configureId != null" >
+        configureId,
+      </if>
+      <if test="modularType != null" >
+        modularType,
+      </if>
+      <if test="modularName != null" >
+        modularName,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="configureValue != null" >
+        configureValue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="configureId != null" >
+        #{configureId,jdbcType=VARCHAR},
+      </if>
+      <if test="modularType != null" >
+        #{modularType,jdbcType=VARCHAR},
+      </if>
+      <if test="modularName != null" >
+        #{modularName,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="configureValue != null" >
+        #{configureValue,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    update bas_custom_configure
+    <set >
+      <if test="modularType != null" >
+        modularType = #{modularType,jdbcType=VARCHAR},
+      </if>
+      <if test="modularName != null" >
+        modularName = #{modularName,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="configureValue != null" >
+        configureValue = #{configureValue,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where configureId = #{configureId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    update bas_custom_configure
+    set modularType = #{modularType,jdbcType=VARCHAR},
+      modularName = #{modularName,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      configureValue = #{configureValue,jdbcType=LONGVARCHAR}
+    where configureId = #{configureId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.basedata.po.BasCustomConfigure" >
+    update bas_custom_configure
+    set modularType = #{modularType,jdbcType=VARCHAR},
+      modularName = #{modularName,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER}
+    where configureId = #{configureId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

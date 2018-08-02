@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.evt.dao.EvtMedicalEventDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
+    <id column="medEventId" property="medEventId" jdbcType="VARCHAR" />
+    <result column="docId" property="docId" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="dosage" property="dosage" jdbcType="REAL" />
+    <result column="thickness" property="thickness" jdbcType="REAL" />
+    <result column="thicknessUnit" property="thicknessUnit" jdbcType="VARCHAR" />
+    <result column="flow" property="flow" jdbcType="REAL" />
+    <result column="flowUnit" property="flowUnit" jdbcType="VARCHAR" />
+    <result column="diluentQuant" property="diluentQuant" jdbcType="INTEGER" />
+    <result column="durable" property="durable" jdbcType="INTEGER" />
+    <result column="ended" property="ended" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="isCharged" property="isCharged" jdbcType="VARCHAR" />
+    <result column="medicineId" property="medicineId" jdbcType="VARCHAR" />
+    <result column="occurHour" property="occurHour" jdbcType="VARCHAR" />
+    <result column="showOption" property="showOption" jdbcType="VARCHAR" />
+    <result column="isContinued" property="isContinued" jdbcType="INTEGER" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="medTakeWayId" property="medTakeWayId" jdbcType="VARCHAR" />
+    <result column="priceId" property="priceId" jdbcType="VARCHAR" />
+    <result column="docType" property="docType" jdbcType="INTEGER" />
+    <result column="pcorec" property="pcorec" jdbcType="INTEGER" />
+    <result column="tciUnit" property="tciUnit" jdbcType="VARCHAR" />
+    <result column="tciValue" property="tciValue" jdbcType="REAL" />
+    <result column="proportion" property="proportion" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    medEventId, docId, startTime, endTime, dosage, thickness, thicknessUnit, flow, flowUnit, 
+    diluentQuant, durable, ended, type, createUser, isCharged, medicineId, occurHour, 
+    showOption, isContinued, reason, medTakeWayId, priceId, docType,pcorec,tciUnit,tciValue,proportion
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from evt_medicalevent
+    where medEventId = #{medEventId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="searchMedicaleventList" resultType="com.digihealth.anesthesia.evt.formbean.SearchOptOperMedicalevent">
+		SELECT
+			a.medEventId,a.thickness,a.thicknessUnit,a.flow,a.flowUnit,a.diluentQuant,a.startTime,a.createUser,a.docType,
+			(select name from bas_user where bas_user.userName = a.createuser and bas_user.beid = #{searchBean.beid} limit 1 ) createUserName,
+			a.endTime,a.ended,a.medicineId,a.occurHour,a.docId,a.isContinued,a.priceId,a.proportion,
+			b.name,p.spec,b.dosageUnit,a.medTakeWayId,m.name as medTakeWayName,r.reason AS reasonName,
+			p.firm,a.reason,a.dosage,a.durable,a.pcorec,a.tcivalue,a.tciunit,a.showOption, b.packageDosageAmount, p.minPackageUnit unit, p.priceMinPackage
+		FROM evt_medicalevent a left join bas_medicine b on a.medicineId=b.medicineId 
+		left join bas_price p on p.priceId = a.priceId
+		left join bas_medical_take_way m on m.medTakeWayId = a.medTakeWayId
+		left join bas_medical_take_reason r on r.medTakeReasonId = a.reason
+		WHERE 1 = 1
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		<if test="searchBean.docType != null and searchBean.docType != ''">
+			AND a.docType = #{searchBean.docType}
+		</if>
+		<if test="searchBean.type!= null and searchBean.type != ''">
+			AND a.type = #{searchBean.type}
+		</if>
+		<if test="searchBean.code!= null and searchBean.code != ''">
+			AND a.medicineId = #{searchBean.code}
+		</if>
+		<if test="searchBean.medEventId!= null and searchBean.medEventId != ''">
+			AND a.medEventId = #{searchBean.medEventId}
+		</if>
+		<if test="searchBean.durable != null and searchBean.durable != ''">
+			AND a.durable = #{searchBean.durable}
+		</if>
+		<if test="searchBean.whitePrescription != null and searchBean.whitePrescription != ''">
+			AND b.whitePrescription = #{searchBean.whitePrescription}
+		</if>
+		<if test="searchBean.redPrescription != null and searchBean.redPrescription != ''">
+			AND b.redPrescription = #{searchBean.redPrescription}
+		</if>
+		<if test="searchBean.jingyi != null and searchBean.jingyi != ''">
+			AND b.jingyi = #{searchBean.jingyi}
+		</if>
+		group by a.medEventId,b.code
+		order by a.startTime,a.medEventId
+  </select>
+  
+  <select id="queryMedicaleventListById" resultType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent">
+	SELECT 
+		a.*
+	FROM evt_medicalevent a where 1 = 1
+	<if test="searchBean.docId != null and searchBean.docId != ''">
+		AND a.docId = #{searchBean.docId}
+	</if>
+	<if test="searchBean.id != null and searchBean.id != ''">
+		AND a.medEventId = #{searchBean.id}
+	</if>
+  </select>
+  
+  <select id="getMedicalGroupByNameList" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperMedicaleventFormBean">
+		SELECT
+      	b.medicineId code,b.`name`,a.thickness,a.thicknessUnit,a.`durable`,b.dosageUnit, 
+      	b.packageDosageAmount, p.minPackageUnit unit, p.priceMinPackage, b.spec,a.proportion
+		FROM evt_medicalevent a 
+		 join bas_medicine b on a.medicineId=b.medicineId 
+		 left join bas_price p on ( p.code = b.code and p.beid = b.beid )
+		 left join bas_medical_take_way m on a.medTakeWayId like concat('%', m.medTakeWayId, '%')
+		WHERE 1 = 1
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		<if test="searchBean.type!= null and searchBean.type != ''">
+			AND a.type = #{searchBean.type}
+		</if>
+		<if test="searchBean.whitePrescription != null and searchBean.whitePrescription != ''">
+			AND b.whitePrescription = #{searchBean.whitePrescription}
+		</if>
+		<if test="searchBean.redPrescription != null and searchBean.redPrescription != ''">
+			AND b.redPrescription = #{searchBean.redPrescription}
+		</if>
+		<if test="searchBean.jingyi != null and searchBean.jingyi != ''">
+			AND b.jingyi = #{searchBean.jingyi}
+		</if>
+		group by b.medicineId,b.`name`
+		
+		<if test="searchBean.order != null and searchBean.order != ''">
+			order by ${searchBean.order}
+		</if>
+		<if test="searchBean.order == null or searchBean.order == ''">
+			order by a.durable desc,a.startTime,a.medEventId
+		</if>
+		
+  </select>
+  
+  <select id="checkMedicaleventCanInsert" resultType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent">
+	select * from evt_medicalevent where docId = #{searchBean.docId}
+		and durable='1' and medicineId = #{medicineId}
+		<if test="searchBean.id != null and searchBean.id != ''">
+			and medEventId != #{searchBean.id}
+		</if>
+  </select>
+  
+  <select id="searchNoEndTimeList" resultType="java.lang.String">
+	select b.name from evt_medicalevent a, bas_medicine b where a.medicineId=b.medicineId and a.docId = #{docId} and a.durable='1' and (a.endTime is null or a.endTime = '')
+  </select>
+  
+  <select id="getPacuMedicaleventList" resultType="com.digihealth.anesthesia.evt.formbean.SearchOptOperMedicalevent">
+		SELECT
+			a.medEventId,a.thickness,a.thicknessUnit,a.flow,a.flowUnit,a.diluentQuant,a.startTime,a.createUser,a.docType,
+			(select name from bas_user where bas_user.userName = a.createuser and bas_user.beid = #{beid} limit 1 ) createUserName,
+			a.endTime,a.ended,a.medicineId,a.occurHour,a.docId,a.isContinued,a.priceId,a.proportion,
+			b.name,p.spec,b.dosageUnit,a.medTakeWayId,m.name as medTakeWayName,p.firm,a.reason,a.dosage,a.durable,a.pcorec,a.tcivalue,a.tciunit
+		FROM evt_medicalevent a left join bas_medicine b on a.medicineId=b.medicineId 
+		left join bas_price p on p.priceId = a.priceId
+		left join bas_medical_take_way m on m.medTakeWayId = a.medTakeWayId
+		WHERE 1 = 1
+		<if test="docId != null and docId != ''">
+			AND a.docId = #{docId}
+		</if>
+
+		<if test="medIds != null and medIds != ''">
+			 and a.medEventId in <foreach collection="medIdLs" item ="item" index="index" open="(" separator="," close=")" >#{item}</foreach>
+		</if>
+		order by a.startTime,a.medEventId
+  </select>
+  
+  <select id="getUseMedicalGroupByNameList" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperMedicaleventFormBean">
+		SELECT
+      	b.medicineId code,b.`name`,sum(dosage) dosage,b.dosageUnit
+		FROM evt_medicalevent a 
+		 join bas_medicine b on a.medicineId=b.medicineId 
+		 join bas_price p on (p.code = b.code AND p.beid = b.beid )
+		 join bas_medical_take_way m on m.medTakeWayId = a.medTakeWayId
+		WHERE 1 = 1
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		group by b.medicineId,b.`name`
+		order by a.startTime,a.medEventId
+  </select>
+  
+  <select id="getUseMedicalTotalById" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperMedicaleventFormBean">
+		SELECT t.`code`, t.`name`, SUM(t.dosage) dosage, t.dosageUnit FROM (
+		SELECT DISTINCT
+      	b.medicineId code,b.`name`,a.dosage,b.dosageUnit
+		FROM evt_medicalevent a 
+		 join bas_medicine b on a.medicineId=b.medicineId 
+		 left join bas_price p on (p.code = b.code AND p.beid = b.beid )
+		 left join bas_medical_take_way m on a.medTakeWayId LIKE CONCAT('%', m.medTakeWayId, '%')
+		WHERE 1 = 1
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		<if test="searchBean.code!= null and searchBean.code != ''">
+			AND a.medicineId = #{searchBean.code}
+		</if>
+		<if test="searchBean.type!= null and searchBean.type != ''">
+			AND a.type = #{searchBean.type}
+		</if>
+		group by b.medicineId,b.`name`
+		order by a.startTime,a.medEventId) t GROUP BY t.`code`, t.`name`
+	</select>
+	
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from evt_medicalevent
+    where medEventId = #{medEventId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
+    insert into evt_medicalevent (medEventId, docId, startTime, 
+      endTime, dosage, thickness, 
+      thicknessUnit, flow, flowUnit, 
+      diluentQuant, durable, ended, 
+      type, createUser, isCharged, 
+      medicineId, occurHour, showOption, 
+      isContinued, reason, medTakeWayId, 
+      priceId, docType,pcorec,tciUnit,tciValue,proportion)
+    values (#{medEventId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{dosage,jdbcType=REAL}, #{thickness,jdbcType=REAL}, 
+      #{thicknessUnit,jdbcType=VARCHAR}, #{flow,jdbcType=REAL}, #{flowUnit,jdbcType=VARCHAR}, 
+      #{diluentQuant,jdbcType=INTEGER}, #{durable,jdbcType=INTEGER}, #{ended,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{isCharged,jdbcType=VARCHAR}, 
+      #{medicineId,jdbcType=VARCHAR}, #{occurHour,jdbcType=VARCHAR}, #{showOption,jdbcType=VARCHAR}, 
+      #{isContinued,jdbcType=INTEGER}, #{reason,jdbcType=VARCHAR}, #{medTakeWayId,jdbcType=VARCHAR}, 
+      #{priceId,jdbcType=VARCHAR}, #{docType,jdbcType=INTEGER},#{pcorec,jdbcType=INTEGER},
+      #{tciUnit,jdbcType=VARCHAR}, #{tciValue,jdbcType=REAL},#{proportion,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
+    insert into evt_medicalevent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="medEventId != null" >
+        medEventId,
+      </if>
+      <if test="docId != null" >
+        docId,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="dosage != null" >
+        dosage,
+      </if>
+      <if test="thickness != null" >
+        thickness,
+      </if>
+      <if test="thicknessUnit != null" >
+        thicknessUnit,
+      </if>
+      <if test="flow != null" >
+        flow,
+      </if>
+      <if test="flowUnit != null" >
+        flowUnit,
+      </if>
+      <if test="diluentQuant != null" >
+        diluentQuant,
+      </if>
+      <if test="durable != null" >
+        durable,
+      </if>
+      <if test="ended != null" >
+        ended,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="isCharged != null" >
+        isCharged,
+      </if>
+      <if test="medicineId != null" >
+        medicineId,
+      </if>
+      <if test="occurHour != null" >
+        occurHour,
+      </if>
+      <if test="showOption != null" >
+        showOption,
+      </if>
+      <if test="isContinued != null" >
+        isContinued,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="medTakeWayId != null" >
+        medTakeWayId,
+      </if>
+      <if test="priceId != null" >
+        priceId,
+      </if>
+      <if test="docType != null" >
+        docType,
+      </if>
+      <if test="pcorec != null" >
+        pcorec,
+      </if>
+      <if test="tciUnit != null" >
+        tciUnit,
+      </if>
+      <if test="tciValue != null" >
+        tciValue,
+      </if>
+      <if test="proportion != null" >
+        proportion,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="medEventId != null" >
+        #{medEventId,jdbcType=VARCHAR},
+      </if>
+      <if test="docId != null" >
+        #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dosage != null" >
+        #{dosage,jdbcType=REAL},
+      </if>
+      <if test="thickness != null" >
+        #{thickness,jdbcType=REAL},
+      </if>
+      <if test="thicknessUnit != null" >
+        #{thicknessUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        #{flow,jdbcType=REAL},
+      </if>
+      <if test="flowUnit != null" >
+        #{flowUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="diluentQuant != null" >
+        #{diluentQuant,jdbcType=INTEGER},
+      </if>
+      <if test="durable != null" >
+        #{durable,jdbcType=INTEGER},
+      </if>
+      <if test="ended != null" >
+        #{ended,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isCharged != null" >
+        #{isCharged,jdbcType=VARCHAR},
+      </if>
+      <if test="medicineId != null" >
+        #{medicineId,jdbcType=VARCHAR},
+      </if>
+      <if test="occurHour != null" >
+        #{occurHour,jdbcType=VARCHAR},
+      </if>
+      <if test="showOption != null" >
+        #{showOption,jdbcType=VARCHAR},
+      </if>
+      <if test="isContinued != null" >
+        #{isContinued,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="medTakeWayId != null" >
+        #{medTakeWayId,jdbcType=VARCHAR},
+      </if>
+      <if test="priceId != null" >
+        #{priceId,jdbcType=VARCHAR},
+      </if>
+      <if test="docType != null" >
+        #{docType,jdbcType=INTEGER},
+      </if>
+      <if test="pcorec != null" >
+       #{pcorec,jdbcType=INTEGER},
+      </if>
+      <if test="tciUnit != null" >
+       #{tciUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="tciValue != null" >
+        #{tciValue,jdbcType=REAL},
+      </if>
+      <if test="proportion != null" >
+        #{proportion,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
+    update evt_medicalevent
+    <set >
+      <if test="docId != null" >
+        docId = #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dosage != null" >
+        dosage = #{dosage,jdbcType=REAL},
+      </if>
+      <if test="thickness != null" >
+        thickness = #{thickness,jdbcType=REAL},
+      </if>
+      <if test="thicknessUnit != null" >
+        thicknessUnit = #{thicknessUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        flow = #{flow,jdbcType=REAL},
+      </if>
+      <if test="flowUnit != null" >
+        flowUnit = #{flowUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="diluentQuant != null" >
+        diluentQuant = #{diluentQuant,jdbcType=INTEGER},
+      </if>
+      <if test="durable != null" >
+        durable = #{durable,jdbcType=INTEGER},
+      </if>
+      <if test="ended != null" >
+        ended = #{ended,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isCharged != null" >
+        isCharged = #{isCharged,jdbcType=VARCHAR},
+      </if>
+      <if test="medicineId != null" >
+        medicineId = #{medicineId,jdbcType=VARCHAR},
+      </if>
+      <if test="occurHour != null" >
+        occurHour = #{occurHour,jdbcType=VARCHAR},
+      </if>
+      <if test="showOption != null" >
+        showOption = #{showOption,jdbcType=VARCHAR},
+      </if>
+      <if test="isContinued != null" >
+        isContinued = #{isContinued,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="medTakeWayId != null" >
+        medTakeWayId = #{medTakeWayId,jdbcType=VARCHAR},
+      </if>
+      <if test="priceId != null" >
+        priceId = #{priceId,jdbcType=VARCHAR},
+      </if>
+      <if test="docType != null" >
+        docType = #{docType,jdbcType=INTEGER},
+      </if>
+      <if test="pcorec != null" >
+        pcorec = #{pcorec,jdbcType=INTEGER},
+      </if>
+      <if test="tciUnit != null" >
+        tciUnit = #{tciUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="tciValue != null" >
+        tciValue = #{tciValue,jdbcType=REAL},
+      </if>
+      <if test="proportion != null" >
+        proportion = #{proportion,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where medEventId = #{medEventId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
+    update evt_medicalevent
+    set docId = #{docId,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      dosage = #{dosage,jdbcType=REAL},
+      thickness = #{thickness,jdbcType=REAL},
+      thicknessUnit = #{thicknessUnit,jdbcType=VARCHAR},
+      flow = #{flow,jdbcType=REAL},
+      flowUnit = #{flowUnit,jdbcType=VARCHAR},
+      diluentQuant = #{diluentQuant,jdbcType=INTEGER},
+      durable = #{durable,jdbcType=INTEGER},
+      ended = #{ended,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=INTEGER},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      isCharged = #{isCharged,jdbcType=VARCHAR},
+      medicineId = #{medicineId,jdbcType=VARCHAR},
+      occurHour = #{occurHour,jdbcType=VARCHAR},
+      showOption = #{showOption,jdbcType=VARCHAR},
+      isContinued = #{isContinued,jdbcType=INTEGER},
+      reason = #{reason,jdbcType=VARCHAR},
+      medTakeWayId = #{medTakeWayId,jdbcType=VARCHAR},
+      priceId = #{priceId,jdbcType=VARCHAR},
+      docType = #{docType,jdbcType=INTEGER},
+      pcorec = #{pcorec,jdbcType=INTEGER},
+      tciUnit = #{tciUnit,jdbcType=VARCHAR},
+      tciValue = #{tciValue,jdbcType=REAL},
+      proportion = #{proportion,jdbcType=VARCHAR}
+    where medEventId = #{medEventId,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByType">
+    delete from evt_medicalevent
+    where docId = #{docId,jdbcType=VARCHAR}
+    <if test="type != null and type != ''" > 
+    	and  type = #{type,jdbcType=INTEGER}
+    </if>
+  </delete>
+  
+    <select id="searchSelectedEventByType" resultType="com.digihealth.anesthesia.evt.formbean.SearchEventFormbean">  
+	 select * from(
+	 	SELECT 
+		  a.medEventId id, a.`type`, '' subType,c.`name`, c.`spec`,d.firm,a.durable,
+		  (SELECT reason FROM bas_medical_take_reason t WHERE beid = #{beid} AND t.`medTakeReasonId` = a.reason) reason,
+		  a.`dosage`,c.dosageUnit,a.`medTakeWayId` way,a.`flow`,a.`flowUnit`,a.`thickness`,a.`thicknessUnit`,a.`startTime`,a.`endTime`,a.medicineId eventId
+		FROM
+		  evt_medicalevent a,
+		  (SELECT * FROM bas_medicine WHERE beid = #{beid}) c,
+		  (SELECT * FROM bas_price WHERE beid = #{beid}) d
+		WHERE a.`medicineId` = c.`medicineId` 
+		  AND c.`code` = d.`code`
+		  AND a.`docId` = #{docId}
+	 
+		<!-- SELECT 
+		  b.`id` id, a.`type`, '' subType,c.`name`, c.`spec`,d.firm,a.durable,
+		  (SELECT reason FROM bas_medical_take_reason t WHERE beid = #{beid} AND t.`medTakeReasonId` = a.reason) reason,
+		  a.`dosage`,c.dosageUnit,a.`medTakeWayId` way,b.`flow`,b.`flowUnit`,b.`thickness`,b.`thicknessUnit`,b.`startTime`,b.`endTime`,a.medEventId
+		FROM
+		  evt_medicalevent a,
+		  evt_medicalevent_detail b,
+		  (SELECT * FROM bas_medicine WHERE beid = #{beid}) c,
+		  (SELECT * FROM bas_price WHERE beid = #{beid}) d
+		WHERE a.`medEventId` = b.`medEventId` 
+		  AND a.`medicineId` = c.`medicineId` 
+		  AND c.`code` = d.`code`
+		  AND a.`docId` = #{docId} -->
+		UNION ALL
+		SELECT 
+		  a.inEventId id, b.`type`, b.subType, b.`name`, b.`spec`,'' firm,'' durable,'' reason,a.`dosageAmount` dosage, b.`dosageUnit`, 
+		  '' way, '' flow,'' flowunit, '' thickness,'' thicknessUnit, a.startTime,a.endTime,a.`ioDefId` eventId
+		FROM evt_inevent a, bas_io_defination b  
+		WHERE a.`ioDefId` = b.`ioDefId` 
+		  AND a.`docId` = #{docId}
+		UNION ALL
+		SELECT 
+		  a.egressId id, b.`type`, b.subType, b.`name`, b.`spec`,'' firm,'' durable,'' reason,a.`value` dosage, b.`dosageUnit`,
+		  '' way, '' flow,'' flowunit, '' thickness,'' thicknessUnit, a.startTime,a.endTime,a.`ioDefId` eventId
+		FROM evt_egress a, bas_io_defination b  
+		WHERE a.`ioDefId` = b.`ioDefId` 
+		  AND a.`docId` = #{docId}
+		UNION ALL
+		SELECT 
+		  a.anaEventId id, '4' `type`, '' subType,  b.`name`,'' spec, '' firm,'' durable, '' reason, '' dosage, '' dosageUnit, 
+		  '' way, '' flow,'' flowunit, '' thickness,'' thicknessUnit, a.occurTime startTime,null endTime, a.code eventId
+		FROM evt_anaesevent a, bas_anaes_event b
+		WHERE a.code = b.eventValue
+		AND a.code NOT IN('1','2','4','5','8','9')
+		AND b.beid = #{beid}
+		AND a.`docId` = #{docId}
+	  ) a where 1 =1
+	  <if test="type!= null and type != ''">
+			AND a.type = #{type,jdbcType=VARCHAR}
+	  </if>
+	  <if test="subType!= null and subType != ''">
+			AND a.subType = #{subType}
+	  </if>
+	  order by a.type, subType
+	</select>
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.basedata.dao.BasSelfPayInstrumentDao">
+	<resultMap id="BaseResultMap"
+		type="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="REAL" />
+		<result column="pinYin" property="pinYin" jdbcType="VARCHAR" />
+		<result column="enable" property="enable" jdbcType="INTEGER" />
+		<result column="beid" property="beid" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+	</resultMap>
+
+
+
+	<sql id="Base_Column_List">
+		id, name, price, pinYin, enable, beid, type
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from bas_self_pay_instrument
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from bas_self_pay_instrument
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insert"
+		parameterType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		insert into bas_self_pay_instrument (id, name, price,
+		pinYin, enable, beid, type
+		)
+		values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{price,jdbcType=REAL},
+		#{pinYin,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<insert id="insertSelective"
+		parameterType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		insert into bas_self_pay_instrument
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+			<if test="pinYin != null">
+				pinYin,
+			</if>
+			<if test="enable != null">
+				enable,
+			</if>
+			<if test="beid != null">
+				beid,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=REAL},
+			</if>
+			<if test="pinYin != null">
+				#{pinYin,jdbcType=VARCHAR},
+			</if>
+			<if test="enable != null">
+				#{enable,jdbcType=INTEGER},
+			</if>
+			<if test="beid != null">
+				#{beid,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		update bas_self_pay_instrument
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=REAL},
+			</if>
+			<if test="pinYin != null">
+				pinYin = #{pinYin,jdbcType=VARCHAR},
+			</if>
+			<if test="enable != null">
+				enable = #{enable,jdbcType=INTEGER},
+			</if>
+			<if test="beid != null">
+				beid = #{beid,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateByPrimaryKey"
+		parameterType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		update bas_self_pay_instrument
+		set name = #{name,jdbcType=VARCHAR},
+		price = #{price,jdbcType=REAL},
+		pinYin = #{pinYin,jdbcType=VARCHAR},
+		enable = #{enable,jdbcType=INTEGER},
+		beid = #{beid,jdbcType=VARCHAR},
+		type = #{type,jdbcType=INTEGER}
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from bas_self_pay_instrument
+		where enable = 1
+		and beid = #{beid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="searchSelfPayInstrument"
+		resultType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		SELECT * FROM bas_self_pay_instrument a where 1=1 and a.beid =
+		#{baseQuery.beid}
+		<if test="baseQuery.pinyin != null and baseQuery.pinyin != ''">
+			AND a.pinyin LIKE
+			CONCAT(CONCAT('%',#{baseQuery.pinyin}),'%')
+		</if>
+		<if test="baseQuery.enable != null and baseQuery.enable != ''">
+			AND a.enable = #{baseQuery.enable}
+		</if>
+		<if test="baseQuery.pageSize != 0 and baseQuery.pageSize!=null">
+			limit #{baseQuery.pageNo},#{baseQuery.pageSize}
+		</if>
+	</select>
+
+	<select id="querySelfPayInstrumentList"
+		resultType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		SELECT * FROM bas_self_pay_instrument where 1=1 and beid =
+		#{systemSearchFormBean.beid} ${filter}
+		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+		<if
+			test="systemSearchFormBean.pageSize != 0 and systemSearchFormBean.pageSize!=null">
+			limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+		</if>
+	</select>
+
+	<select id="querySelfPayInstrumentTotal" resultType="java.lang.Integer">
+		SELECT count(*) FROM bas_self_pay_instrument where 1=1 and beid =
+		#{systemSearchFormBean.beid} ${filter}
+	</select>
+
+	<select id="searchSelfPayInstrumentById"
+		resultType="com.digihealth.anesthesia.basedata.po.BasSelfPayInstrument">
+		select * from bas_self_pay_instrument where id = #{id}
+	</select>
+
+</mapper>

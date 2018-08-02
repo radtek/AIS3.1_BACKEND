@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.sysMng.dao.BasViewDao" >
+
+  <select id="selectAllView" resultType="java.util.HashMap">
+    SELECT table_name, table_name FROM  information_schema.VIEWS WHERE table_schema = (SELECT DATABASE());
+  </select>
+  
+  <select id="selectAllColumnsOfView" resultType="com.digihealth.anesthesia.sysMng.po.BasEntity">
+    SELECT column_name id, column_comment VALUE FROM information_schema.columns WHERE table_name = #{viewName};
+  </select>
+
+  <select id="selectByColumns" resultType="java.util.HashMap">
+    SELECT ${formBean.column} FROM ${formBean.viewName} where beid=${formBean.beid} ${filter}
+    order by ${formBean.sort} ${formBean.orderBy}
+    <if test="formBean.pageSize != 0 and formBean.pageSize!=null">
+		 	 limit #{formBean.pageNo},#{formBean.pageSize}
+    </if>
+  </select>
+  
+  <select id="selectByColumnsTotal" resultType="java.lang.Integer">
+    SELECT count(*) FROM ${formBean.viewName} where beid=${formBean.beid} ${filter}
+  </select>
+
+</mapper>

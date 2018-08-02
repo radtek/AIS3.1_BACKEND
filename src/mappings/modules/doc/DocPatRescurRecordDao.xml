@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPatRescurRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPatRescurRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="host" property="host" jdbcType="VARCHAR" />
+    <result column="jobTitle" property="jobTitle" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="rescueTime" property="rescueTime" jdbcType="TIMESTAMP" />
+    <result column="rescueResult" property="rescueResult" jdbcType="INTEGER" />
+    <result column="diagnosis" property="diagnosis" jdbcType="VARCHAR" />
+    <result column="rescueWorker" property="rescueWorker" jdbcType="VARCHAR" />
+    <result column="rescueReason" property="rescueReason" jdbcType="VARCHAR" />
+    <result column="measureAndAfter" property="measureAndAfter" jdbcType="VARCHAR" />
+    <result column="hostSummary" property="hostSummary" jdbcType="VARCHAR" />
+    <result column="recordDate" property="recordDate" jdbcType="DATE" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, processState, host, jobTitle, position, rescueTime, rescueResult, diagnosis, 
+    rescueWorker, rescueReason, measureAndAfter, hostSummary, recordDate
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_rescue_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_pat_rescue_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPatRescurRecord" >
+    insert into doc_pat_rescue_record (id, regOptId, processState, 
+      host, jobTitle, position, 
+      rescueTime, rescueResult, diagnosis, 
+      rescueWorker, rescueReason, measureAndAfter, 
+      hostSummary, recordDate)
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
+      #{host,jdbcType=VARCHAR}, #{jobTitle,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, 
+      #{rescueTime,jdbcType=TIMESTAMP}, #{rescueResult,jdbcType=INTEGER}, #{diagnosis,jdbcType=VARCHAR}, 
+      #{rescueWorker,jdbcType=VARCHAR}, #{rescueReason,jdbcType=VARCHAR}, #{measureAndAfter,jdbcType=VARCHAR}, 
+      #{hostSummary,jdbcType=VARCHAR}, #{recordDate,jdbcType=DATE})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatRescurRecord" >
+    insert into doc_pat_rescue_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="host != null" >
+        host,
+      </if>
+      <if test="jobTitle != null" >
+        jobTitle,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="rescueTime != null" >
+        rescueTime,
+      </if>
+      <if test="rescueResult != null" >
+        rescueResult,
+      </if>
+      <if test="diagnosis != null" >
+        diagnosis,
+      </if>
+      <if test="rescueWorker != null" >
+        rescueWorker,
+      </if>
+      <if test="rescueReason != null" >
+        rescueReason,
+      </if>
+      <if test="measureAndAfter != null" >
+        measureAndAfter,
+      </if>
+      <if test="hostSummary != null" >
+        hostSummary,
+      </if>
+      <if test="recordDate != null" >
+        recordDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null" >
+        #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueTime != null" >
+        #{rescueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rescueResult != null" >
+        #{rescueResult,jdbcType=INTEGER},
+      </if>
+      <if test="diagnosis != null" >
+        #{diagnosis,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueWorker != null" >
+        #{rescueWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueReason != null" >
+        #{rescueReason,jdbcType=VARCHAR},
+      </if>
+      <if test="measureAndAfter != null" >
+        #{measureAndAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="hostSummary != null" >
+        #{hostSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        #{recordDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatRescurRecord" >
+    update doc_pat_rescue_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null" >
+        jobTitle = #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueTime != null" >
+        rescueTime = #{rescueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rescueResult != null" >
+        rescueResult = #{rescueResult,jdbcType=INTEGER},
+      </if>
+      <if test="diagnosis != null" >
+        diagnosis = #{diagnosis,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueWorker != null" >
+        rescueWorker = #{rescueWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="rescueReason != null" >
+        rescueReason = #{rescueReason,jdbcType=VARCHAR},
+      </if>
+      <if test="measureAndAfter != null" >
+        measureAndAfter = #{measureAndAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="hostSummary != null" >
+        hostSummary = #{hostSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        recordDate = #{recordDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPatRescurRecord" >
+    update doc_pat_rescue_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      host = #{host,jdbcType=VARCHAR},
+      jobTitle = #{jobTitle,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      rescueTime = #{rescueTime,jdbcType=TIMESTAMP},
+      rescueResult = #{rescueResult,jdbcType=INTEGER},
+      diagnosis = #{diagnosis,jdbcType=VARCHAR},
+      rescueWorker = #{rescueWorker,jdbcType=VARCHAR},
+      rescueReason = #{rescueReason,jdbcType=VARCHAR},
+      measureAndAfter = #{measureAndAfter,jdbcType=VARCHAR},
+      hostSummary = #{hostSummary,jdbcType=VARCHAR},
+      recordDate = #{recordDate,jdbcType=DATE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_rescue_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

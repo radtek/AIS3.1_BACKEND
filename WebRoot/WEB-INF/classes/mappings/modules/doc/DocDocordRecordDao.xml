@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocDocordRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocDocordRecord" >
+    <id column="docRecordId" property="docRecordId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="zyhm" property="zyhm" jdbcType="VARCHAR" />
+    <result column="groupId" property="groupId" jdbcType="VARCHAR" />
+    <result column="groupName" property="groupName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="subType" property="subType" jdbcType="VARCHAR" />
+    <result column="medId" property="medId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="doctorContent" property="doctorContent" jdbcType="VARCHAR" />
+    <result column="freq" property="freq" jdbcType="VARCHAR" />
+    <result column="number1" property="number1" jdbcType="REAL" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="dosage" property="dosage" jdbcType="REAL" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="speed" property="speed" jdbcType="VARCHAR" />
+    <result column="doctor" property="doctor" jdbcType="VARCHAR" />
+    <result column="doctorTime" property="doctorTime" jdbcType="TIMESTAMP" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="dispenser" property="dispenser" jdbcType="VARCHAR" />
+    <result column="excutor" property="excutor" jdbcType="VARCHAR" />
+    <result column="excutorId" property="excutorId" jdbcType="VARCHAR" />
+    <result column="skinTestRem" property="skinTestRem" jdbcType="VARCHAR" />
+    <result column="checkor" property="checkor" jdbcType="VARCHAR" />
+    <result column="excuteTime" property="excuteTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="jlxh" property="jlxh" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    docRecordId, regOptId, zyhm, groupId, groupName, type, subType, medId, name, method, 
+    doctorContent, freq, number1, times, dosage, unit, speed, doctor, doctorTime, startTime, 
+    endTime, dispenser, excutor, excutorId, skinTestRem, checkor, excuteTime, remark, 
+    state, jlxh
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_docord_record
+    where docRecordId = #{docRecordId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_docord_record
+    where docRecordId = #{docRecordId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocDocordRecord" >
+    insert into doc_docord_record (docRecordId, regOptId, zyhm, 
+      groupId, groupName, type, 
+      subType, medId, name, 
+      method, doctorContent, freq, 
+      number1, times, dosage, unit, 
+      speed, doctor, doctorTime, 
+      startTime, endTime, dispenser, 
+      excutor, excutorId, skinTestRem, 
+      checkor, excuteTime, remark, 
+      state, jlxh)
+    values (#{docRecordId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{zyhm,jdbcType=VARCHAR}, 
+      #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{subType,jdbcType=VARCHAR}, #{medId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{method,jdbcType=VARCHAR}, #{doctorContent,jdbcType=VARCHAR}, #{freq,jdbcType=VARCHAR}, 
+      #{number1,jdbcType=REAL}, #{times,jdbcType=INTEGER}, #{dosage,jdbcType=REAL}, #{unit,jdbcType=VARCHAR}, 
+      #{speed,jdbcType=VARCHAR}, #{doctor,jdbcType=VARCHAR}, #{doctorTime,jdbcType=TIMESTAMP}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{dispenser,jdbcType=VARCHAR}, 
+      #{excutor,jdbcType=VARCHAR}, #{excutorId,jdbcType=VARCHAR}, #{skinTestRem,jdbcType=VARCHAR}, 
+      #{checkor,jdbcType=VARCHAR}, #{excuteTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER}, #{jlxh,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocDocordRecord" >
+    insert into doc_docord_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="docRecordId != null" >
+        docRecordId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="zyhm != null" >
+        zyhm,
+      </if>
+      <if test="groupId != null" >
+        groupId,
+      </if>
+      <if test="groupName != null" >
+        groupName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="subType != null" >
+        subType,
+      </if>
+      <if test="medId != null" >
+        medId,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="method != null" >
+        method,
+      </if>
+      <if test="doctorContent != null" >
+        doctorContent,
+      </if>
+      <if test="freq != null" >
+        freq,
+      </if>
+      <if test="number1 != null" >
+        number1,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="dosage != null" >
+        dosage,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="speed != null" >
+        speed,
+      </if>
+      <if test="doctor != null" >
+        doctor,
+      </if>
+      <if test="doctorTime != null" >
+        doctorTime,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="dispenser != null" >
+        dispenser,
+      </if>
+      <if test="excutor != null" >
+        excutor,
+      </if>
+      <if test="excutorId != null" >
+        excutorId,
+      </if>
+      <if test="skinTestRem != null" >
+        skinTestRem,
+      </if>
+      <if test="checkor != null" >
+        checkor,
+      </if>
+      <if test="excuteTime != null" >
+        excuteTime,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="jlxh != null" >
+        jlxh,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="docRecordId != null" >
+        #{docRecordId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="zyhm != null" >
+        #{zyhm,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="subType != null" >
+        #{subType,jdbcType=VARCHAR},
+      </if>
+      <if test="medId != null" >
+        #{medId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null" >
+        #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorContent != null" >
+        #{doctorContent,jdbcType=VARCHAR},
+      </if>
+      <if test="freq != null" >
+        #{freq,jdbcType=VARCHAR},
+      </if>
+      <if test="number1 != null" >
+        #{number1,jdbcType=REAL},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+      <if test="dosage != null" >
+        #{dosage,jdbcType=REAL},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="speed != null" >
+        #{speed,jdbcType=VARCHAR},
+      </if>
+      <if test="doctor != null" >
+        #{doctor,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTime != null" >
+        #{doctorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dispenser != null" >
+        #{dispenser,jdbcType=VARCHAR},
+      </if>
+      <if test="excutor != null" >
+        #{excutor,jdbcType=VARCHAR},
+      </if>
+      <if test="excutorId != null" >
+        #{excutorId,jdbcType=VARCHAR},
+      </if>
+      <if test="skinTestRem != null" >
+        #{skinTestRem,jdbcType=VARCHAR},
+      </if>
+      <if test="checkor != null" >
+        #{checkor,jdbcType=VARCHAR},
+      </if>
+      <if test="excuteTime != null" >
+        #{excuteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="jlxh != null" >
+        #{jlxh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocDocordRecord" >
+    update doc_docord_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="zyhm != null" >
+        zyhm = #{zyhm,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        groupId = #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        groupName = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="subType != null" >
+        subType = #{subType,jdbcType=VARCHAR},
+      </if>
+      <if test="medId != null" >
+        medId = #{medId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null" >
+        method = #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorContent != null" >
+        doctorContent = #{doctorContent,jdbcType=VARCHAR},
+      </if>
+      <if test="freq != null" >
+        freq = #{freq,jdbcType=VARCHAR},
+      </if>
+      <if test="number1 != null" >
+        number1 = #{number1,jdbcType=REAL},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+      <if test="dosage != null" >
+        dosage = #{dosage,jdbcType=REAL},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="speed != null" >
+        speed = #{speed,jdbcType=VARCHAR},
+      </if>
+      <if test="doctor != null" >
+        doctor = #{doctor,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTime != null" >
+        doctorTime = #{doctorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dispenser != null" >
+        dispenser = #{dispenser,jdbcType=VARCHAR},
+      </if>
+      <if test="excutor != null" >
+        excutor = #{excutor,jdbcType=VARCHAR},
+      </if>
+      <if test="excutorId != null" >
+        excutorId = #{excutorId,jdbcType=VARCHAR},
+      </if>
+      <if test="skinTestRem != null" >
+        skinTestRem = #{skinTestRem,jdbcType=VARCHAR},
+      </if>
+      <if test="checkor != null" >
+        checkor = #{checkor,jdbcType=VARCHAR},
+      </if>
+      <if test="excuteTime != null" >
+        excuteTime = #{excuteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="jlxh != null" >
+        jlxh = #{jlxh,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where docRecordId = #{docRecordId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocDocordRecord" >
+    update doc_docord_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      zyhm = #{zyhm,jdbcType=VARCHAR},
+      groupId = #{groupId,jdbcType=VARCHAR},
+      groupName = #{groupName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      subType = #{subType,jdbcType=VARCHAR},
+      medId = #{medId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      doctorContent = #{doctorContent,jdbcType=VARCHAR},
+      freq = #{freq,jdbcType=VARCHAR},
+      number1 = #{number1,jdbcType=REAL},
+      times = #{times,jdbcType=INTEGER},
+      dosage = #{dosage,jdbcType=REAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      speed = #{speed,jdbcType=VARCHAR},
+      doctor = #{doctor,jdbcType=VARCHAR},
+      doctorTime = #{doctorTime,jdbcType=TIMESTAMP},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      dispenser = #{dispenser,jdbcType=VARCHAR},
+      excutor = #{excutor,jdbcType=VARCHAR},
+      excutorId = #{excutorId,jdbcType=VARCHAR},
+      skinTestRem = #{skinTestRem,jdbcType=VARCHAR},
+      checkor = #{checkor,jdbcType=VARCHAR},
+      excuteTime = #{excuteTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      jlxh = #{jlxh,jdbcType=VARCHAR}
+    where docRecordId = #{docRecordId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryListByHidGroupId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_docord_record
+    where zyhm = #{hid,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
+    <if test="jlxh != null and jlxh !=''" >
+    	and jlxh = #{jlxh,jdbcType=VARCHAR} 
+    </if>
+  </select>
+  
+  <select id="queryDocordRecordListByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_docord_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+    ORDER by state asc ,doctorTime desc
+  </select>
+
+</mapper>

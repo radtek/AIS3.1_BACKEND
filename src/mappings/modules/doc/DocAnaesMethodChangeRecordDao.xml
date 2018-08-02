@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocAnaesMethodChangeRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocAnaesMethodChangeRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="anaesMethodName" property="anaesMethodName" jdbcType="VARCHAR" />
+    <result column="anaesMethodCode" property="anaesMethodCode" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="anaesEffect" property="anaesEffect" jdbcType="VARCHAR" />
+    <result column="anesthetistId" property="anesthetistId" jdbcType="VARCHAR" />
+    <result column="superiorPhysician" property="superiorPhysician" jdbcType="VARCHAR" />
+    <result column="modifyTime" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, regOptId, anaesMethodName, anaesMethodCode, reason, anaesEffect, anesthetistId, 
+    superiorPhysician, modifyTime, processState
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_method_change_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_method_change_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_anaes_method_change_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesMethodChangeRecord" >
+    insert into doc_anaes_method_change_record (id, regOptId, anaesMethodName, 
+      anaesMethodCode, reason, anaesEffect, 
+      anesthetistId, superiorPhysician, modifyTime, 
+      processState)
+    values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{anaesMethodName,jdbcType=VARCHAR}, 
+      #{anaesMethodCode,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{anaesEffect,jdbcType=VARCHAR}, 
+      #{anesthetistId,jdbcType=VARCHAR}, #{superiorPhysician,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, 
+      #{processState,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesMethodChangeRecord" >
+    insert into doc_anaes_method_change_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="anaesMethodName != null" >
+        anaesMethodName,
+      </if>
+      <if test="anaesMethodCode != null" >
+        anaesMethodCode,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="anaesEffect != null" >
+        anaesEffect,
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId,
+      </if>
+      <if test="superiorPhysician != null" >
+        superiorPhysician,
+      </if>
+      <if test="modifyTime != null" >
+        modifyTime,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodName != null" >
+        #{anaesMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodCode != null" >
+        #{anaesMethodCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesEffect != null" >
+        #{anaesEffect,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorPhysician != null" >
+        #{superiorPhysician,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesMethodChangeRecord" >
+    update doc_anaes_method_change_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodName != null" >
+        anaesMethodName = #{anaesMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodCode != null" >
+        anaesMethodCode = #{anaesMethodCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesEffect != null" >
+        anaesEffect = #{anaesEffect,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorPhysician != null" >
+        superiorPhysician = #{superiorPhysician,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modifyTime = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesMethodChangeRecord" >
+    update doc_anaes_method_change_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      anaesMethodName = #{anaesMethodName,jdbcType=VARCHAR},
+      anaesMethodCode = #{anaesMethodCode,jdbcType=VARCHAR},
+      reason = #{reason,jdbcType=VARCHAR},
+      anaesEffect = #{anaesEffect,jdbcType=VARCHAR},
+      anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      superiorPhysician = #{superiorPhysician,jdbcType=VARCHAR},
+      modifyTime = #{modifyTime,jdbcType=TIMESTAMP},
+      processState = #{processState,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

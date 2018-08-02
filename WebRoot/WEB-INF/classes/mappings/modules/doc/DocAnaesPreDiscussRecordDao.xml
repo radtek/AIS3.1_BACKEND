@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocAnaesPreDiscussRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord" >
+    <id column="preDiscussId" property="preDiscussId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="discussTime" property="discussTime" jdbcType="TIMESTAMP" />
+    <result column="discussPlace" property="discussPlace" jdbcType="VARCHAR" />
+    <result column="host" property="host" jdbcType="VARCHAR" />
+    <result column="reporter" property="reporter" jdbcType="VARCHAR" />
+    <result column="participant" property="participant" jdbcType="VARCHAR" />
+    <result column="designedAnaesMethodName" property="designedAnaesMethodName" jdbcType="VARCHAR" />
+    <result column="designedAnaesMethodCode" property="designedAnaesMethodCode" jdbcType="VARCHAR" />
+    <result column="designedTime" property="designedTime" jdbcType="TIMESTAMP" />
+    <result column="caseSummary" property="caseSummary" jdbcType="VARCHAR" />
+    <result column="anaesEssential" property="anaesEssential" jdbcType="VARCHAR" />
+    <result column="recorder" property="recorder" jdbcType="VARCHAR" />
+    <result column="recordTime" property="recordTime" jdbcType="TIMESTAMP" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    preDiscussId, regOptId, discussTime, discussPlace, host, reporter, participant, designedAnaesMethodName, 
+    designedAnaesMethodCode, designedTime, caseSummary, anaesEssential, recorder, recordTime, processState
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_pre_discuss_record
+    where preDiscussId = #{preDiscussId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_anaes_pre_discuss_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_anaes_pre_discuss_record
+    where preDiscussId = #{preDiscussId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord" >
+    insert into doc_anaes_pre_discuss_record (preDiscussId, regOptId, discussTime, 
+      discussPlace, host, reporter, 
+      participant, designedAnaesMethodName, designedAnaesMethodCode, designedTime,
+      caseSummary, anaesEssential, recorder, 
+      recordTime, processState)
+    values (#{preDiscussId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{discussTime,jdbcType=TIMESTAMP}, 
+      #{discussPlace,jdbcType=VARCHAR}, #{host,jdbcType=VARCHAR}, #{reporter,jdbcType=VARCHAR}, 
+      #{participant,jdbcType=VARCHAR}, #{designedAnaesMethodName,jdbcType=VARCHAR}, #{designedAnaesMethodCode,jdbcType=VARCHAR}, #{designedTime,jdbcType=TIMESTAMP}, 
+      #{caseSummary,jdbcType=VARCHAR}, #{anaesEssential,jdbcType=VARCHAR}, #{recorder,jdbcType=VARCHAR}, 
+      #{recordTime,jdbcType=TIMESTAMP}, #{processState,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord" >
+    insert into doc_anaes_pre_discuss_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="preDiscussId != null" >
+        preDiscussId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="discussTime != null" >
+        discussTime,
+      </if>
+      <if test="discussPlace != null" >
+        discussPlace,
+      </if>
+      <if test="host != null" >
+        host,
+      </if>
+      <if test="reporter != null" >
+        reporter,
+      </if>
+      <if test="participant != null" >
+        participant,
+      </if>
+      <if test="designedAnaesMethodName != null" >
+        designedAnaesMethodName,
+      </if>
+      <if test="designedAnaesMethodCode != null" >
+        designedAnaesMethodCode,
+      </if>
+      <if test="caseSummary != null" >
+        caseSummary,
+      </if>
+      <if test="anaesEssential != null" >
+        anaesEssential,
+      </if>
+      <if test="recorder != null" >
+        recorder,
+      </if>
+      <if test="recordTime != null" >
+        recordTime,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="designedTime != null" >
+        designedTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="preDiscussId != null" >
+        #{preDiscussId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null" >
+        #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discussPlace != null" >
+        #{discussPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        #{reporter,jdbcType=VARCHAR},
+      </if>
+      <if test="participant != null" >
+        #{participant,jdbcType=VARCHAR},
+      </if>
+      <if test="designedAnaesMethodName != null" >
+        #{designedAnaesMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="designedAnaesMethodCode != null" >
+        #{designedAnaesMethodCode,jdbcType=VARCHAR},
+      </if>
+      <if test="caseSummary != null" >
+        #{caseSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesEssential != null" >
+        #{anaesEssential,jdbcType=VARCHAR},
+      </if>
+      <if test="recorder != null" >
+        #{recorder,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="designedTime != null" >
+        #{designedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord" >
+    update doc_anaes_pre_discuss_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null" >
+        discussTime = #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discussPlace != null" >
+        discussPlace = #{discussPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        reporter = #{reporter,jdbcType=VARCHAR},
+      </if>
+      <if test="participant != null" >
+        participant = #{participant,jdbcType=VARCHAR},
+      </if>
+      <if test="designedAnaesMethodName != null" >
+        designedAnaesMethodName = #{designedAnaesMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="designedAnaesMethodCode != null" >
+        designedAnaesMethodCode = #{designedAnaesMethodCode,jdbcType=VARCHAR},
+      </if>
+      <if test="caseSummary != null" >
+        caseSummary = #{caseSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesEssential != null" >
+        anaesEssential = #{anaesEssential,jdbcType=VARCHAR},
+      </if>
+      <if test="recorder != null" >
+        recorder = #{recorder,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        recordTime = #{recordTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="designedTime != null" >
+        designedTime = #{designedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where preDiscussId = #{preDiscussId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord" >
+    update doc_anaes_pre_discuss_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      discussTime = #{discussTime,jdbcType=TIMESTAMP},
+      discussPlace = #{discussPlace,jdbcType=VARCHAR},
+      host = #{host,jdbcType=VARCHAR},
+      reporter = #{reporter,jdbcType=VARCHAR},
+      participant = #{participant,jdbcType=VARCHAR},
+      designedAnaesMethodName = #{designedAnaesMethodName,jdbcType=VARCHAR},
+      designedAnaesMethodCode = #{designedAnaesMethodCode,jdbcType=VARCHAR},
+      caseSummary = #{caseSummary,jdbcType=VARCHAR},
+      anaesEssential = #{anaesEssential,jdbcType=VARCHAR},
+      recorder = #{recorder,jdbcType=VARCHAR},
+      recordTime = #{recordTime,jdbcType=TIMESTAMP},
+      processState = #{processState,jdbcType=VARCHAR},
+      designedTime = #{designedTime,jdbcType=TIMESTAMP}
+    where preDiscussId = #{preDiscussId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

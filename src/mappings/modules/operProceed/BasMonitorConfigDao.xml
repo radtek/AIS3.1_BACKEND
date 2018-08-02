@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.operProceed.dao.BasMonitorConfigDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+    <id column="eventId" property="eventId" jdbcType="VARCHAR" />
+    <id column="beid" property="beid" jdbcType="VARCHAR" />
+    <result column="eventName" property="eventName" jdbcType="VARCHAR" />
+    <result column="precision" property="precision" jdbcType="INTEGER" />
+    <result column="frequency" property="frequency" jdbcType="INTEGER" />
+    <result column="max" property="max" jdbcType="REAL" />
+    <result column="min" property="min" jdbcType="REAL" />
+    <result column="amendFlag" property="amendFlag" jdbcType="INTEGER" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="iconId" property="iconId" jdbcType="VARCHAR" />
+    <result column="eventDesc" property="eventDesc" jdbcType="VARCHAR" />
+    <result column="mustShow" property="mustShow" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="INTEGER" />
+    <result column="units" property="units" jdbcType="VARCHAR" />
+    <result column="roomId" property="roomId" jdbcType="VARCHAR" />
+    <result column="widthAndHeight" property="widthAndHeight" jdbcType="INTEGER" />
+    
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    eventId, beid, eventName, `precision`, frequency, `max`, `min`, amendFlag, color, iconId, 
+    eventDesc, mustShow, `position`, units ,roomId,widthAndHeight
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_monitor_config
+    where eventId = #{eventId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+      and roomId = #{roomId,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 增加判断 不传递roomId,则不带入roomId的where条件 -->
+  <select id="searchAnaesObserveList" resultType="com.digihealth.anesthesia.operProceed.po.Observe">
+		SELECT
+		            t2.observeId ,
+		            t2.name,
+		            t2.`precision`,
+		            IFNULL(t3.color, t2.color) color,
+		            IFNULL(t3.iconId, t2.icon) icon,
+		            t2.freq,
+		            t2.max,
+		            t2.min,
+		            t2.isAmend,
+		            t2.paraId,
+		            t2.paraName,
+		            t2.deviceId,
+		            t2.position,
+		            t2.beid,
+		            t2.roomId
+		 FROM (
+		    SELECT x.* FROM (
+		            SELECT
+		            a.eventId AS observeId,
+		            a.eventName AS NAME,
+		            a.`precision`,
+		            a.color,
+		            a.iconId AS icon,
+		            a.frequency AS freq,
+		            a.max,
+		            a.min,
+		            a.amendFlag AS isAmend,
+		            b.paraId,
+		            b.paraName,
+		            b.deviceId,
+		            a.position,
+		            a.`beid`,
+		            a.roomId
+		        FROM
+		            (select * from bas_monitor_config where beid = #{beid} and roomId = #{roomId} ) a,
+		            (select * from bas_device_monitor_config where beid = #{beid} and roomId = #{roomId} ) b
+		        WHERE
+		            a.eventId = b.eventId and a.roomId = b.roomId
+		        	AND optional IS NOT NULL
+		        ) x,bas_device_config x1 WHERE
+		            x.deviceId=x1.deviceId AND x1.enable='1' 
+		            AND x1.beid = #{beid}
+					AND x1.roomId = #{roomId}
+		         ORDER BY x.observeId    
+		) t2 LEFT JOIN (
+		        SELECT a.* FROM
+		                    bas_anaes_monitor_config a
+		            WHERE   regOptId = #{operId}  
+		) t3 ON t2.observeId = t3.eventId AND t2.deviceId = t3.deviceId 
+  </select>
+	
+  <select id="searchAllAnaesObserveList" resultType="com.digihealth.anesthesia.operProceed.po.Observe">
+        SELECT
+            a.eventId AS observeId,
+            a.eventName AS name,
+            a.`precision`,
+            a.color,
+            a.iconId AS icon,
+            a.frequency AS freq,
+            a.`max`,
+            a.`min`,
+            a.amendFlag AS isAmend,
+            a.position,
+            a.roomId
+        FROM
+            bas_monitor_config a
+        WHERE
+            (a.`POSITION` = '1' or a.`POSITION` = '0' )
+            and a.beid = #{beid}
+            and a.roomId = #{roomId}
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from bas_monitor_config
+    where eventId = #{eventId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+      and roomId = #{roomId,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteByBeidDeviceId" parameterType="map" >
+  delete from bas_monitor_config 
+	where beid=#{beid} and eventId in (select eventId from bas_device_monitor_config where beid=#{beid} and roomId = 0 and deviceId = #{deviceId})
+  </delete>
+  
+  
+  <delete id="deleteByBeidDeviceType" parameterType="map" >
+  	delete from bas_monitor_config 
+	where beid=#{beid} and eventId in (select eventId from bas_device_monitor_config where beid=#{beid} and roomId = 0 and deviceId = #{deviceId})
+  </delete>
+  
+  
+   <select id="selectList" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_monitor_config where beid = #{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectMonitorListByDeviceId" resultType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+ 
+	 select * from bas_monitor_config 
+		where beid='0' and eventId in (
+		select DISTINCT a.eventId from bas_device_monitor_config a,bas_device_specification b
+			where  a.deviceId = b.deviceId 
+			and a.beid = '0' and roomId = '0'
+			and b.deviceType = (select DISTINCT deviceType from bas_device_monitor_config a,bas_device_specification b
+			where  a.deviceId = b.deviceId
+			and a.deviceId = #{deviceId})
+			and a.eventId not in (
+			<!-- select DISTINCT a.eventId from bas_monitor_config a,bas_device_monitor_config b,bas_device_specification c
+			where a.eventId = b.eventId
+			and b.deviceId = c.deviceId
+			and a.beid = #{beid} and a.roomId = 0
+			and c.deviceType = (select DISTINCT deviceType from bas_device_monitor_config a,bas_device_specification b
+			where  a.deviceId = b.deviceId
+			and a.deviceId = #{deviceId}) -->
+			
+			select DISTINCT a.eventId from bas_monitor_config a where a.beid = #{beid} and a.roomId = 0
+			
+			)
+		) 
+ 
+ <!--  select * from bas_monitor_config 
+	where beid=#{beid} and eventId in (select eventId from bas_device_monitor_config where beid=#{beid} and roomId = 0 and deviceId = #{deviceId}) -->
+  </select>
+
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+    insert into bas_monitor_config (eventId, beid, eventName, 
+      `precision`, frequency, `max`, 
+      `min`, amendFlag, color, 
+      iconId, eventDesc, mustShow, 
+      `position`, units,roomId,widthAndHeight)
+    values (#{eventId,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR}, #{eventName,jdbcType=VARCHAR}, 
+      #{precision,jdbcType=INTEGER}, #{frequency,jdbcType=INTEGER}, #{max,jdbcType=REAL}, 
+      #{min,jdbcType=REAL}, #{amendFlag,jdbcType=INTEGER}, #{color,jdbcType=VARCHAR}, 
+      #{iconId,jdbcType=VARCHAR}, #{eventDesc,jdbcType=VARCHAR}, #{mustShow,jdbcType=VARCHAR}, 
+      #{position,jdbcType=INTEGER}, #{units,jdbcType=VARCHAR}, #{roomId,jdbcType=VARCHAR},#{widthAndHeight,jdbcType=INTEGER})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+    insert into bas_monitor_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="eventId != null" >
+        eventId,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="eventName != null" >
+        eventName,
+      </if>
+      <if test="precision != null" >
+        `precision`,
+      </if>
+      <if test="frequency != null" >
+        frequency,
+      </if>
+      <if test="max != null" >
+        `max`,
+      </if>
+      <if test="min != null" >
+        `min`,
+      </if>
+      <if test="amendFlag != null" >
+        amendFlag,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="iconId != null" >
+        iconId,
+      </if>
+      <if test="eventDesc != null" >
+        eventDesc,
+      </if>
+      <if test="mustShow != null" >
+        mustShow,
+      </if>
+      <if test="position != null" >
+        `position`,
+      </if>
+      <if test="units != null" >
+        units,
+      </if>
+      <if test="roomId != null" >
+        roomId,
+      </if>
+      <if test="widthAndHeight != null and widthAndHeight!=''" >
+        widthAndHeight,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="eventId != null" >
+        #{eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="eventName != null" >
+        #{eventName,jdbcType=VARCHAR},
+      </if>
+      <if test="precision != null" >
+        #{precision,jdbcType=INTEGER},
+      </if>
+      <if test="frequency != null" >
+        #{frequency,jdbcType=INTEGER},
+      </if>
+      <if test="max != null" >
+        #{max,jdbcType=REAL},
+      </if>
+      <if test="min != null" >
+        #{min,jdbcType=REAL},
+      </if>
+      <if test="amendFlag != null" >
+        #{amendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="iconId != null" >
+        #{iconId,jdbcType=VARCHAR},
+      </if>
+      <if test="eventDesc != null" >
+        #{eventDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="mustShow != null" >
+        #{mustShow,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=INTEGER},
+      </if>
+      <if test="units != null" >
+        #{units,jdbcType=VARCHAR},
+      </if>
+      <if test="roomId != null" >
+        #{roomId,jdbcType=VARCHAR},
+      </if>
+      <if test="widthAndHeight != null and widthAndHeight!=''" >
+        #{widthAndHeight,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+    update bas_monitor_config
+    <set >
+      <if test="eventName != null" >
+        eventName = #{eventName,jdbcType=VARCHAR},
+      </if>
+      <if test="precision != null" >
+        `precision` = #{precision,jdbcType=INTEGER},
+      </if>
+      <if test="frequency != null" >
+        frequency = #{frequency,jdbcType=INTEGER},
+      </if>
+      <if test="max != null" >
+        max = #{max,jdbcType=REAL},
+      </if>
+      <if test="min != null" >
+        min = #{min,jdbcType=REAL},
+      </if>
+      <if test="amendFlag != null" >
+        amendFlag = #{amendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="iconId != null" >
+        iconId = #{iconId,jdbcType=VARCHAR},
+      </if>
+      <if test="eventDesc != null" >
+        eventDesc = #{eventDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="mustShow != null" >
+        mustShow = #{mustShow,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=INTEGER},
+      </if>
+      <if test="units != null" >
+        units = #{units,jdbcType=VARCHAR},
+      </if>
+      <if test="widthAndHeight != null and widthAndHeight!=''" >
+        widthAndHeight = #{widthAndHeight,jdbcType=INTEGER},
+      </if>
+    </set>
+    where eventId = #{eventId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+      and roomId = #{roomId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+    update bas_monitor_config
+    set eventName = #{eventName,jdbcType=VARCHAR},
+      `precision` = #{precision,jdbcType=INTEGER},
+      frequency = #{frequency,jdbcType=INTEGER},
+      max = #{max,jdbcType=REAL},
+      min = #{min,jdbcType=REAL},
+      amendFlag = #{amendFlag,jdbcType=INTEGER},
+      color = #{color,jdbcType=VARCHAR},
+      iconId = #{iconId,jdbcType=VARCHAR},
+      eventDesc = #{eventDesc,jdbcType=VARCHAR},
+      mustShow = #{mustShow,jdbcType=VARCHAR},
+      position = #{position,jdbcType=INTEGER},
+      units = #{units,jdbcType=VARCHAR},
+      widthAndHeight = #{widthAndHeight,jdbcType=INTEGER}
+    where eventId = #{eventId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+      and roomId = #{roomId,jdbcType=VARCHAR}
+  </update>
+ 
+  <select id="selectMustShowList" resultMap="BaseResultMap">
+  	SELECT
+  	<include refid="Base_Column_List" />
+  	FROM bas_monitor_config WHERE  `POSITION` = '1' AND mustShow = '1' and beid = #{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectWithoutMustShowList" resultMap="BaseResultMap">
+  	SELECT 
+  	<include refid="Base_Column_List" />
+  	FROM bas_monitor_config WHERE  `POSITION` = '1' AND (mustShow != '1' OR mustShow IS NULL ) and beid = #{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectEventIdByEventName" resultType="java.lang.String">
+	SELECT a.`eventId` FROM (select * from bas_monitor_config where beid=#{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}) a,
+	(select * from bas_device_config where beid=#{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}) b,
+	(select * from bas_device_monitor_config where beid=#{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}) c
+	WHERE a.`eventId` = c.`eventId` 
+	AND b.`deviceId` = c.`deviceId`
+	AND a.`eventName` = #{eventName,jdbcType=VARCHAR}
+	AND a.`position` = '0'
+	AND b.`enable` = '1' 
+	AND c.`optional` IS NOT NULL
+  </select>
+  
+  <select id="queryAllMonitorConfig" resultMap="BaseResultMap">
+  	SELECT 
+  	<include refid="Base_Column_List" />
+  	FROM bas_monitor_config WHERE  `POSITION` = '1' and beid = #{beid,jdbcType=VARCHAR} and roomId = #{roomId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getLifeSignList" resultType="com.digihealth.anesthesia.research.formbean.LifeSignObserveFormBean">
+  	SELECT eventId AS observeId ,eventName AS observeName ,eventDesc FROM bas_monitor_config 
+  	WHERE `POSITION` = 0 and beid = #{beid,jdbcType=VARCHAR} 
+  			and roomId = #{roomId,jdbcType=VARCHAR}
+  	ORDER BY eventId ASC
+  </select>
+  
+  <select id="getMaxEventId" resultType="java.lang.String">
+  
+  	select MAX(eventId)+1 eventId From  bas_monitor_config  where 
+  	beid = 0 and roomId = 0
+  	and position = #{position,jdbcType=INTEGER} and eventId like CONCAT(#{deviceType},'%') 
+  </select>
+  
+  
+ <select id="queryBasMonitorConfigList" resultType="com.digihealth.anesthesia.operProceed.po.BasMonitorConfig" >
+   		SELECT * FROM bas_monitor_config
+		WHERE 1 = 1 
+		<if test="filters != null">
+			<foreach collection="filters" item="filter" open=" " close=" " >
+				<if test="filter.field != null and filter.field != '' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND ${filter.field} = #{filter.value}
+						<!-- AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%') -->
+					</if>
+				</if>
+			</foreach>
+		</if>
+  		order by ${systemSearchFormBean.sort} ${systemSearchFormBean.orderBy}
+  		<if test="systemSearchFormBean.pageSize != null and systemSearchFormBean.pageSize!='' " >
+	       limit #{systemSearchFormBean.pageNo},#{systemSearchFormBean.pageSize}
+	    </if>
+  </select>
+	
+   <select id="queryBasMonitorConfigListTotal" resultType="java.lang.Integer" >
+   		SELECT count(1) FROM bas_monitor_config
+		WHERE 1 = 1 
+		<if test="filters != null">
+			<foreach collection="filters" item="filter" open=" " close=" " >
+				<if test="filter.field != null and filter.field != '' ">
+					<if test="filter.value != null and filter.value != ''">
+						AND ${filter.field} = #{filter.value}
+						<!-- AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%') -->
+					</if>
+				</if>
+			</foreach>
+		</if>
+  </select>
+
+</mapper>

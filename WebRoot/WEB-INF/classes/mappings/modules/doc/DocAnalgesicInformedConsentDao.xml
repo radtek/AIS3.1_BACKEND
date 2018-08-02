@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocAnalgesicInformedConsentDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent" >
+    <id column="analgesicId" property="analgesicId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="pcia" property="pcia" jdbcType="INTEGER" />
+    <result column="pcea" property="pcea" jdbcType="INTEGER" />
+    <result column="pumpPrice" property="pumpPrice" jdbcType="REAL" />
+    <result column="electronicPumpPrice" property="electronicPumpPrice" jdbcType="REAL" />
+    <result column="signName" property="signName" jdbcType="VARCHAR" />
+    <result column="signTime" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="analgesicType" property="analgesicType" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="beid" property="beid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    analgesicId, regOptId, pcia, pcea, pumpPrice, electronicPumpPrice, signName, signTime, 
+    analgesicType, processState, beid
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_analgesic_informed_consent
+    where analgesicId = #{analgesicId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectInformedConsentByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_analgesic_informed_consent
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_analgesic_informed_consent
+    where analgesicId = #{analgesicId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent" >
+    insert into doc_analgesic_informed_consent (analgesicId, regOptId, pcia, 
+      pcea, pumpPrice, electronicPumpPrice, 
+      signName, signTime, analgesicType, 
+      processState, beid)
+    values (#{analgesicId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{pcia,jdbcType=INTEGER}, 
+      #{pcea,jdbcType=INTEGER}, #{pumpPrice,jdbcType=REAL}, #{electronicPumpPrice,jdbcType=REAL}, 
+      #{signName,jdbcType=VARCHAR}, #{signTime,jdbcType=TIMESTAMP}, #{analgesicType,jdbcType=VARCHAR}, 
+      #{processState,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent" >
+    insert into doc_analgesic_informed_consent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="analgesicId != null" >
+        analgesicId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="pcia != null" >
+        pcia,
+      </if>
+      <if test="pcea != null" >
+        pcea,
+      </if>
+      <if test="pumpPrice != null" >
+        pumpPrice,
+      </if>
+      <if test="electronicPumpPrice != null" >
+        electronicPumpPrice,
+      </if>
+      <if test="signName != null" >
+        signName,
+      </if>
+      <if test="signTime != null" >
+        signTime,
+      </if>
+      <if test="analgesicType != null" >
+        analgesicType,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="analgesicId != null" >
+        #{analgesicId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="pcia != null" >
+        #{pcia,jdbcType=INTEGER},
+      </if>
+      <if test="pcea != null" >
+        #{pcea,jdbcType=INTEGER},
+      </if>
+      <if test="pumpPrice != null" >
+        #{pumpPrice,jdbcType=REAL},
+      </if>
+      <if test="electronicPumpPrice != null" >
+        #{electronicPumpPrice,jdbcType=REAL},
+      </if>
+      <if test="signName != null" >
+        #{signName,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="analgesicType != null" >
+        #{analgesicType,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent" >
+    update doc_analgesic_informed_consent
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="pcia != null" >
+        pcia = #{pcia,jdbcType=INTEGER},
+      </if>
+      <if test="pcea != null" >
+        pcea = #{pcea,jdbcType=INTEGER},
+      </if>
+      <if test="pumpPrice != null" >
+        pumpPrice = #{pumpPrice,jdbcType=REAL},
+      </if>
+      <if test="electronicPumpPrice != null" >
+        electronicPumpPrice = #{electronicPumpPrice,jdbcType=REAL},
+      </if>
+      <if test="signName != null" >
+        signName = #{signName,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        signTime = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="analgesicType != null" >
+        analgesicType = #{analgesicType,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        beid = #{beid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where analgesicId = #{analgesicId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent" >
+    update doc_analgesic_informed_consent
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      pcia = #{pcia,jdbcType=INTEGER},
+      pcea = #{pcea,jdbcType=INTEGER},
+      pumpPrice = #{pumpPrice,jdbcType=REAL},
+      electronicPumpPrice = #{electronicPumpPrice,jdbcType=REAL},
+      signName = #{signName,jdbcType=VARCHAR},
+      signTime = #{signTime,jdbcType=TIMESTAMP},
+      analgesicType = #{analgesicType,jdbcType=VARCHAR},
+      processState = #{processState,jdbcType=VARCHAR},
+      beid = #{beid,jdbcType=VARCHAR}
+    where analgesicId = #{analgesicId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

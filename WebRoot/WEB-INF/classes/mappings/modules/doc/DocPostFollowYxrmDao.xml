@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPostFollowYxrmDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPostFollowYxrm" >
+    <id column="postFollowYxrmId" property="postFollowYxrmId" jdbcType="VARCHAR" />
+    <result column="postFollowId" property="postFollowId" jdbcType="VARCHAR" />
+    <result column="beforeBloodPre" property="beforeBloodPre" jdbcType="VARCHAR" />
+    <result column="beforeHeartrate" property="beforeHeartrate" jdbcType="INTEGER" />
+    <result column="beforeBreath" property="beforeBreath" jdbcType="INTEGER" />
+    <result column="beforeSpo2" property="beforeSpo2" jdbcType="INTEGER" />
+    <result column="beforeMentalState" property="beforeMentalState" jdbcType="VARCHAR" />
+    <result column="beforeFeel" property="beforeFeel" jdbcType="VARCHAR" />
+    <result column="beforeMotorFunction" property="beforeMotorFunction" jdbcType="VARCHAR" />
+    <result column="beforeAnaesPipe" property="beforeAnaesPipe" jdbcType="VARCHAR" />
+    <result column="beforeRemovalTime" property="beforeRemovalTime" jdbcType="TIMESTAMP" />
+    <result column="beforeOther" property="beforeOther" jdbcType="VARCHAR" />
+    <result column="afterHeartrate" property="afterHeartrate" jdbcType="INTEGER" />
+    <result column="afterBreath" property="afterBreath" jdbcType="INTEGER" />
+    <result column="afterSpo2" property="afterSpo2" jdbcType="INTEGER" />
+    <result column="afterBloodPre" property="afterBloodPre" jdbcType="VARCHAR" />
+    <result column="afterMentalState" property="afterMentalState" jdbcType="VARCHAR" />
+    <result column="afterFeel" property="afterFeel" jdbcType="VARCHAR" />
+    <result column="afterMotorFunction" property="afterMotorFunction" jdbcType="VARCHAR" />
+    <result column="afterAnaesPipe" property="afterAnaesPipe" jdbcType="VARCHAR" />
+    <result column="afterOther" property="afterOther" jdbcType="VARCHAR" />
+    <result column="signTime" jdbcType="TIMESTAMP" property="signTime" />
+    <result column="signName" property="signName" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    postFollowYxrmId, postFollowId, beforeBloodPre, beforeHeartrate, beforeBreath, beforeSpo2, 
+    beforeMentalState, beforeFeel, beforeMotorFunction, beforeAnaesPipe, beforeRemovalTime, 
+    beforeOther, afterHeartrate, afterSpo2, afterBreath, afterBloodPre, afterMentalState, afterFeel, 
+    afterMotorFunction, afterAnaesPipe, afterOther, signTime, signName
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_post_follow_yxrm
+    where postFollowYxrmId = #{postFollowYxrmId,jdbcType=VARCHAR}
+  </select>
+  
+
+  <select id="selectPostFollowYxrmByFollowId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_post_follow_yxrm
+    where postFollowId = #{postFollowId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_post_follow_yxrm
+    where postFollowYxrmId = #{postFollowYxrmId,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteFollowYxrmByFollowId" parameterType="java.lang.String" >
+    delete from doc_post_follow_yxrm
+    where postFollowId = #{postFollowId,jdbcType=VARCHAR}
+  </delete>
+
+ <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPostFollowYxrm">
+    insert into doc_post_follow_yxrm (postFollowYxrmId, postFollowId, beforeBloodPre, 
+      beforeHeartrate, beforeBreath, beforeSpo2, 
+      beforeMentalState, beforeFeel, beforeMotorFunction, 
+      beforeAnaesPipe, beforeRemovalTime, beforeOther, 
+      afterHeartrate, afterSpo2, afterBreath, 
+      afterBloodPre, afterMentalState, afterFeel, 
+      afterMotorFunction, afterAnaesPipe, afterOther, 
+      signTime, signName)
+    values (#{postFollowYxrmId,jdbcType=VARCHAR}, #{postFollowId,jdbcType=VARCHAR}, #{beforeBloodPre,jdbcType=VARCHAR}, 
+      #{beforeHeartrate,jdbcType=INTEGER}, #{beforeBreath,jdbcType=INTEGER}, #{beforeSpo2,jdbcType=INTEGER}, 
+      #{beforeMentalState,jdbcType=VARCHAR}, #{beforeFeel,jdbcType=VARCHAR}, #{beforeMotorFunction,jdbcType=VARCHAR}, 
+      #{beforeAnaesPipe,jdbcType=VARCHAR}, #{beforeRemovalTime,jdbcType=TIMESTAMP}, #{beforeOther,jdbcType=VARCHAR}, 
+      #{afterHeartrate,jdbcType=INTEGER}, #{afterSpo2,jdbcType=INTEGER}, #{afterBreath,jdbcType=INTEGER}, 
+      #{afterBloodPre,jdbcType=VARCHAR}, #{afterMentalState,jdbcType=VARCHAR}, #{afterFeel,jdbcType=VARCHAR}, 
+      #{afterMotorFunction,jdbcType=VARCHAR}, #{afterAnaesPipe,jdbcType=VARCHAR}, #{afterOther,jdbcType=VARCHAR}, 
+      #{signTime,jdbcType=TIMESTAMP}, #{signName,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPostFollowYxrm">
+    insert into doc_post_follow_yxrm
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="postFollowYxrmId != null">
+        postFollowYxrmId,
+      </if>
+      <if test="postFollowId != null">
+        postFollowId,
+      </if>
+      <if test="beforeBloodPre != null">
+        beforeBloodPre,
+      </if>
+      <if test="beforeHeartrate != null">
+        beforeHeartrate,
+      </if>
+      <if test="beforeBreath != null">
+        beforeBreath,
+      </if>
+      <if test="beforeSpo2 != null">
+        beforeSpo2,
+      </if>
+      <if test="beforeMentalState != null">
+        beforeMentalState,
+      </if>
+      <if test="beforeFeel != null">
+        beforeFeel,
+      </if>
+      <if test="beforeMotorFunction != null">
+        beforeMotorFunction,
+      </if>
+      <if test="beforeAnaesPipe != null">
+        beforeAnaesPipe,
+      </if>
+      <if test="beforeRemovalTime != null">
+        beforeRemovalTime,
+      </if>
+      <if test="beforeOther != null">
+        beforeOther,
+      </if>
+      <if test="afterHeartrate != null">
+        afterHeartrate,
+      </if>
+      <if test="afterSpo2 != null">
+        afterSpo2,
+      </if>
+      <if test="afterBreath != null">
+        afterBreath,
+      </if>
+      <if test="afterBloodPre != null">
+        afterBloodPre,
+      </if>
+      <if test="afterMentalState != null">
+        afterMentalState,
+      </if>
+      <if test="afterFeel != null">
+        afterFeel,
+      </if>
+      <if test="afterMotorFunction != null">
+        afterMotorFunction,
+      </if>
+      <if test="afterAnaesPipe != null">
+        afterAnaesPipe,
+      </if>
+      <if test="afterOther != null">
+        afterOther,
+      </if>
+      <if test="signTime != null">
+        signTime,
+      </if>
+      <if test="signName != null">
+        signName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="postFollowYxrmId != null">
+        #{postFollowYxrmId,jdbcType=VARCHAR},
+      </if>
+      <if test="postFollowId != null">
+        #{postFollowId,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeBloodPre != null">
+        #{beforeBloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeHeartrate != null">
+        #{beforeHeartrate,jdbcType=INTEGER},
+      </if>
+      <if test="beforeBreath != null">
+        #{beforeBreath,jdbcType=INTEGER},
+      </if>
+      <if test="beforeSpo2 != null">
+        #{beforeSpo2,jdbcType=INTEGER},
+      </if>
+      <if test="beforeMentalState != null">
+        #{beforeMentalState,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeFeel != null">
+        #{beforeFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeMotorFunction != null">
+        #{beforeMotorFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeAnaesPipe != null">
+        #{beforeAnaesPipe,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeRemovalTime != null">
+        #{beforeRemovalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beforeOther != null">
+        #{beforeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="afterHeartrate != null">
+        #{afterHeartrate,jdbcType=INTEGER},
+      </if>
+      <if test="afterSpo2 != null">
+        #{afterSpo2,jdbcType=INTEGER},
+      </if>
+      <if test="afterBreath != null">
+        #{afterBreath,jdbcType=INTEGER},
+      </if>
+      <if test="afterBloodPre != null">
+        #{afterBloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="afterMentalState != null">
+        #{afterMentalState,jdbcType=VARCHAR},
+      </if>
+      <if test="afterFeel != null">
+        #{afterFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="afterMotorFunction != null">
+        #{afterMotorFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="afterAnaesPipe != null">
+        #{afterAnaesPipe,jdbcType=VARCHAR},
+      </if>
+      <if test="afterOther != null">
+        #{afterOther,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null">
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="signName != null">
+        #{signName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPostFollowYxrm">
+    update doc_post_follow_yxrm
+    <set>
+      <if test="postFollowId != null">
+        postFollowId = #{postFollowId,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeBloodPre != null">
+        beforeBloodPre = #{beforeBloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeHeartrate != null">
+        beforeHeartrate = #{beforeHeartrate,jdbcType=INTEGER},
+      </if>
+      <if test="beforeBreath != null">
+        beforeBreath = #{beforeBreath,jdbcType=INTEGER},
+      </if>
+      <if test="beforeSpo2 != null">
+        beforeSpo2 = #{beforeSpo2,jdbcType=INTEGER},
+      </if>
+      <if test="beforeMentalState != null">
+        beforeMentalState = #{beforeMentalState,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeFeel != null">
+        beforeFeel = #{beforeFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeMotorFunction != null">
+        beforeMotorFunction = #{beforeMotorFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeAnaesPipe != null">
+        beforeAnaesPipe = #{beforeAnaesPipe,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeRemovalTime != null">
+        beforeRemovalTime = #{beforeRemovalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beforeOther != null">
+        beforeOther = #{beforeOther,jdbcType=VARCHAR},
+      </if>
+      <if test="afterHeartrate != null">
+        afterHeartrate = #{afterHeartrate,jdbcType=INTEGER},
+      </if>
+      <if test="afterSpo2 != null">
+        afterSpo2 = #{afterSpo2,jdbcType=INTEGER},
+      </if>
+      <if test="afterBreath != null">
+        afterBreath = #{afterBreath,jdbcType=INTEGER},
+      </if>
+      <if test="afterBloodPre != null">
+        afterBloodPre = #{afterBloodPre,jdbcType=VARCHAR},
+      </if>
+      <if test="afterMentalState != null">
+        afterMentalState = #{afterMentalState,jdbcType=VARCHAR},
+      </if>
+      <if test="afterFeel != null">
+        afterFeel = #{afterFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="afterMotorFunction != null">
+        afterMotorFunction = #{afterMotorFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="afterAnaesPipe != null">
+        afterAnaesPipe = #{afterAnaesPipe,jdbcType=VARCHAR},
+      </if>
+      <if test="afterOther != null">
+        afterOther = #{afterOther,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null">
+        signTime = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="signName != null">
+        signName = #{signName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where postFollowYxrmId = #{postFollowYxrmId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPostFollowYxrm">
+    update doc_post_follow_yxrm
+    set postFollowId = #{postFollowId,jdbcType=VARCHAR},
+      beforeBloodPre = #{beforeBloodPre,jdbcType=VARCHAR},
+      beforeHeartrate = #{beforeHeartrate,jdbcType=INTEGER},
+      beforeBreath = #{beforeBreath,jdbcType=INTEGER},
+      beforeSpo2 = #{beforeSpo2,jdbcType=INTEGER},
+      beforeMentalState = #{beforeMentalState,jdbcType=VARCHAR},
+      beforeFeel = #{beforeFeel,jdbcType=VARCHAR},
+      beforeMotorFunction = #{beforeMotorFunction,jdbcType=VARCHAR},
+      beforeAnaesPipe = #{beforeAnaesPipe,jdbcType=VARCHAR},
+      beforeRemovalTime = #{beforeRemovalTime,jdbcType=TIMESTAMP},
+      beforeOther = #{beforeOther,jdbcType=VARCHAR},
+      afterHeartrate = #{afterHeartrate,jdbcType=INTEGER},
+      afterSpo2 = #{afterSpo2,jdbcType=INTEGER},
+      afterBreath = #{afterBreath,jdbcType=INTEGER},
+      afterBloodPre = #{afterBloodPre,jdbcType=VARCHAR},
+      afterMentalState = #{afterMentalState,jdbcType=VARCHAR},
+      afterFeel = #{afterFeel,jdbcType=VARCHAR},
+      afterMotorFunction = #{afterMotorFunction,jdbcType=VARCHAR},
+      afterAnaesPipe = #{afterAnaesPipe,jdbcType=VARCHAR},
+      afterOther = #{afterOther,jdbcType=VARCHAR},
+      signTime = #{signTime,jdbcType=TIMESTAMP},
+      signName = #{signName,jdbcType=VARCHAR}
+    where postFollowYxrmId = #{postFollowYxrmId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>
