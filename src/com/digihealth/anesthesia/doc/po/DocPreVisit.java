@@ -664,6 +664,66 @@ public class DocPreVisit {
      */
     private String asaE;
     
+    /**
+     * 青光眼
+     */
+    private Integer glaucoma;
+    
+    /**
+     * 其他目前用药
+     */
+    private String specialTreatmentOther;
+    
+    /**
+     * 风险评估
+     */
+    private Integer riskAssessment;
+    
+    /**
+     * 心血管系统
+     */
+    private Integer heartBoolHave;
+    
+    /**
+     * 呼吸系统
+     */
+    private Integer lungbreathHave;
+    
+    /**
+     * 神经系统
+     */
+    private Integer brainNerveHave;
+    
+    /**
+     * 脊柱与四肢
+     */
+    private Integer spineLimbHave;
+    
+    /**
+     * 血液系统
+     */
+    private Integer bloodHave;
+    
+    /**
+     * 肾脏疾病
+     */
+    private Integer kidneyHave;
+    
+    /**
+     * 消化系统
+     */
+    private Integer digestionHave;
+    
+    /**
+     * 内分泌系统
+     */
+    private Integer endocrineHave;
+    
+    /**
+     * 传染病
+     */
+    private Integer infectiousHave;
+    
     @ApiModelProperty(value = "拟行麻醉集合")
     private List<String> designedAnaesList;
 
@@ -1904,6 +1964,102 @@ public class DocPreVisit {
 	public void setOrganAbnormalGrade(Integer organAbnormalGrade)
 	{
 		this.organAbnormalGrade = organAbnormalGrade;
+	}
+
+	public Integer getGlaucoma() {
+		return glaucoma;
+	}
+
+	public void setGlaucoma(Integer glaucoma) {
+		this.glaucoma = glaucoma;
+	}
+
+	public String getSpecialTreatmentOther() {
+		return specialTreatmentOther;
+	}
+
+	public void setSpecialTreatmentOther(String specialTreatmentOther) {
+		this.specialTreatmentOther = specialTreatmentOther;
+	}
+
+	public Integer getRiskAssessment() {
+		return riskAssessment;
+	}
+
+	public void setRiskAssessment(Integer riskAssessment) {
+		this.riskAssessment = riskAssessment;
+	}
+
+	public Integer getHeartBoolHave() {
+		return heartBoolHave;
+	}
+
+	public void setHeartBoolHave(Integer heartBoolHave) {
+		this.heartBoolHave = heartBoolHave;
+	}
+
+	public Integer getLungbreathHave() {
+		return lungbreathHave;
+	}
+
+	public void setLungbreathHave(Integer lungbreathHave) {
+		this.lungbreathHave = lungbreathHave;
+	}
+
+	public Integer getBrainNerveHave() {
+		return brainNerveHave;
+	}
+
+	public void setBrainNerveHave(Integer brainNerveHave) {
+		this.brainNerveHave = brainNerveHave;
+	}
+
+	public Integer getSpineLimbHave() {
+		return spineLimbHave;
+	}
+
+	public void setSpineLimbHave(Integer spineLimbHave) {
+		this.spineLimbHave = spineLimbHave;
+	}
+
+	public Integer getBloodHave() {
+		return bloodHave;
+	}
+
+	public void setBloodHave(Integer bloodHave) {
+		this.bloodHave = bloodHave;
+	}
+
+	public Integer getKidneyHave() {
+		return kidneyHave;
+	}
+
+	public void setKidneyHave(Integer kidneyHave) {
+		this.kidneyHave = kidneyHave;
+	}
+
+	public Integer getDigestionHave() {
+		return digestionHave;
+	}
+
+	public void setDigestionHave(Integer digestionHave) {
+		this.digestionHave = digestionHave;
+	}
+
+	public Integer getEndocrineHave() {
+		return endocrineHave;
+	}
+
+	public void setEndocrineHave(Integer endocrineHave) {
+		this.endocrineHave = endocrineHave;
+	}
+
+	public Integer getInfectiousHave() {
+		return infectiousHave;
+	}
+
+	public void setInfectiousHave(Integer infectiousHave) {
+		this.infectiousHave = infectiousHave;
 	}
 
 }

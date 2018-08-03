@@ -70,6 +70,19 @@ public class SearchRegOptByRoomIdAndOperDateAndStateFormBean implements Serializ
 	// 全麻局麻标识
     private String isLocalAnaes;
 
+    private String operSource;//是否门诊;0-住院,1-门诊
+	
+	
+	
+    public String getOperSource() {
+		return operSource;
+	}
+
+	public void setOperSource(String operSource) {
+		this.operSource = operSource;
+	}
+
+    
 	public String getIsLocalAnaes()
     {
         return isLocalAnaes;

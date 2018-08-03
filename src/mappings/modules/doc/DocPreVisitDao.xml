@@ -116,6 +116,18 @@
     <result column="assistMeasure" property="assistMeasure" jdbcType="VARCHAR" />
     <result column="asaE" property="asaE" jdbcType="VARCHAR" />
     <result column="organAbnormalGrade" property="organAbnormalGrade" jdbcType="INTEGER" />
+    <result column="glaucoma" property="glaucoma" jdbcType="INTEGER" />
+    <result column="specialTreatmentOther" property="specialTreatmentOther" jdbcType="VARCHAR" />
+    <result column="riskAssessment" property="riskAssessment" jdbcType="INTEGER" />
+    <result column="heartBoolHave" property="heartBoolHave" jdbcType="INTEGER" />
+    <result column="lungbreathHave" property="lungbreathHave" jdbcType="INTEGER" />
+    <result column="brainNerveHave" property="brainNerveHave" jdbcType="INTEGER" />
+    <result column="spineLimbHave" property="spineLimbHave" jdbcType="INTEGER" />
+    <result column="bloodHave" property="bloodHave" jdbcType="INTEGER" />
+    <result column="kidneyHave" property="kidneyHave" jdbcType="INTEGER" />
+    <result column="digestionHave" property="digestionHave" jdbcType="INTEGER" />
+    <result column="endocrineHave" property="endocrineHave" jdbcType="INTEGER" />
+    <result column="infectiousHave" property="infectiousHave" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -136,7 +148,9 @@
     designedAnaesCode, designedAnaes, airwayManage, specialHandle, analgesic, analgesicCond, 
     monitor, leaveTo, evaluationOther, otherBriefHisCond, tracheaOffset, ucgAbnormal, 
     ef, otherProblem, otherMeasures, hypertension, coronary, airwayPatency, anaesPuncture, 
-    anaesPunctureCond, anesthIndica, anaesDocord, assistMeasure,asaE, organAbnormalGrade
+    anaesPunctureCond, anesthIndica, anaesDocord, assistMeasure,asaE, organAbnormalGrade,
+    glaucoma, specialTreatmentOther, riskAssessment, heartBoolHave, lungbreathHave, brainNerveHave, 
+    spineLimbHave, bloodHave, kidneyHave, digestionHave, endocrineHave, infectiousHave
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -190,7 +204,9 @@
       hypertension, coronary, airwayPatency, 
       anaesPuncture, anaesPunctureCond, anesthIndica, 
       anaesDocord, assistMeasure, asaE, 
-      organAbnormalGrade)
+      organAbnormalGrade, glaucoma, specialTreatmentOther, riskAssessment, 
+      heartBoolHave, lungbreathHave, brainNerveHave, spineLimbHave, bloodHave, 
+      kidneyHave, digestionHave, endocrineHave, infectiousHave)
     values (#{preVisitId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{briefHis,jdbcType=VARCHAR}, 
       #{comorbidity,jdbcType=VARCHAR}, #{drugAddiction,jdbcType=VARCHAR}, #{drugAddictionCond,jdbcType=VARCHAR}, 
       #{othComorbidity,jdbcType=VARCHAR}, #{heartBool,jdbcType=VARCHAR}, #{lungbreath,jdbcType=VARCHAR}, 
@@ -229,7 +245,9 @@
       #{hypertension,jdbcType=INTEGER}, #{coronary,jdbcType=INTEGER}, #{airwayPatency,jdbcType=INTEGER}, 
       #{anaesPuncture,jdbcType=INTEGER}, #{anaesPunctureCond,jdbcType=VARCHAR}, #{anesthIndica,jdbcType=INTEGER}, 
       #{anaesDocord,jdbcType=VARCHAR}, #{assistMeasure,jdbcType=VARCHAR}, #{asaE,jdbcType=VARCHAR}, 
-      #{organAbnormalGrade,jdbcType=INTEGER})
+      #{organAbnormalGrade,jdbcType=INTEGER}, #{glaucoma,jdbcType=INTEGER}, #{specialTreatmentOther,jdbcType=VARCHAR},
+      #{riskAssessment,jdbcType=INTEGER}, #{heartBoolHave,jdbcType=INTEGER}, #{lungbreathHave,jdbcType=INTEGER}, #{brainNerveHave,jdbcType=INTEGER}, #{spineLimbHave,jdbcType=INTEGER},
+      #{bloodHave,jdbcType=INTEGER}, #{kidneyHave,jdbcType=INTEGER}, #{digestionHave,jdbcType=INTEGER}, #{endocrineHave,jdbcType=INTEGER}, #{infectiousHave,jdbcType=INTEGER})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPreVisit" >
@@ -577,6 +595,42 @@
       <if test="organAbnormalGrade != null" >
         organAbnormalGrade,
       </if>
+      <if test="glaucoma != null" >
+        glaucoma,
+      </if>
+      <if test="specialTreatmentOther != null" >
+        specialTreatmentOther,
+      </if>
+      <if test="riskAssessment != null" >
+        riskAssessment,
+      </if>
+      <if test="heartBoolHave != null" >
+        heartBoolHave,
+      </if>
+      <if test="lungbreathHave != null" >
+        lungbreathHave,
+      </if>
+      <if test="brainNerveHave != null" >
+        brainNerveHave,
+      </if>
+      <if test="spineLimbHave != null" >
+        spineLimbHave,
+      </if>
+      <if test="bloodHave != null" >
+        bloodHave,
+      </if>
+      <if test="kidneyHave != null" >
+        kidneyHave,
+      </if>
+      <if test="digestionHave != null" >
+        digestionHave,
+      </if>
+      <if test="endocrineHave != null" >
+        endocrineHave,
+      </if>
+      <if test="infectiousHave != null" >
+        infectiousHave,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="preVisitId != null" >
@@ -920,6 +974,42 @@
       </if>
       <if test="organAbnormalGrade != null" >
         #{organAbnormalGrade,jdbcType=INTEGER},
+      </if>
+      <if test="glaucoma != null" >
+        #{glaucoma,jdbcType=INTEGER},
+      </if>
+      <if test="specialTreatmentOther != null" >
+        #{specialTreatmentOther,jdbcType=VARCHAR},
+      </if>
+      <if test="riskAssessment != null" >
+        #{riskAssessment,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolHave != null" >
+        #{heartBoolHave,jdbcType=INTEGER},
+      </if>
+      <if test="lungbreathHave != null" >
+        #{lungbreathHave,jdbcType=INTEGER},
+      </if>
+      <if test="brainNerveHave != null" >
+        #{brainNerveHave,jdbcType=INTEGER},
+      </if>
+      <if test="spineLimbHave != null" >
+        #{spineLimbHave,jdbcType=INTEGER},
+      </if>
+      <if test="bloodHave != null" >
+        #{bloodHave,jdbcType=INTEGER},
+      </if>
+      <if test="kidneyHave != null" >
+        #{kidneyHave,jdbcType=INTEGER},
+      </if>
+      <if test="digestionHave != null" >
+        #{digestionHave,jdbcType=INTEGER},
+      </if>
+      <if test="endocrineHave != null" >
+        #{endocrineHave,jdbcType=INTEGER},
+      </if>
+      <if test="infectiousHave != null" >
+        #{infectiousHave,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -1266,6 +1356,42 @@
       <if test="organAbnormalGrade != null" >
         organAbnormalGrade = #{organAbnormalGrade,jdbcType=INTEGER},
       </if>
+      <if test="glaucoma != null" >
+        glaucoma = #{glaucoma,jdbcType=INTEGER},
+      </if>
+      <if test="specialTreatmentOther != null" >
+        specialTreatmentOther = #{specialTreatmentOther,jdbcType=VARCHAR},
+      </if>
+      <if test="riskAssessment != null" >
+        riskAssessment = #{riskAssessment,jdbcType=INTEGER},
+      </if>
+      <if test="heartBoolHave != null" >
+        heartBoolHave = #{heartBoolHave,jdbcType=INTEGER},
+      </if>
+      <if test="lungbreathHave != null" >
+        lungbreathHave = #{lungbreathHave,jdbcType=INTEGER},
+      </if>
+      <if test="brainNerveHave != null" >
+        brainNerveHave = #{brainNerveHave,jdbcType=INTEGER},
+      </if>
+      <if test="spineLimbHave != null" >
+        spineLimbHave = #{spineLimbHave,jdbcType=INTEGER},
+      </if>
+      <if test="bloodHave != null" >
+        bloodHave = #{bloodHave,jdbcType=INTEGER},
+      </if>
+      <if test="kidneyHave != null" >
+        kidneyHave = #{kidneyHave,jdbcType=INTEGER},
+      </if>
+      <if test="digestionHave != null" >
+        digestionHave = #{digestionHave,jdbcType=INTEGER},
+      </if>
+      <if test="endocrineHave != null" >
+        endocrineHave = #{endocrineHave,jdbcType=INTEGER},
+      </if>
+      <if test="infectiousHave != null" >
+        infectiousHave = #{infectiousHave,jdbcType=INTEGER},
+      </if>
     </set>
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
@@ -1384,7 +1510,19 @@
       anaesDocord = #{anaesDocord,jdbcType=VARCHAR},
       assistMeasure = #{assistMeasure,jdbcType=VARCHAR},
       asaE = #{asaE,jdbcType=VARCHAR},
-      organAbnormalGrade = #{organAbnormalGrade,jdbcType=INTEGER}
+      organAbnormalGrade = #{organAbnormalGrade,jdbcType=INTEGER},
+      glaucoma = #{glaucoma,jdbcType=INTEGER},
+      specialTreatmentOther = #{specialTreatmentOther,jdbcType=VARCHAR},
+      riskAssessment = #{riskAssessment,jdbcType=INTEGER},
+      heartBoolHave = #{heartBoolHave,jdbcType=INTEGER},
+      lungbreathHave = #{lungbreathHave,jdbcType=INTEGER},
+      brainNerveHave = #{brainNerveHave,jdbcType=INTEGER},
+      spineLimbHave = #{spineLimbHave,jdbcType=INTEGER},
+      bloodHave = #{bloodHave,jdbcType=INTEGER},
+      kidneyHave = #{kidneyHave,jdbcType=INTEGER},
+      digestionHave = #{digestionHave,jdbcType=INTEGER},
+      endocrineHave = #{endocrineHave,jdbcType=INTEGER},
+      infectiousHave = #{infectiousHave,jdbcType=INTEGER}
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
   
@@ -1502,7 +1640,19 @@
       anaesDocord = #{anaesDocord,jdbcType=VARCHAR},
       assistMeasure = #{assistMeasure,jdbcType=VARCHAR},
       asaE = #{asaE,jdbcType=VARCHAR},
-      organAbnormalGrade = #{organAbnormalGrade,jdbcType=INTEGER}
+      organAbnormalGrade = #{organAbnormalGrade,jdbcType=INTEGER},
+      glaucoma = #{glaucoma,jdbcType=INTEGER},
+      specialTreatmentOther = #{specialTreatmentOther,jdbcType=VARCHAR},
+      riskAssessment = #{riskAssessment,jdbcType=INTEGER},
+      heartBoolHave = #{heartBoolHave,jdbcType=INTEGER},
+      lungbreathHave = #{lungbreathHave,jdbcType=INTEGER},
+      brainNerveHave = #{brainNerveHave,jdbcType=INTEGER},
+      spineLimbHave = #{spineLimbHave,jdbcType=INTEGER},
+      bloodHave = #{bloodHave,jdbcType=INTEGER},
+      kidneyHave = #{kidneyHave,jdbcType=INTEGER},
+      digestionHave = #{digestionHave,jdbcType=INTEGER},
+      endocrineHave = #{endocrineHave,jdbcType=INTEGER},
+      infectiousHave = #{infectiousHave,jdbcType=INTEGER}
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
   

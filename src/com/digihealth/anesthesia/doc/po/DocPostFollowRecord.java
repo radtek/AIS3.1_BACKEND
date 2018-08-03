@@ -230,6 +230,21 @@ public class DocPostFollowRecord {
      * 日期
      */
     private String docDate;
+
+    /**
+     * 心率
+     */
+    private String heartrate;
+
+    /**
+     * 术后医嘱
+     */
+    private String postDoctorAdvice;
+
+    /**
+     * 其他术后医嘱
+     */
+    private String postDoctorAdviceOther;
 	
 	
     public String getLine1() {
@@ -608,4 +623,29 @@ public class DocPostFollowRecord {
     {
         this.docDate = docDate;
     }
+
+	public String getHeartrate() {
+		return heartrate;
+	}
+
+	public void setHeartrate(String heartrate) {
+		this.heartrate = heartrate;
+	}
+
+	public String getPostDoctorAdvice() {
+		return postDoctorAdvice;
+	}
+
+	public void setPostDoctorAdvice(String postDoctorAdvice) {
+		this.postDoctorAdvice = postDoctorAdvice;
+	}
+
+	public String getPostDoctorAdviceOther() {
+		return postDoctorAdviceOther;
+	}
+
+	public void setPostDoctorAdviceOther(String postDoctorAdviceOther) {
+		this.postDoctorAdviceOther = postDoctorAdviceOther;
+	}
+    
 }

@@ -125,9 +125,19 @@ public class SearchRegOptByLoginNameAndStateFormBean implements Serializable {
 	
 	private String createTime;//手术通知单数据插入时间
 	
+	private String operSource;//是否门诊;0-住院,1-门诊
 	
 	
-    public String getCreateTime() {
+	
+    public String getOperSource() {
+		return operSource;
+	}
+
+	public void setOperSource(String operSource) {
+		this.operSource = operSource;
+	}
+
+	public String getCreateTime() {
 		return createTime;
 	}
 

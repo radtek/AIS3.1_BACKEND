@@ -43,6 +43,9 @@
     <result column="itchScore" property="itchScore" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="docDate" property="docDate" jdbcType="VARCHAR" />
+    <result column="heartrate" property="heartrate" jdbcType="VARCHAR" />
+    <result column="postDoctorAdvice" property="postDoctorAdvice" jdbcType="VARCHAR" />
+    <result column="postDoctorAdviceOther" property="postDoctorAdviceOther" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -52,7 +55,7 @@
     hoarseness, throatSore, cyclingStability, cognitiveDisorders, muscleRecovery, feelingAbnormal, 
     spinalAnaesHeadache, punctureTenderness, uroschesis, urineTubeRetain, analgesicPump, 
     vasResting, vasActivity, breatheInhibi, ramsay, nauseaScore, vomitScore, itchScore, 
-    remark, docDate
+    remark, docDate, heartrate, postDoctorAdvice, postDoctorAdviceOther
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -81,7 +84,7 @@
       uroschesis, urineTubeRetain, analgesicPump, 
       vasResting, vasActivity, breatheInhibi, 
       ramsay, nauseaScore, vomitScore, 
-      itchScore, remark, docDate
+      itchScore, remark, docDate, heartrate, postDoctorAdvice, postDoctorAdviceOther
       )
     values (#{postFollowId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{bloodPressure,jdbcType=VARCHAR}, 
       #{pulse,jdbcType=VARCHAR}, #{generalExceptCase,jdbcType=VARCHAR}, #{spinalExceptCase,jdbcType=VARCHAR}, 
@@ -96,7 +99,8 @@
       #{uroschesis,jdbcType=INTEGER}, #{urineTubeRetain,jdbcType=INTEGER}, #{analgesicPump,jdbcType=INTEGER}, 
       #{vasResting,jdbcType=INTEGER}, #{vasActivity,jdbcType=INTEGER}, #{breatheInhibi,jdbcType=INTEGER}, 
       #{ramsay,jdbcType=INTEGER}, #{nauseaScore,jdbcType=INTEGER}, #{vomitScore,jdbcType=INTEGER}, 
-      #{itchScore,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{docDate,jdbcType=VARCHAR}
+      #{itchScore,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{docDate,jdbcType=VARCHAR},
+      #{heartrate,jdbcType=VARCHAR}, #{postDoctorAdvice,jdbcType=VARCHAR}, #{postDoctorAdviceOther,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -226,6 +230,15 @@
       <if test="docDate != null" >
         docDate,
       </if>
+      <if test="heartrate != null" >
+        heartrate,
+      </if>
+      <if test="postDoctorAdvice != null" >
+        postDoctorAdvice,
+      </if>
+      <if test="postDoctorAdviceOther != null" >
+        postDoctorAdviceOther,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="postFollowId != null" >
@@ -350,6 +363,15 @@
       </if>
       <if test="docDate != null" >
         #{docDate,jdbcType=VARCHAR},
+      </if>
+      <if test="heartrate != null" >
+        #{heartrate,jdbcType=VARCHAR},
+      </if>
+      <if test="postDoctorAdvice != null" >
+        #{postDoctorAdvice,jdbcType=VARCHAR},
+      </if>
+      <if test="postDoctorAdviceOther != null" >
+        #{postDoctorAdviceOther,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -477,6 +499,15 @@
       <if test="docDate != null" >
         docDate = #{docDate,jdbcType=VARCHAR},
       </if>
+      <if test="heartrate != null" >
+        heartrate = #{heartrate,jdbcType=VARCHAR},
+      </if>
+      <if test="postDoctorAdvice != null" >
+        postDoctorAdvice = #{postDoctorAdvice,jdbcType=VARCHAR},
+      </if>
+      <if test="postDoctorAdviceOther != null" >
+        postDoctorAdviceOther = #{postDoctorAdviceOther,jdbcType=VARCHAR},
+      </if>
     </set>
     where postFollowId = #{postFollowId,jdbcType=VARCHAR}
   </update>
@@ -522,7 +553,10 @@
       vomitScore = #{vomitScore,jdbcType=INTEGER},
       itchScore = #{itchScore,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
-      docDate = #{docDate,jdbcType=VARCHAR}
+      docDate = #{docDate,jdbcType=VARCHAR},
+      heartrate = #{heartrate,jdbcType=VARCHAR},
+      postDoctorAdvice = #{postDoctorAdvice,jdbcType=VARCHAR},
+      postDoctorAdviceOther = #{postDoctorAdviceOther,jdbcType=VARCHAR}
     where postFollowId = #{postFollowId,jdbcType=VARCHAR}
   </update>
 

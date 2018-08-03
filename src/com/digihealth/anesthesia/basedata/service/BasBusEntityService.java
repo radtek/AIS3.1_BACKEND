@@ -498,16 +498,25 @@ public class BasBusEntityService extends BaseService {
 //				operdef.setBeid("103");
 //				basOperdefDao.insert(operdef);
 //			}
+//		}queryMedicineByBeid
+		
+//		BaseInfoQuery query = new BaseInfoQuery();
+//		query.setBeid("109");
+//		List<BasAnaesEvent> basAnaesEventList = basAnaesEventDao.findAllAnaesEvent(query);
+//		if (null != basAnaesEventList && basAnaesEventList.size() > 0) {
+//			for (BasAnaesEvent anaesEvent : basAnaesEventList) {
+//				anaesEvent.setId(GenerateSequenceUtil.generateSequenceNo());
+//				anaesEvent.setBeid("103");
+//				basAnaesEventDao.insert(anaesEvent);
+//			}
 //		}
 		
-		BaseInfoQuery query = new BaseInfoQuery();
-		query.setBeid("109");
-		List<BasAnaesEvent> basAnaesEventList = basAnaesEventDao.findAllAnaesEvent(query);
-		if (null != basAnaesEventList && basAnaesEventList.size() > 0) {
-			for (BasAnaesEvent anaesEvent : basAnaesEventList) {
-				anaesEvent.setId(GenerateSequenceUtil.generateSequenceNo());
-				anaesEvent.setBeid("103");
-				basAnaesEventDao.insert(anaesEvent);
+		List<BasMedicine> basMedicineList = basMedicineDao.queryMedicineByBeid("109");
+		if (null != basMedicineList && basMedicineList.size() > 0) {
+			for (BasMedicine medicine : basMedicineList) {
+				medicine.setMedicineId(GenerateSequenceUtil.generateSequenceNo());
+				medicine.setBeid("103");
+				basMedicineDao.insert(medicine);
 			}
 		}
 	}
