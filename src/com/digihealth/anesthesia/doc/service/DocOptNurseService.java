@@ -417,4 +417,77 @@ public class DocOptNurseService extends BaseService {
         resp.setResultMessage("护理器械单修改成功!");
         return resp;
     }
+
+	/**
+     * 
+     * @discription 保存手术护理
+     * @author chengwang
+     * @created 2015-10-20 下午1:44:18
+     * @param preVisit
+     * @return
+     */
+    @Transactional
+    public ResponseValue updateOptNurseForSYBX(OptNurseInstrubillItemFormbean optNurseItem) {
+        ResponseValue resp = new ResponseValue();
+        DocOptNurse optNurse = optNurseItem.getOptNurse();
+        if(optNurse.getShuHouState() == 1){
+            Controller controller = controllerDao.getControllerById(optNurse.getRegOptId());
+            if(null != controller){
+                if(controller.getIsLocalAnaes().equals("1")){
+                    controller.setState(OperationState.POSTOPERATIVE);
+                    controllerDao.update(controller);
+                }
+                
+            }
+        }
+        //optNurse.setProcessState("END");
+        Controller controller = controllerDao.getControllerById(optNurse
+                .getRegOptId() != null ? optNurse.getRegOptId() : "");
+        
+        BasRegOpt regOpt = basRegOptDao.searchRegOptById(optNurse
+                .getRegOptId() != null ? optNurse.getRegOptId() : "");
+        
+        if (controller == null) {
+            resp.setResultCode("70000001");
+            resp.setResultMessage("手术控制信息不存在!");
+            return resp;
+        }
+        DocOptNurse oldOptNurse = searchOptNurseById(optNurse.getOptNurseId() != null ? optNurse
+                .getOptNurseId() : "");
+        if (oldOptNurse == null) {
+            resp.setResultCode("40000002");
+            resp.setResultMessage("护理记录单不存在");
+            return resp;
+        }
+        optNurse.setPreCircunurseId(StringUtils.getStringByList(optNurse.getPreCircunurseList()));
+        optNurse.setMidCircunurseId(StringUtils.getStringByList(optNurse.getMidCircunurseList()));
+        optNurse.setPostCircunurseId(StringUtils.getStringByList(optNurse.getPostCircunurseList()));
+        optNurse.setInstrnuseId(StringUtils.getStringByList(optNurse.getInstrnuseList()));
+        optNurse.setCircunurseId(StringUtils.getStringByList(optNurse.getCircunurseList()));
+        optNurse.setOptBody(StringUtils.getStringByList(optNurse.getOptBodyList()));
+        optNurse.setOperDoctor(StringUtils.getStringByList(optNurse.getOperDoctorList()));
+        optNurse.setShiftCircunurseId(StringUtils.getStringByList(optNurse.getShiftCircunurseList()));
+        optNurse.setShiftInstrnuseId(StringUtils.getStringByList(optNurse.getShiftInstrnuseList()));
+        docOptNurseDao.updateByPrimaryKeySelective(optNurse);
+        
+        if (optNurseItem.getInstrubillItems() != null && optNurseItem.getInstrubillItems().size() > 0)
+        {
+            for (int i = 0; i < optNurseItem.getInstrubillItems().size(); i++) 
+            {
+                DocInstrubillItem docInstrubillItem = optNurseItem.getInstrubillItems().get(i);
+                if(null != docInstrubillItem.getInaddInt() && docInstrubillItem.getInaddInt().intValue() >0)
+                {
+                	docInstrubillItem.setInadd(docInstrubillItem.getInaddInt().intValue() + "");
+                }
+                docInstrubillItemDao.updateInstrubillItem(docInstrubillItem);
+            }
+        }
+        BasUser user = UserUtils.getUserCache();
+        LogUtils.saveOperateLog(regOpt.getRegOptId(), "4",
+            "2", "手术护理单修改", JsonType.jsonType(optNurseItem),user, getBeid());
+            
+        resp.setResultCode("1");
+        resp.setResultMessage("护理器械单修改成功!");
+        return resp;
+    }
 }

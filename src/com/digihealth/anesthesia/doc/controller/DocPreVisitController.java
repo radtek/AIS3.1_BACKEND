@@ -118,6 +118,77 @@ public class DocPreVisitController extends BaseController {
         logger.info("-------------------end searchPreVisitByRegOptId-------------------");
         return resp.getJsonStr();
     }
+
+    @RequestMapping(value = "/searchPreVisitByRegOptIdSYBX")
+    @ResponseBody
+	@ApiOperation(value="根据手术ID获取术前访视单信息",httpMethod="POST",notes="根据手术ID获取术前访视单信息")
+    public String searchPreVisitByRegOptIdSYBX(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
+        logger.info("------------------begin searchPreVisitByRegOptIdSYBX------------------");
+        ResponseValue resp = new ResponseValue();
+        String regOptId = map.get("regOptId") != null ? map.get("regOptId").toString() : "";
+        PreVisitFormBean preVisitFormBean = docPreVisitService.searchPreVisitByRegOptId(regOptId);
+        DocPreVisit preVisit = preVisitFormBean.getPreVisit();
+        if (preVisit == null) {
+            resp.setResultCode("30000001");
+            resp.setResultMessage("术前访视单不存在!");
+            return resp.getJsonStr();
+        }
+        
+        //获取到麻醉医生名字
+        if (null == preVisit.getAnaestheitistId())
+        {
+            DispatchFormbean dispatchPeople =
+                basDispatchService.getDispatchOperByRegOptId(map.get("regOptId").toString());
+            if (dispatchPeople != null)
+            {
+                preVisit.setAnaestheitistId(dispatchPeople.getAnesthetistId() != null ? dispatchPeople.getAnesthetistId() : "");
+                preVisit.setAnaestheitistName(dispatchPeople.getAnesthetistName() != null ? dispatchPeople.getAnesthetistName() : "");
+            }
+        }
+        
+        //获取手术基本信息
+        SearchRegOptByIdFormBean searchRegOptByIdFormBean =
+            basRegOptService.searchApplicationById(map.get("regOptId").toString());
+        if (searchRegOptByIdFormBean == null) {
+            resp.setResultCode("30000001");
+            resp.setResultMessage("手术基本信息不存在!");
+            return resp.getJsonStr();
+        }
+        
+        List<String> anaseMethodList = new ArrayList<String>();
+        String[] code = null;
+        if (null == preVisit.getDesignedAnaesCode())
+        {
+            if (StringUtils.isNotBlank(searchRegOptByIdFormBean.getDesignedAnaesMethodCode()))
+            {
+                code = searchRegOptByIdFormBean.getDesignedAnaesMethodCode().split(",");
+            }
+            preVisit.setDesignedAnaesCode(searchRegOptByIdFormBean.getDesignedAnaesMethodCode());
+            preVisit.setDesignedAnaes(searchRegOptByIdFormBean.getDesignedAnaesMethodName());
+        }
+        else
+        {
+            code = preVisit.getDesignedAnaesCode().split(",");
+        }
+        if (null != code && code.length > 0)
+        {
+            for (int i = 0; i < code.length; i++)
+            {
+                anaseMethodList.add(code[i]);
+            }
+        }
+        preVisit.setDesignedAnaesList(anaseMethodList);
+            
+        //设置页面选择框的值
+        setMapValue(preVisit);
+//        setMapValueSYBX(preVisit);
+        
+		resp.put("result", "true");
+		resp.put("preVisitItem", preVisit);
+		resp.put("regOptItem", searchRegOptByIdFormBean);
+        logger.info("-------------------end searchPreVisitByRegOptIdSYBX-------------------");
+        return resp.getJsonStr();
+    }
     
     /**
      * @discription 根据手术ID获取术前访视单信息(南华局点)
@@ -182,6 +253,7 @@ public class DocPreVisitController extends BaseController {
             
         //设置页面选择框的值
         setMapValue(preVisit);
+//        setMapValueSYBX(preVisit);
         
         DocPrevisitAccessexam accessexam = preVisitFormBean.getPrevisitAccessexam();
         if ("NO_END".equals(preVisit.getProcessState()))
@@ -521,8 +593,15 @@ public class DocPreVisitController extends BaseController {
         
         JSONObject jasonObject21 = JSONObject.fromObject(preVisit.getAssistMeasure());
         preVisit.setAssistMeasureMap(null == jasonObject21 ? new HashMap<String, Object>() : jasonObject21);
+        
+        JSONObject jasonObject22 = JSONObject.fromObject(preVisit.getDrugAbuseCond());
+        preVisit.setDrugAbuseCondMap(null == jasonObject22 ? new HashMap<String, Object>() : jasonObject22);
     }
-    
+
+//    private void setMapValueSYBX(DocPreVisit preVisit){
+//        JSONObject jasonObject1 = JSONObject.fromObject(preVisit.getDrugAddictionCond());
+//        preVisit.setDrugAddictionCondMap(null == jasonObject1 ? new HashMap<String, Object>() : jasonObject1);
+//    }
     /**
      * 
      * @discription 修改术前访视单

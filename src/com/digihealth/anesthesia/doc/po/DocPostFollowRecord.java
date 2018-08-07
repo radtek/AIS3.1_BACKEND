@@ -237,6 +237,11 @@ public class DocPostFollowRecord {
     private String heartrate;
 
     /**
+     * 术后医嘱标识
+     */
+    private String postDoctorAdviceFlag;
+
+    /**
      * 术后医嘱
      */
     private String postDoctorAdvice;
@@ -630,6 +635,14 @@ public class DocPostFollowRecord {
 
 	public void setHeartrate(String heartrate) {
 		this.heartrate = heartrate;
+	}
+
+	public String getPostDoctorAdviceFlag() {
+		return postDoctorAdviceFlag;
+	}
+
+	public void setPostDoctorAdviceFlag(String postDoctorAdviceFlag) {
+		this.postDoctorAdviceFlag = postDoctorAdviceFlag;
 	}
 
 	public String getPostDoctorAdvice() {

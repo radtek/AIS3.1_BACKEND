@@ -316,4 +316,161 @@ public class EvtInEventService extends BaseService {
 	{
 	    return evtInEventDao.selectByPrimaryKey(inEventId);
 	}
+
+	/**
+	 * 本溪项目同一种输液不能在一个时间段内重复
+	 * @param ioevent
+	 * @param value
+	 */
+	@Transactional
+	public void saveIoeventSYBX(EvtInEvent ioevent, ResponseValue value) {
+		SearchFormBean searchFormBean = new SearchFormBean();
+		searchFormBean.setDocId(ioevent.getDocId());
+		searchFormBean.setId(ioevent.getInEventId());
+		Date ioEndTime = ioevent.getEndTime();
+		if (null != ioEndTime)
+		{
+    		List<EvtInEvent> List = evtInEventDao.checkIoeventCanInsert(searchFormBean, ioevent.getIoDefId() + "");
+    		if (null != List && List.size() > 0) {
+    			for (EvtInEvent event : List) {
+    				Date ioStartTime = ioevent.getStartTime();
+    				Date startTime = event.getStartTime();
+                    Date endTime = event.getEndTime();
+                    
+                    if ((ioStartTime.getTime() < startTime.getTime() && ioEndTime.getTime() < startTime.getTime()) || ioStartTime.getTime() > endTime.getTime()) {
+                        continue;
+                    }else {
+                        value.setResultCode("10000001");
+                        value.setResultMessage("该输液在开始时间：" + DateUtils.formatDateTime(ioevent.getStartTime()) + "至结束时间：" + DateUtils.formatDateTime(ioevent.getEndTime()) + ", 已经存在持续输液情况,请勿重复添加!");
+                        return;
+                    }
+    			}
+    		}
+		}
+		
+        String inEventId = GenerateSequenceUtil.generateSequenceNo();
+        /**
+		 * 2017-10-30沈阳本溪
+		 * 将修改痕迹保存到表中
+		 */
+        DocAnaesRecord anaesRecord = docAnaesRecordDao.searchAnaesRecordById(ioevent.getDocId());
+        if(null!=anaesRecord){
+        	BasRegOpt regOpt = basRegOptDao.searchRegOptById(anaesRecord.getRegOptId());
+	        //如果当前状态不为术中时，则需要记录变更信息
+        	if(null!=regOpt && !"04".equals(regOpt.getState())){
+	        	if (StringUtils.isNotBlank(ioevent.getInEventId())) {
+	        		EvtInEvent oldEvt = evtInEventDao.selectByPrimaryKey(ioevent.getInEventId());
+	    			
+	    			CompareObject compare = new CompareObject();
+	    			List<ChangeValueFormbean> changeList = new ArrayList<ChangeValueFormbean>();
+	    			try {
+	    				changeList = compare.getCompareResultByFields(oldEvt, ioevent);
+	    				if(null!=changeList && changeList.size()>0){
+	    					for (ChangeValueFormbean changeValueFormbean : changeList) {
+	    						//排除非表内字段产生的差异，如medTakeWayIdList等
+	    						Map<String,String> hisMap = compare.getColumnListByTableName("evt_inevent");
+	    						if(hisMap.containsKey(changeValueFormbean.getModProperty())){
+	    							EvtAnaesModifyRecord evtModRd = new EvtAnaesModifyRecord();
+	    							evtModRd.setBeid(getBeid());
+	    							evtModRd.setIp(getIP());
+	    							evtModRd.setOperId(getUserName());
+	    							evtModRd.setEventId(ioevent.getInEventId());
+	    							evtModRd.setRegOptId(anaesRecord.getRegOptId());
+	    							evtModRd.setModifyDate(new Date());
+	    							evtModRd.setModTable("evt_inevent(入量药品事件)");
+	    							evtModRd.setOperModule("术中输液("+basIoDefinationDao.selectByPrimaryKey(ioevent.getIoDefId()).getName()+")");
+	    							evtModRd.setId(GenerateSequenceUtil.generateSequenceNo());
+	    							evtModRd.setModProperty(compare.getColumnContentByProperty("evt_inevent", changeValueFormbean.getModProperty()));
+	    							evtModRd.setOldValue(changeValueFormbean.getOldValue());
+	    							evtModRd.setNewValue(changeValueFormbean.getNewValue());
+	    							evtModRd.setRemark("修改");
+	    							evtAnaesModifyRecordDao.insert(evtModRd);
+	    						}
+	    					}
+	    				}
+	    			} catch (Exception e) {
+	    				logger.info("------getCompareResultByFields-----"+Exceptions.getStackTraceAsString(e));
+	    				throw new CustomException(Exceptions.getStackTraceAsString(e));
+	    			}
+	        	}else{
+	        		EvtAnaesModifyRecord evtModRd = new EvtAnaesModifyRecord();
+	    			evtModRd.setBeid(getBeid());
+	    			evtModRd.setIp(getIP());
+	    			evtModRd.setOperId(getUserName());
+	    			evtModRd.setEventId(inEventId);
+	    			evtModRd.setRegOptId(anaesRecord.getRegOptId());
+	    			evtModRd.setModifyDate(new Date());
+	    			evtModRd.setModTable("evt_inevent(入量药品事件)");
+					evtModRd.setOperModule("术中输液");
+	    			evtModRd.setId(GenerateSequenceUtil.generateSequenceNo());
+	    			evtModRd.setModProperty("新增输液("+basIoDefinationDao.selectByPrimaryKey(ioevent.getIoDefId()).getName()+")");
+	    			StringBuffer buffer = new StringBuffer();
+					buffer.append("开始时间:"+DateUtils.formatDateTime(ioevent.getStartTime()));
+					if(null!=ioevent.getDosageAmount() && ioevent.getDosageAmount()>0){
+						buffer.append("; 数量:"+ioevent.getDosageAmount());
+					}
+					evtModRd.setNewValue(buffer.toString());
+	    			evtModRd.setRemark("新增");
+	    			evtAnaesModifyRecordDao.insert(evtModRd);
+	        	}
+	        }
+        }
+
+		if (StringUtils.isNotBlank(ioevent.getInEventId())) {
+			evtInEventDao.updateByPrimaryKeySelective(ioevent);
+		} else {
+			ioevent.setInEventId(inEventId);
+			evtInEventDao.insert(ioevent);
+		}
+		LogUtils.saveOperateLog(ioevent.getDocId(), LogUtils.OPT_TYPE_INFO_SAVE, LogUtils.OPT_MODULE_INTERFACE, "术中入量事件保存", JsonType.jsonType(ioevent), UserUtils.getUserCache(), getBeid());
+	}
+
+	@Transactional
+	public void batchSaveIoeventSYBX(List<EvtInEvent> ioeventList, ResponseValue value) {
+		if (null != ioeventList && ioeventList.size() > 0) {
+			List<String> successList = new ArrayList<String>();
+			List<String> failList = new ArrayList<String>();
+			for (EvtInEvent ioevent : ioeventList) {
+				SearchFormBean searchFormBean = new SearchFormBean();
+				searchFormBean.setDocId(ioevent.getDocId());
+				searchFormBean.setId(ioevent.getInEventId());
+				Date ioEndTime = ioevent.getEndTime();
+				boolean flag = false;
+				if (null != ioEndTime)
+				{
+    				List<EvtInEvent> List = evtInEventDao.checkIoeventCanInsert(searchFormBean, ioevent.getIoDefId() + "");
+    				for (EvtInEvent event : List) {
+    					
+    					if ((ioevent.getStartTime().compareTo(event.getStartTime()) < 0 
+                        		&& ioEndTime.compareTo(event.getStartTime()) < 0) || ioevent.getStartTime().compareTo(event.getEndTime()) > 0) {
+                            continue;
+                        }else {
+    						// value.setResultCode("10000001");
+    						// value.setResultMessage("该输液在开始时间：" +
+    						// ioevent.getStarttime() + "至结束时间：" +
+    						// ioevent.getEndtime()
+    						// + ", 已经存在持续输液情况,请勿重复添加!");
+    						// return;
+    						flag = true;
+    					}
+    				}
+				}
+
+				BasIoDefination ioDefination = basIoDefinationDao.selectByPrimaryKey(ioevent.getIoDefId() + "");
+
+				if (flag) {
+					failList.add(ioDefination.getName());
+					continue;
+				}
+
+				if (StringUtils.isBlank(ioevent.getInEventId())) {
+					ioevent.setInEventId(GenerateSequenceUtil.generateSequenceNo());
+					evtInEventDao.insert(ioevent);
+					successList.add(ioDefination.getName());
+				}
+			}
+			value.put("success", successList);
+			value.put("fail", failList);
+		}
+	}
 }

@@ -77,6 +77,12 @@ public class DocPreVisit {
 	private String allergicCond;
 
 	/**
+	 * 药物滥用史
+	 */
+	@ApiModelProperty(value = "药物滥用史")
+	private String drugAbuseCond;
+
+	/**
 	 * 药物使用史
 	 */
 	@ApiModelProperty(value = "药物使用史")
@@ -786,6 +792,9 @@ public class DocPreVisit {
     @ApiModelProperty(value = "麻醉辅助措施")
     private Map<String, Object> assistMeasureMap;
     
+    @ApiModelProperty(value = "药物滥用史")
+    private Map<String, Object> drugAbuseCondMap;
+    
     /**
      * 器官异常等级：1 轻，2中 ，3重
      */
@@ -812,7 +821,15 @@ public class DocPreVisit {
         this.assistMeasureMap = assistMeasureMap;
     }
 
-    public Map<String, Object> getAnaesCondMap()
+	public Map<String, Object> getDrugAbuseCondMap() {
+		return drugAbuseCondMap;
+	}
+
+	public void setDrugAbuseCondMap(Map<String, Object> drugAbuseCondMap) {
+		this.drugAbuseCondMap = drugAbuseCondMap;
+	}
+
+	public Map<String, Object> getAnaesCondMap()
     {
         return anaesCondMap;
     }
@@ -2060,6 +2077,14 @@ public class DocPreVisit {
 
 	public void setInfectiousHave(Integer infectiousHave) {
 		this.infectiousHave = infectiousHave;
+	}
+
+	public String getDrugAbuseCond() {
+		return drugAbuseCond;
+	}
+
+	public void setDrugAbuseCond(String drugAbuseCond) {
+		this.drugAbuseCond = drugAbuseCond;
 	}
 
 }

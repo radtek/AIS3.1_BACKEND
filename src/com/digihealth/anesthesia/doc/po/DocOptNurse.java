@@ -63,6 +63,12 @@ public class DocOptNurse {
     private String bloodComponents;
 
     /**
+     * 输血签名
+     */
+    @ApiModelProperty(value = "输血签名")
+    private String bloodSign;
+
+    /**
      * 血量
      */
 	@ApiModelProperty(value = "血量")
@@ -79,6 +85,54 @@ public class DocOptNurse {
 
 	@ApiModelProperty(value = "")
     private String circunurseId;
+
+    /**
+     * 术中抗生素
+     */
+    @ApiModelProperty(value = "术中抗生素")
+    private Integer antibiotic;
+
+    /**
+     * 抗生素使用签名
+     */
+    @ApiModelProperty(value = "抗生素使用签名")
+    private String antibioticSign;
+
+    /**
+     * 抗生素使用时间
+     */
+    @ApiModelProperty(value = "抗生素使用时间")
+    private Date antibioticTime;
+
+    /**
+     * 导尿添加签名
+     */
+    @ApiModelProperty(value = "导尿添加签名")
+    private String catheterizaSign;
+
+    /**
+     * 导尿添加时间
+     */
+    @ApiModelProperty(value = "导尿添加时间")
+    private Date catheterizaTime;
+
+    /**
+     * 术后病理添加签名
+     */
+    @ApiModelProperty(value = "术后病理添加签名")
+    private String postOperPathSign;
+
+    /**
+     * 术后病理添加时间
+     */
+    @ApiModelProperty(value = "术后病理添加时间")
+    private Date postOperPathTime;
+
+    /**
+     * 输血时间
+     */
+    @ApiModelProperty(value = "输血时间")
+    private Date bloodTime;
 
     /**
      * 医生确认
@@ -421,6 +475,9 @@ public class DocOptNurse {
     
     @ApiModelProperty(value = "手术医生集合")
     private List<String> operDoctorList;
+    
+    @ApiModelProperty(value = "输血签名集合")
+    private List<String> bloodSignList;
     
     @ApiModelProperty(value = "负极板位置")
     private Map<String, Object> negativePlateMap;
@@ -1185,6 +1242,86 @@ public class DocOptNurse {
 	public void setPostInstrnurseList(List<String> postInstrnurseList)
 	{
 		this.postInstrnurseList = postInstrnurseList;
+	}
+
+	public String getBloodSign() {
+		return bloodSign;
+	}
+
+	public void setBloodSign(String bloodSign) {
+		this.bloodSign = bloodSign;
+	}
+
+	public List<String> getBloodSignList() {
+		return bloodSignList;
+	}
+
+	public void setBloodSignList(List<String> bloodSignList) {
+		this.bloodSignList = bloodSignList;
+	}
+
+	public Integer getAntibiotic() {
+		return antibiotic;
+	}
+
+	public void setAntibiotic(Integer antibiotic) {
+		this.antibiotic = antibiotic;
+	}
+
+	public String getAntibioticSign() {
+		return antibioticSign;
+	}
+
+	public void setAntibioticSign(String antibioticSign) {
+		this.antibioticSign = antibioticSign;
+	}
+
+	public Date getAntibioticTime() {
+		return antibioticTime;
+	}
+
+	public void setAntibioticTime(Date antibioticTime) {
+		this.antibioticTime = antibioticTime;
+	}
+
+	public String getCatheterizaSign() {
+		return catheterizaSign;
+	}
+
+	public void setCatheterizaSign(String catheterizaSign) {
+		this.catheterizaSign = catheterizaSign;
+	}
+
+	public Date getCatheterizaTime() {
+		return catheterizaTime;
+	}
+
+	public void setCatheterizaTime(Date catheterizaTime) {
+		this.catheterizaTime = catheterizaTime;
+	}
+
+	public String getPostOperPathSign() {
+		return postOperPathSign;
+	}
+
+	public void setPostOperPathSign(String postOperPathSign) {
+		this.postOperPathSign = postOperPathSign;
+	}
+
+	public Date getPostOperPathTime() {
+		return postOperPathTime;
+	}
+
+	public void setPostOperPathTime(Date postOperPathTime) {
+		this.postOperPathTime = postOperPathTime;
+	}
+
+	public Date getBloodTime() {
+		return bloodTime;
+	}
+
+	public void setBloodTime(Date bloodTime) {
+		this.bloodTime = bloodTime;
 	}
     
 }

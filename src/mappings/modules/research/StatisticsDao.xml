@@ -404,7 +404,7 @@ and t1.state in ('06','07') and t1.beid = #{beid} and t1.isLocalAnaes = '0' and 
 		(SELECT GROUP_CONCAT(NAME) FROM evt_real_anaes_method sram WHERE d.anaRecordId = sram.`docId`  ORDER BY sram.`anaMedId` ),
 		(SELECT designedAnaesMethodName FROM doc_opt_nurse_record t WHERE t.regOptId = b.regOptId))) real_anaes_method,
 		(SELECT bas_user.`name` FROM bas_dispatch p,bas_user WHERE p.regOptId = b.regOptId AND p.anesthetistId = bas_user.userName AND bas_user.`beid` = #{searchFormBean.beid}) anaes_doc FROM bas_reg_opt b,doc_anaes_record d   
-            WHERE b.regOptId=d.regOptId AND b.state IN ('06','05') AND b.beid = #{searchFormBean.beid} and d.analgesicMethod is not null and d.analgesicMethod != '') anaesRecord
+            WHERE b.regOptId=d.regOptId AND b.state IN ('06','05') AND b.beid = #{searchFormBean.beid} and d.analgesicMethod is not null and d.analgesicMethod != '' and d.analgesicMethod != '0') anaesRecord
         WHERE 1 = 1
         <if test="filters != null">
             <foreach collection="filters" item="filter" open=" " close=" " >
@@ -447,7 +447,7 @@ and t1.state in ('06','07') and t1.beid = #{beid} and t1.isLocalAnaes = '0' and 
 			 (SELECT bas_user.`name` 
 			FROM bas_dispatch p,bas_user WHERE p.regOptId = b.regOptId AND p.anesthetistId = bas_user.userName AND bas_user.`beid` = #{searchFormBean.beid}) anaes_doc 
 			FROM bas_reg_opt b,doc_anaes_record d 
-			WHERE b.regOptId=d.regOptId AND b.state IN ('06','05') AND b.beid = #{searchFormBean.beid} and d.analgesicMethod is not null and d.analgesicMethod != '') anaesRecord 
+			WHERE b.regOptId=d.regOptId AND b.state IN ('06','05') AND b.beid = #{searchFormBean.beid} and d.analgesicMethod is not null and d.analgesicMethod != ''  and d.analgesicMethod != '0') anaesRecord 
 			WHERE 1 = 1  
 			<if test="filters != null">
 	            <foreach collection="filters" item="filter" open=" " close=" " >

@@ -179,6 +179,7 @@ public class DocPreVisitService extends BaseService {
         preVisit.setOperHisCond(String.valueOf(preVisit.getOperHisCondMap()));
         preVisit.setAnaesPunctureCond(String.valueOf(preVisit.getAnaesPunctureCondMap()));
         preVisit.setAssistMeasure(String.valueOf(preVisit.getAssistMeasureMap()));
+        preVisit.setDrugAbuseCond(String.valueOf(preVisit.getDrugAbuseCondMap()));
         
     }
 

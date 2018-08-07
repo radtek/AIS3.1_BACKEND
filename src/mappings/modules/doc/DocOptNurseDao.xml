@@ -66,6 +66,15 @@
     <result column="specimenAmount" property="specimenAmount" jdbcType="INTEGER" />
     <result column="other" property="other" jdbcType="VARCHAR" />
     <result column="anaesTime" property="anaesTime" jdbcType="TIMESTAMP" />
+    <result column="antibiotic" property="antibiotic" jdbcType="INTEGER" />
+    <result column="antibioticSign" property="antibioticSign" jdbcType="VARCHAR" />
+    <result column="antibioticTime" property="antibioticTime" jdbcType="TIMESTAMP" />
+    <result column="catheterizaSign" property="catheterizaSign" jdbcType="VARCHAR" />
+    <result column="catheterizaTime" property="catheterizaTime" jdbcType="TIMESTAMP" />
+    <result column="postOperPathSign" property="postOperPathSign" jdbcType="VARCHAR" />
+    <result column="postOperPathTime" property="postOperPathTime" jdbcType="TIMESTAMP" />
+    <result column="bloodSign" property="bloodSign" jdbcType="VARCHAR" />
+    <result column="bloodTime" property="bloodTime" jdbcType="TIMESTAMP" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -79,7 +88,9 @@
     shiftInstrnuseTime, shiftCircunurseTime, leaveToOther, electricKnife, negativePlate, 
     negativePlateOther, burning, burningPlace, burningArea, tourniquet, tourniquetPlace, 
     tourniquetPlaceOther, heatDevice, heatDeviceDetail, heatDeviceOther, stomachTube, 
-    specimen, specimenAmount, other, anaesTime
+    specimen, specimenAmount, other, anaesTime, antibiotic, antibioticSign, antibioticTime, 
+    catheterizaSign, catheterizaTime, postOperPathSign, postOperPathTime, bloodSign, 
+    bloodTime
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -116,7 +127,10 @@
       burningArea, tourniquet, tourniquetPlace, 
       tourniquetPlaceOther, heatDevice, heatDeviceDetail, 
       heatDeviceOther, stomachTube, specimen, 
-      specimenAmount, other, anaesTime)
+      specimenAmount, other, anaesTime, 
+      antibiotic, antibioticSign, antibioticTime, 
+      catheterizaSign, catheterizaTime, postOperPathSign, 
+      postOperPathTime, bloodSign, bloodTime)
     values (#{optNurseId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{specimenName,jdbcType=VARCHAR}, 
       #{infusion,jdbcType=INTEGER}, #{bleeding,jdbcType=INTEGER}, #{urine,jdbcType=INTEGER}, 
       #{bloodType,jdbcType=VARCHAR}, #{bloodComponents,jdbcType=VARCHAR}, #{blood,jdbcType=INTEGER}, 
@@ -138,7 +152,11 @@
       #{burningArea,jdbcType=VARCHAR}, #{tourniquet,jdbcType=INTEGER}, #{tourniquetPlace,jdbcType=VARCHAR}, 
       #{tourniquetPlaceOther,jdbcType=VARCHAR}, #{heatDevice,jdbcType=INTEGER}, #{heatDeviceDetail,jdbcType=VARCHAR}, 
       #{heatDeviceOther,jdbcType=VARCHAR}, #{stomachTube,jdbcType=INTEGER}, #{specimen,jdbcType=INTEGER}, 
-      #{specimenAmount,jdbcType=INTEGER}, #{other,jdbcType=VARCHAR}, #{anaesTime,jdbcType=TIMESTAMP})
+      #{specimenAmount,jdbcType=INTEGER}, #{other,jdbcType=VARCHAR}, #{anaesTime,jdbcType=TIMESTAMP}, 
+      #{antibiotic,jdbcType=INTEGER}, #{antibioticSign,jdbcType=VARCHAR}, #{antibioticTime,jdbcType=TIMESTAMP}, 
+      #{catheterizaSign,jdbcType=VARCHAR}, #{catheterizaTime,jdbcType=TIMESTAMP}, #{postOperPathSign,jdbcType=VARCHAR}, 
+      #{postOperPathTime,jdbcType=TIMESTAMP}, #{bloodSign,jdbcType=VARCHAR}, #{bloodTime,jdbcType=TIMESTAMP}
+      )
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocOptNurse" >
@@ -336,6 +354,33 @@
       <if test="anaesTime != null" >
         anaesTime,
       </if>
+      <if test="antibiotic != null" >
+        antibiotic,
+      </if>
+      <if test="antibioticSign != null" >
+        antibioticSign,
+      </if>
+      <if test="antibioticTime != null" >
+        antibioticTime,
+      </if>
+      <if test="catheterizaSign != null" >
+        catheterizaSign,
+      </if>
+      <if test="catheterizaTime != null" >
+        catheterizaTime,
+      </if>
+      <if test="postOperPathSign != null" >
+        postOperPathSign,
+      </if>
+      <if test="postOperPathTime != null" >
+        postOperPathTime,
+      </if>
+      <if test="bloodSign != null" >
+        bloodSign,
+      </if>
+      <if test="bloodTime != null" >
+        bloodTime,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="optNurseId != null" >
@@ -529,6 +574,33 @@
       </if>
       <if test="anaesTime != null" >
         #{anaesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="antibiotic != null" >
+        #{antibiotic,jdbcType=INTEGER},
+      </if>
+      <if test="antibioticSign != null" >
+        #{antibioticSign,jdbcType=VARCHAR},
+      </if>
+      <if test="antibioticTime != null" >
+        #{antibioticTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="catheterizaSign != null" >
+        #{catheterizaSign,jdbcType=VARCHAR},
+      </if>
+      <if test="catheterizaTime != null" >
+        #{catheterizaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="postOperPathSign != null" >
+        #{postOperPathSign,jdbcType=VARCHAR},
+      </if>
+      <if test="postOperPathTime != null" >
+        #{postOperPathTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bloodSign != null" >
+        #{bloodSign,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodTime != null" >
+        #{bloodTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -725,6 +797,33 @@
       <if test="anaesTime != null" >
         anaesTime = #{anaesTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="antibiotic != null" >
+        antibiotic = #{antibiotic,jdbcType=INTEGER},
+      </if>
+      <if test="antibioticSign != null" >
+        antibioticSign = #{antibioticSign,jdbcType=VARCHAR},
+      </if>
+      <if test="antibioticTime != null" >
+        antibioticTime = #{antibioticTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="catheterizaSign != null" >
+        catheterizaSign = #{catheterizaSign,jdbcType=VARCHAR},
+      </if>
+      <if test="catheterizaTime != null" >
+        catheterizaTime = #{catheterizaTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="postOperPathSign != null" >
+        postOperPathSign = #{postOperPathSign,jdbcType=VARCHAR},
+      </if>
+      <if test="postOperPathTime != null" >
+        postOperPathTime = #{postOperPathTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bloodSign != null" >
+        bloodSign = #{bloodSign,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodTime != null" >
+        bloodTime = #{bloodTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where optNurseId = #{optNurseId,jdbcType=VARCHAR}
   </update>
@@ -793,7 +892,16 @@
       specimen = #{specimen,jdbcType=INTEGER},
       specimenAmount = #{specimenAmount,jdbcType=INTEGER},
       other = #{other,jdbcType=VARCHAR},
-      anaesTime = #{anaesTime,jdbcType=TIMESTAMP}
+      anaesTime = #{anaesTime,jdbcType=TIMESTAMP},
+      antibiotic = #{antibiotic,jdbcType=INTEGER},
+      antibioticSign = #{antibioticSign,jdbcType=VARCHAR},
+      antibioticTime = #{antibioticTime,jdbcType=TIMESTAMP},
+      catheterizaSign = #{catheterizaSign,jdbcType=VARCHAR},
+      catheterizaTime = #{catheterizaTime,jdbcType=TIMESTAMP},
+      postOperPathSign = #{postOperPathSign,jdbcType=VARCHAR},
+      postOperPathTime = #{postOperPathTime,jdbcType=TIMESTAMP},
+      bloodSign = #{bloodSign,jdbcType=VARCHAR},
+      bloodTime = #{bloodTime,jdbcType=TIMESTAMP}
     where optNurseId = #{optNurseId,jdbcType=VARCHAR}
   </update>
   

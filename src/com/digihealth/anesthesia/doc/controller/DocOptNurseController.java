@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.digihealth.anesthesia.basedata.config.OperationState;
 import com.digihealth.anesthesia.basedata.formbean.DesignedOptCodes;
+import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
 import com.digihealth.anesthesia.basedata.po.BasDispatch;
+import com.digihealth.anesthesia.basedata.po.BasOperdef;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.utils.BasRegOptUtils;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
@@ -38,8 +40,10 @@ import com.digihealth.anesthesia.doc.po.DocInstrubillItem;
 import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
 import com.digihealth.anesthesia.doc.po.DocOptNurse;
 import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
+import com.digihealth.anesthesia.evt.formbean.SearchOptOperIoevent;
 import com.digihealth.anesthesia.evt.formbean.SearchRegOptByIdFormBean;
 import com.digihealth.anesthesia.evt.po.EvtOptRealOper;
+import com.digihealth.anesthesia.evt.po.EvtRealAnaesMethod;
 import com.digihealth.anesthesia.evt.service.EvtParticipantService;
 import com.digihealth.anesthesia.sysMng.formbean.UserInfoFormBean;
 import com.digihealth.anesthesia.websocket.WebSocketHandler;
@@ -325,7 +329,368 @@ public class DocOptNurseController extends BaseController {
 		logger.info("-----------------end searchOptNurseByRegOptId-----------------");
 		return resp.getJsonStr();
 	}
-	
+
+	@RequestMapping(value = "/searchOptNurseForSYBX")
+    @ResponseBody
+    @ApiOperation(value="根据手术ID获取手术清点单",httpMethod="POST",notes="根据手术ID获取手术清点单")
+    public String searchOptNurseForSYBX(@ApiParam(name="map", value ="查询参数") @RequestBody Map map) {
+        logger.info("----------------------begin searchOptNurseForSYBX-----------------------");
+        ResponseValue resp = new ResponseValue();
+        String regOptId = map.get("regOptId") != null ? map.get("regOptId").toString() : "";
+        
+        DocOptNurse optNurse = docOptNurseService.searchOptNurseByRegOptId(regOptId);
+        if (optNurse == null)
+        {
+            resp.setResultCode("40000002");
+            resp.setResultMessage("护理记录单不存在");
+            return resp.getJsonStr();
+        }
+        
+        List<DocInstrubillItem> instrubillItem = docInstrubillItemService.searchInstrubillItemByRegOptId(regOptId, null);
+        if (null != instrubillItem && instrubillItem.size() > 0)
+        {
+            for (DocInstrubillItem dib : instrubillItem)
+            {
+                dib.setInaddInt(null != dib.getInadd() ? Integer.parseInt(dib.getInadd()) : 0);
+            }
+        }
+        
+        SearchRegOptByIdFormBean searchRegOptByIdFormBean = basRegOptService.searchApplicationById(regOptId);
+        
+        DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+        SearchFormBean searchBean = new SearchFormBean();
+        searchBean.setDocId(anaesRecord.getAnaRecordId());
+        String isLocalAnaes = searchRegOptByIdFormBean.getIsLocalAnaes();
+        
+        // 器械护士处理 首次进入清点单或者点击数据同步时，不从清点表中获取数据
+        List<String> instrnuseList = new ArrayList<String>();
+        if (null == optNurse.getInstrnuseId() || "1".equals(map.get("type")))
+        {
+            // 全麻时从麻醉记录单中获取到器械护士
+            if ("0".equals(isLocalAnaes))
+            {
+                searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+                searchBean.setType(EvtParticipantService.OPER_TYPE_INSTRUMENT);
+                List<UserInfoFormBean> instruNurseList = evtParticipantService.getSelectParticipantList(searchBean);
+                if (instruNurseList != null && instruNurseList.size() > 0)
+                {
+                    for (int i = 0; i < instruNurseList.size(); i++)
+                    {
+                        instrnuseList.add(instruNurseList.get(i).getId());
+                    }
+                    optNurse.setInstrnuseId(StringUtils.getStringByList(instrnuseList));
+                }
+            }
+            else
+            {
+                // 局麻时从手术排程中获取到器械护士
+                BasDispatch dispatch = basDispatchService.getDispatchOper(regOptId);
+                if (null != dispatch)
+                {
+                    if (StringUtils.isNotBlank(dispatch.getInstrnurseId1()))
+                    {
+                        instrnuseList.add(dispatch.getInstrnurseId1());
+                    }
+                    
+                    if (StringUtils.isNotBlank(dispatch.getInstrnurseId2()))
+                    {
+                        instrnuseList.add(dispatch.getInstrnurseId2());
+                    }
+                }
+            }
+        }
+        else
+        {
+            instrnuseList = StringUtils.getListByString(optNurse.getInstrnuseId());
+        }
+        optNurse.setInstrnuseList(instrnuseList);
+        
+        // 巡回护士处理 首次进入清点单或者点击数据同步时，不从清点表中获取数据
+        List<String> circunurseList = new ArrayList<String>();
+        if (null == optNurse.getCircunurseId() || "1".equals(map.get("type")))
+        {
+            // 全麻时从麻醉记录单中获取到巡回护士
+            if ("0".equals(isLocalAnaes))
+            {
+                searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+                searchBean.setType(EvtParticipantService.OPER_TYPE_TOUR);
+                List<UserInfoFormBean> circuNurseList = evtParticipantService.getSelectParticipantList(searchBean);
+                if (circuNurseList != null && circuNurseList.size() > 0)
+                {
+                    for (int i = 0; i < circuNurseList.size(); i++)
+                    {
+                        circunurseList.add(circuNurseList.get(i).getId());
+                    }
+                    optNurse.setCircunurseId(StringUtils.getStringByList(circunurseList));
+                }
+            }
+            else
+            {
+                // 局麻时从手术排程中获取到巡回护士
+                BasDispatch dispatch = basDispatchService.getDispatchOper(regOptId);
+                if (null != dispatch)
+                {
+                    if (StringUtils.isNotBlank(dispatch.getCircunurseId1()))
+                    {
+                        circunurseList.add(dispatch.getCircunurseId1());
+                    }
+                    
+                    if (StringUtils.isNotBlank(dispatch.getCircunurseId2()))
+                    {
+                        circunurseList.add(dispatch.getCircunurseId2());
+                    }
+                }
+            }
+        }
+        else
+        {
+            circunurseList = StringUtils.getListByString(optNurse.getCircunurseId());
+        }
+        optNurse.setCircunurseList(circunurseList);
+        
+        // 手术名称处理 首次进入清点单或者点击数据同步时，不从清点表中获取数据
+        List<DesignedOptCodes> operationNameList = new ArrayList<DesignedOptCodes>();
+        String operatorIds = optNurse.getOperatorId();
+        String operatorId = "";
+        String operatorName = "";
+        if (null == operatorIds || "1".equals(map.get("type")))
+        {
+            // 全麻时从麻醉记录单中获取到手术名称
+            if ("0".equals(isLocalAnaes))
+            {
+                List<EvtOptRealOper> optROList = evtOptRealOperService.searchOptRealOperList(searchBean);
+                if (optROList != null && optROList.size() > 0)
+                {
+                    for (int i = 0; i < optROList.size(); i++)
+                    {
+                        DesignedOptCodes optCode = new DesignedOptCodes();
+                        String operId = optROList.get(i).getOperDefId();
+                        BasOperdef basOperdef = basOperdefService.queryOperdefById(operId);
+                        if(null != basOperdef)
+                        {
+                            optCode.setOperDefId(operId);
+                            optCode.setName(basOperdef.getName());
+                            optCode.setPinYin(basOperdef.getPinYin());
+                            operationNameList.add(optCode);
+                            if (StringUtils.isBlank(operatorId))
+                            {
+                                operatorId = operId;
+                            }
+                            else
+                            {
+                                operatorId = operatorId + "," + operId;
+                            }
+                            
+                            if (StringUtils.isBlank(operatorName))
+                            {
+                                operatorName = basOperdef.getName();
+                            }
+                            else
+                            {
+                                operatorName = operatorName + "," + basOperdef.getName();
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            else
+            {
+                // 局麻时从手术基本信息中获取到手术名称
+                if (StringUtils.isNotBlank(searchRegOptByIdFormBean.getDesignedOptCode()))
+                {
+                    operationNameList = BasRegOptUtils.getOperDefList(searchRegOptByIdFormBean.getDesignedOptCode());
+                    operatorId = searchRegOptByIdFormBean.getDesignedOptCode();
+                    operatorName = searchRegOptByIdFormBean.getDesignedOptName();
+//                    String[] ary = searchRegOptByIdFormBean.getDesignedOptCode().split(",");
+//                    for (int i = 0; i < ary.length; i++)
+//                    {
+//                        DesignedOptCodes optCode = new DesignedOptCodes();
+//                        BasOperdef basOperdef = basOperdefService.queryOperdefById(ary[i]);
+//                        if (null != basOperdef)
+//                        {
+//                            optCode.setOperDefId(ary[i]);
+//                            optCode.setName(basOperdef.getName());
+//                            optCode.setPinYin(basOperdef.getPinYin());
+//                        }
+//                        operationNameList.add(optCode);
+//                    }
+                }
+            }
+        }
+        else if (StringUtils.isNotBlank(operatorIds))
+        {
+            operationNameList = BasRegOptUtils.getOperDefList(operatorIds);
+//            String[] ary = operatorId.split(",");
+//            for (int i = 0; i < ary.length; i++)
+//            {
+//                DesignedOptCodes optCode = new DesignedOptCodes();
+//                BasOperdef basOperdef = basOperdefService.queryOperdefById(ary[i]);
+//                if (null != basOperdef)
+//                {
+//                    optCode.setOperDefId(ary[i]);
+//                    optCode.setName(basOperdef.getName());
+//                    optCode.setPinYin(basOperdef.getPinYin());
+//                }
+//                operationNameList.add(optCode);
+//            }
+        }
+        optNurse.setOperationNameList(operationNameList);
+        
+        // 手术体位处理
+        List<String> optBodyList = new ArrayList<String>();
+        if (null == optNurse.getOptBody() || "1".equals(map.get("type")))
+        {
+            // 全麻时从麻醉记录单获取
+            if ("0".equals(isLocalAnaes))
+            {
+                String optBodys = anaesRecord.getOptBody();
+                optBodyList = StringUtils.getListByString(optBodys);
+                optNurse.setOptBody(optBodys);
+            }
+            // 局麻时从基本信息获取
+            else
+            {
+                BasDispatch dispatch = basDispatchService.getDispatchOper(regOptId);
+                optBodyList.add(dispatch.getOptBody());
+            }
+        }
+        else
+        {
+            optBodyList = StringUtils.getListByString(optNurse.getOptBody());
+        }
+        optNurse.setOptBodyList(optBodyList);
+        
+        // 麻醉方法处理
+        List<String> anaesMethodList = new ArrayList<String>();
+        if (null == optNurse.getAnaesMethodId() || "1".equals(map.get("type")))
+        {
+            if ("0".equals(isLocalAnaes))
+            {
+                List<EvtRealAnaesMethod> realAnaesMethodList =
+                    evtRealAnaesMethodService.searchRealAnaesMethodList(searchBean);
+                if (null != realAnaesMethodList && realAnaesMethodList.size() > 0)
+                {
+                    for (int i = 0; i < realAnaesMethodList.size(); i++)
+                    {
+                        anaesMethodList.add(realAnaesMethodList.get(i).getAnaMedId());
+                    }
+                    optNurse.setAnaesMethodId(StringUtils.getStringByList(anaesMethodList));
+                }
+            }
+            else
+            {
+                // 局麻从手术基本信息中获取到麻醉方法
+                anaesMethodList = StringUtils.getListByString(searchRegOptByIdFormBean.getDesignedAnaesMethodCode());
+            }
+        }
+        else
+        {
+            anaesMethodList = StringUtils.getListByString(optNurse.getAnaesMethodId());
+        }
+        optNurse.setAnaesMethodList(anaesMethodList);
+        
+        if ((null == optNurse.getInOperRoomTime() && "0".equals(isLocalAnaes)) || "1".equals(map.get("type")))
+        {
+            String inOperRoomTime = anaesRecord.getInOperRoomTime();
+            
+            if (null != inOperRoomTime && null != DateUtils.getParseTime(inOperRoomTime))
+            {
+                optNurse.setInOperRoomTime(DateUtils.getParseTime(inOperRoomTime));
+            }
+        }
+        
+        if ((null == optNurse.getOutOperRoomTime() && "0".equals(isLocalAnaes)) || "1".equals(map.get("type")))
+        {
+            String outOperRoomTime = anaesRecord.getOutOperRoomTime();
+            
+            if (null != outOperRoomTime && null != DateUtils.getParseTime(outOperRoomTime))
+            {
+                optNurse.setOutOperRoomTime(DateUtils.getParseTime(outOperRoomTime));
+            }
+        }
+        
+        // 血型列表
+        List<SysCodeFormbean> bloodTypeList = basSysCodeService.searchSysCodeByGroupId("blood_type", getBeid());
+        searchBean.setSubType("1");
+        List<SearchOptOperIoevent> transfusionList = evtInEventService.searchIoeventList(searchBean);
+        searchBean.setSubType("2");
+        List<SearchOptOperIoevent> bloodList = evtInEventService.searchIoeventList(searchBean);
+        
+        //全麻或者数据同步时，从麻醉记录单获取尿量和血型
+        if ("0".equals(isLocalAnaes) || "1".equals(map.get("type")))
+        {
+            if (anaesRecord != null) {
+                Integer bleeding = evtEgressService.getEgressCountValueByIoDefName("出血量", anaesRecord.getAnaRecordId())==null?0:evtEgressService.getEgressCountValueByIoDefName("出血量", anaesRecord.getAnaRecordId());
+                optNurse.setBleeding(bleeding); //失血量
+                Integer urine = evtEgressService.getEgressCountValueByIoDefName("尿量", anaesRecord.getAnaRecordId()) == null ?0:evtEgressService.getEgressCountValueByIoDefName("尿量", anaesRecord.getAnaRecordId());
+                optNurse.setUrine(urine);    //尿量
+                Integer infusion = evtInEventService.getIoeventCountValueByIoDef(anaesRecord.getAnaRecordId(),null,null) == null?0:evtInEventService.getIoeventCountValueByIoDef(anaesRecord.getAnaRecordId(),null,null);
+                optNurse.setInfusion(infusion);      //输液
+            }
+            
+            if (null != bloodList && bloodList.size() > 0)
+            {
+                for (SearchOptOperIoevent searchOptOperIoevent : bloodList)
+                {
+                    if (StringUtils.isNotBlank(searchOptOperIoevent.getBlood()))
+                    {
+                        boolean flag = false;
+                        for (SysCodeFormbean scf : bloodTypeList)
+                        {
+                            if (scf.getCodeName().equals(searchOptOperIoevent.getBlood()))
+                            {
+                                optNurse.setBloodType(scf.getCodeValue());
+                                flag = true;
+                                break;
+                            } 
+                        }
+                        if (flag)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 点击数据同步时 需要将数据更新到数据库中
+        if ("1".equals("type"))
+        {
+            OptNurseInstrubillItemFormbean optNurseItem = new OptNurseInstrubillItemFormbean();
+            optNurseItem.setOptNurse(optNurse);
+            docOptNurseService.updateOptNurse(optNurseItem);
+        }
+        
+        // 局麻手术第一次进入手术室时，需要将手术状态改为术中
+        if ("1".equals(isLocalAnaes) && null == optNurse.getInOperRoomTime())
+        {
+            controllerService.changeControllerState(searchRegOptByIdFormBean.getRegOptId(), OperationState.SURGERY);
+            optNurse.setInOperRoomTime(new Date());
+            OptNurseInstrubillItemFormbean optNurseItem = new OptNurseInstrubillItemFormbean();
+            optNurseItem.setOptNurse(optNurse);
+            docOptNurseService.updateOptNurse(optNurseItem);
+            
+            // 将消息推送到手术室大屏
+            BasRegOpt regOpt = basRegOptService.searchRegOptById(regOptId);
+            String bedStr = StringUtils.isNotBlank(regOpt.getBed()) == true ? regOpt.getBed() + "床的" : "";
+            WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName() + regOpt.getRegionName() + bedStr
+                + regOpt.getName() + "开始手术");
+        }
+        optNurse.setBloodSignList(StringUtils.getListByString(optNurse.getBloodSign()));
+        
+        
+        resp.put("result", "true");
+        resp.put("optNurseItem", optNurse);
+        resp.put("instrubillItem", instrubillItem);
+        resp.put("searchRegOptByIdFormBean", searchRegOptByIdFormBean);
+        resp.put("bloodTypeList", bloodTypeList);
+        resp.put("transfusionList", transfusionList);
+        resp.put("bloodList", bloodList);
+        
+        logger.info("---------------------------end searchOptNurseByRegOptId------------------------");
+        return resp.getJsonStr();
+    }
     /**
      * 
      * @discription 根据手术ID获取手术护理(永兴人民)
@@ -524,6 +889,111 @@ public class DocOptNurseController extends BaseController {
 		logger.info("-----------------end updateOptNurse-----------------");
 		return resp.getJsonStr();
 	}
+
+    @RequestMapping(value = "/updateOptNurseForSYBX")
+    @ResponseBody
+    @ApiOperation(value="修改手术清点单",httpMethod="POST",notes="修改手术清点单")
+    public String updateOptNurseForSYBX(@ApiParam(name="optNurseFormBean", value ="修改参数") @RequestBody OptNurseInstrubillItemFormbean optNurseFormBean) 
+    {
+        logger.info("-------------------------begin updateOptNurseForSYBX---------------------------------");
+        ResponseValue resp = new ResponseValue();
+        DocOptNurse optNurse = optNurseFormBean.getOptNurse();
+        if (optNurse == null)
+        {
+            resp.setResultCode("40000002");
+            resp.setResultMessage("护理记录单不存在");
+            return resp.getJsonStr();
+        }
+        String regOptId = optNurse.getRegOptId() != null ? optNurse.getRegOptId() : "";
+        DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+        BasRegOpt regOpt = basRegOptService.searchRegOptById(regOptId);
+        optNurse.setInstrnuseId(StringUtils.getStringByList(optNurse.getInstrnuseList()));
+        optNurse.setCircunurseId(StringUtils.getStringByList(optNurse.getCircunurseList()));
+        optNurse.setBloodSign(StringUtils.getStringByList(optNurse.getBloodSignList()));
+        List<DesignedOptCodes> operationNameList = optNurse.getOperationNameList();
+        String operatorId = "";
+        String operatorName = "";
+        if (null != operationNameList && operationNameList.size() > 0)
+        {
+            for (DesignedOptCodes designedOptCode : operationNameList)
+            {
+                if (StringUtils.isBlank(operatorId))
+                {
+                    operatorId = designedOptCode.getOperDefId(); 
+                }
+                else
+                {
+                    operatorId = operatorId + "," + designedOptCode.getOperDefId();
+                }
+                
+                if (StringUtils.isBlank(operatorName))
+                {
+                    operatorName = designedOptCode.getName();
+                }
+                else
+                {
+                    operatorName = operatorName + "," + designedOptCode.getName();
+                }
+            }
+        }
+        optNurse.setOperatorId(operatorId);
+        optNurse.setOperatorName(operatorName);
+        
+        optNurse.setOptBody(StringUtils.getStringByList(optNurse.getOptBodyList()));
+        optNurse.setAnaesMethodId(StringUtils.getStringByList(optNurse.getAnaesMethodList()));
+        
+        optNurse.setNegativePlate(String.valueOf(optNurse.getNegativePlateMap()));
+        optNurse.setTourniquetPlace(String.valueOf(optNurse.getTourniquetPlaceMap()));
+        optNurse.setHeatDeviceDetail(String.valueOf(optNurse.getHeatDeviceMap()));
+        
+        // 局麻手术时，提交护理单需要将手术状态改为术后
+        if (1 == regOpt.getIsLocalAnaes() && "END".equals(optNurse.getProcessState()))
+        {
+            controllerService.changeControllerState(regOptId, OperationState.POSTOPERATIVE);
+            
+            String leaveTo = "";
+            // 将消息推送到手术室大屏
+            if (null != optNurse.getLeaveTo())
+            {
+                if (1 == optNurse.getLeaveTo())
+                {
+                    leaveTo = "病房";
+                }
+                
+                if (2 == optNurse.getLeaveTo())
+                {
+                    leaveTo = "PACU";
+                }
+                
+                if (3 == optNurse.getLeaveTo())
+                {
+                    leaveTo = "ICU";
+                }
+                
+                if (4 == optNurse.getLeaveTo())
+                {
+                    leaveTo = "死亡";
+                }
+            }
+            
+            WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName() + regOpt.getRegionName() + regOpt.getBed()
+                + regOpt.getName() + "手术已结束,去往" + leaveTo);
+            
+            // 获取麻醉记录单信息，局麻时将手术开始时间和结束时间写入到麻醉记录单中
+            anaesRecord.setInOperRoomTime(DateUtils.formatDateTime(optNurse.getInOperRoomTime()));
+            anaesRecord.setOperStartTime(DateUtils.formatDateTime(optNurse.getInOperRoomTime()));
+            anaesRecord.setOperEndTime(DateUtils.formatDateTime(optNurse.getOutOperRoomTime()));
+            anaesRecord.setOutOperRoomTime(DateUtils.formatDateTime(optNurse.getOutOperRoomTime()));
+            anaesRecord.setOptBody(optNurse.getOptBody());
+            anaesRecord.setLeaveTo(optNurse.getLeaveTo()+"");
+            docAnaesRecordService.saveAnaesRecord(anaesRecord);
+        }
+        optNurseFormBean.setOptNurse(optNurse);
+        resp = docOptNurseService.updateOptNurseForSYBX(optNurseFormBean);
+        
+        logger.info("--------------------------end updateOptNurseForSYBX----------------------------");
+        return resp.getJsonStr();
+    }
 
 	/**
 	 * 

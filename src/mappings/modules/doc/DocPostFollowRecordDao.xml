@@ -44,6 +44,7 @@
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="docDate" property="docDate" jdbcType="VARCHAR" />
     <result column="heartrate" property="heartrate" jdbcType="VARCHAR" />
+    <result column="postDoctorAdviceFlag" property="postDoctorAdviceFlag" jdbcType="VARCHAR" />
     <result column="postDoctorAdvice" property="postDoctorAdvice" jdbcType="VARCHAR" />
     <result column="postDoctorAdviceOther" property="postDoctorAdviceOther" jdbcType="VARCHAR" />
   </resultMap>
@@ -55,7 +56,7 @@
     hoarseness, throatSore, cyclingStability, cognitiveDisorders, muscleRecovery, feelingAbnormal, 
     spinalAnaesHeadache, punctureTenderness, uroschesis, urineTubeRetain, analgesicPump, 
     vasResting, vasActivity, breatheInhibi, ramsay, nauseaScore, vomitScore, itchScore, 
-    remark, docDate, heartrate, postDoctorAdvice, postDoctorAdviceOther
+    remark, docDate, heartrate, postDoctorAdviceFlag, postDoctorAdvice, postDoctorAdviceOther
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -84,7 +85,7 @@
       uroschesis, urineTubeRetain, analgesicPump, 
       vasResting, vasActivity, breatheInhibi, 
       ramsay, nauseaScore, vomitScore, 
-      itchScore, remark, docDate, heartrate, postDoctorAdvice, postDoctorAdviceOther
+      itchScore, remark, docDate, heartrate, postDoctorAdviceFlag, postDoctorAdvice, postDoctorAdviceOther
       )
     values (#{postFollowId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{bloodPressure,jdbcType=VARCHAR}, 
       #{pulse,jdbcType=VARCHAR}, #{generalExceptCase,jdbcType=VARCHAR}, #{spinalExceptCase,jdbcType=VARCHAR}, 
@@ -100,7 +101,8 @@
       #{vasResting,jdbcType=INTEGER}, #{vasActivity,jdbcType=INTEGER}, #{breatheInhibi,jdbcType=INTEGER}, 
       #{ramsay,jdbcType=INTEGER}, #{nauseaScore,jdbcType=INTEGER}, #{vomitScore,jdbcType=INTEGER}, 
       #{itchScore,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{docDate,jdbcType=VARCHAR},
-      #{heartrate,jdbcType=VARCHAR}, #{postDoctorAdvice,jdbcType=VARCHAR}, #{postDoctorAdviceOther,jdbcType=VARCHAR}
+      #{heartrate,jdbcType=VARCHAR}, #{postDoctorAdviceFlag,jdbcType=VARCHAR}, #{postDoctorAdvice,jdbcType=VARCHAR},
+      #{postDoctorAdviceOther,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -232,6 +234,9 @@
       </if>
       <if test="heartrate != null" >
         heartrate,
+      </if>
+      <if test="postDoctorAdviceFlag != null" >
+        postDoctorAdviceFlag,
       </if>
       <if test="postDoctorAdvice != null" >
         postDoctorAdvice,
@@ -366,6 +371,9 @@
       </if>
       <if test="heartrate != null" >
         #{heartrate,jdbcType=VARCHAR},
+      </if>
+      <if test="postDoctorAdviceFlag != null" >
+        #{postDoctorAdviceFlag,jdbcType=VARCHAR},
       </if>
       <if test="postDoctorAdvice != null" >
         #{postDoctorAdvice,jdbcType=VARCHAR},
@@ -502,6 +510,9 @@
       <if test="heartrate != null" >
         heartrate = #{heartrate,jdbcType=VARCHAR},
       </if>
+      <if test="postDoctorAdviceFlag != null" >
+        postDoctorAdviceFlag = #{postDoctorAdviceFlag,jdbcType=VARCHAR},
+      </if>
       <if test="postDoctorAdvice != null" >
         postDoctorAdvice = #{postDoctorAdvice,jdbcType=VARCHAR},
       </if>
@@ -555,6 +566,7 @@
       remark = #{remark,jdbcType=VARCHAR},
       docDate = #{docDate,jdbcType=VARCHAR},
       heartrate = #{heartrate,jdbcType=VARCHAR},
+      postDoctorAdviceFlag = #{postDoctorAdviceFlag,jdbcType=VARCHAR},
       postDoctorAdvice = #{postDoctorAdvice,jdbcType=VARCHAR},
       postDoctorAdviceOther = #{postDoctorAdviceOther,jdbcType=VARCHAR}
     where postFollowId = #{postFollowId,jdbcType=VARCHAR}
