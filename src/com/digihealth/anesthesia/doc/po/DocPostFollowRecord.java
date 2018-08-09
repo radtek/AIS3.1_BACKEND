@@ -9,6 +9,7 @@
 package com.digihealth.anesthesia.doc.po;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -127,6 +128,11 @@ public class DocPostFollowRecord {
     private Integer intraoperAware;
 
     /**
+     * 术中知晓详情
+     */
+    private String intraoperAwareOther;
+
+    /**
      * 意识清醒
      */
     private Integer awareness;
@@ -150,6 +156,11 @@ public class DocPostFollowRecord {
      * 认知障碍
      */
     private Integer cognitiveDisorders;
+
+    /**
+     * 认知障碍详情
+     */
+    private String cognitiveDisordersOther;
 
     /**
      * 下肢肌力恢复
@@ -250,7 +261,9 @@ public class DocPostFollowRecord {
      * 其他术后医嘱
      */
     private String postDoctorAdviceOther;
-	
+
+    @ApiModelProperty(value = "术后医嘱对象")
+    private Map<String, Object> postDoctorAdviceMap;
 	
     public String getLine1() {
 		return line1;
@@ -659,6 +672,30 @@ public class DocPostFollowRecord {
 
 	public void setPostDoctorAdviceOther(String postDoctorAdviceOther) {
 		this.postDoctorAdviceOther = postDoctorAdviceOther;
+	}
+
+	public String getIntraoperAwareOther() {
+		return intraoperAwareOther;
+	}
+
+	public void setIntraoperAwareOther(String intraoperAwareOther) {
+		this.intraoperAwareOther = intraoperAwareOther;
+	}
+
+	public String getCognitiveDisordersOther() {
+		return cognitiveDisordersOther;
+	}
+
+	public void setCognitiveDisordersOther(String cognitiveDisordersOther) {
+		this.cognitiveDisordersOther = cognitiveDisordersOther;
+	}
+
+	public Map<String, Object> getPostDoctorAdviceMap() {
+		return postDoctorAdviceMap;
+	}
+
+	public void setPostDoctorAdviceMap(Map<String, Object> postDoctorAdviceMap) {
+		this.postDoctorAdviceMap = postDoctorAdviceMap;
 	}
     
 }

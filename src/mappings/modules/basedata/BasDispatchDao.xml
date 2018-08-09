@@ -652,6 +652,46 @@ o.designedAnaesMethodName,(select name from bas_user where bas_user.userName = a
 		</if>
 	</select>
 	
+	<select id="searchAllDispatchListSYBX" resultType="com.digihealth.anesthesia.basedata.formbean.SearchListScheduleFormBean" >
+		SELECT o.regOptId,(select sc.codeName from bas_sys_dict_item sc 
+		where sc.groupId='operat_category' and 
+		beid = #{baseQuery.beid} and
+		sc.codeValue=o.emergency) 
+		as emergencyName,o.deptId,o.`name`,o.sex,o.age,o.ageMon,o.ageDay,o.hid,o.regionName,o.isLocalAnaes,
+		o.deptName,o.bed,o.diagnosisName,o.designedOptName,o.designedAnaesMethodName,
+		o.operatorName,o.assistantName,o.operaDate,a.startTime,a.operRoomId,m.`name` as operRoomName,
+		a.pcs,(select codeName from bas_sys_dict_item where groupId = 'pac_type' and codeValue = a.pcs and beid = #{baseQuery.beid}) as pcsName,
+		a.instrnurseId1,a.instrnurseId2,a.circunurseId1,a.circunurseId2,a.optBody,o.remark,
+		a.anesthetistId,a.circuAnesthetistId,a.perfusionDoctorId,o.operateNumber
+		FROM bas_dispatch a 
+		LEFT JOIN bas_reg_opt o 
+		ON a.`regOptId` = o.`regOptId` 
+		LEFT JOIN bas_operroom m ON a.operRoomId = m.operRoomId AND m.beid = #{baseQuery.beid}
+		WHERE 1 = 1
+		 AND a.beid = #{baseQuery.beid} AND o.state ='02'
+			<if test="baseQuery.type ==1 ">
+			AND ( (ISNULL(o.operaDate) OR LENGTH(TRIM(o.operaDate)) &lt; 1 )  OR  a.`startTime` IS  NULL 
+					OR a.`circunurseId1` IS NULL  OR a.`circunurseId1`='' or a.operRoomId IS NULL OR a.pcs IS NULL )
+			</if>
+			<if test="baseQuery.type ==2 ">
+			AND (ISNULL(a.anesthetistId) or a.anesthetistId ='') and o.isLocalAnaes = 0
+			</if>
+			<if test="baseQuery.operDate != null and baseQuery.operDate != ''">
+			    AND o.operaDate = #{baseQuery.operDate}
+		    </if>
+		    <if test="baseQuery.name != null and baseQuery.name != ''">
+			    AND o.`name` LIKE CONCAT(CONCAT('%',#{baseQuery.name}),'%')
+		    </if>
+		    <if test="baseQuery.hid != null and baseQuery.hid != '' ">
+			    AND o.`hid`  = #{baseQuery.hid} 
+		    </if>
+		
+		ORDER BY o.deptId,CONVERT(a.operRoomId,SIGNED),a.startTime ASC,o.operateNumber ASC
+		<if test="baseQuery.pageNo != null and baseQuery.pageSize!= null">
+			LIMIT #{baseQuery.pageNo},#{baseQuery.pageSize}
+		</if>
+	</select>
+
 	<select id="searchNoEndDispatch" resultType="com.digihealth.anesthesia.basedata.formbean.SearchListScheduleFormBean" >
 		select * from(
 		SELECT o.regOptId,(select sc.codeName from bas_sys_dict_item sc 

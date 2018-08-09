@@ -17,6 +17,8 @@ ALTER TABLE `doc_post_follow_record` ADD COLUMN `heartrate` VARCHAR(20) DEFAULT 
 ALTER TABLE `doc_post_follow_record` ADD COLUMN `postDoctorAdviceFlag` VARCHAR(2) DEFAULT NULL COMMENT '术后医嘱标识';
 ALTER TABLE `doc_post_follow_record` ADD COLUMN `postDoctorAdvice` VARCHAR(20) DEFAULT NULL COMMENT '术后医嘱';
 ALTER TABLE `doc_post_follow_record` ADD COLUMN `postDoctorAdviceOther` VARCHAR(40) DEFAULT NULL COMMENT '其他术后医嘱';
+ALTER TABLE `doc_post_follow_record` ADD COLUMN `cognitiveDisordersOther` VARCHAR(100) DEFAULT NULL COMMENT '肢体感觉/运动障碍详情';
+ALTER TABLE `doc_post_follow_record` ADD COLUMN `intraoperAwareOther` VARCHAR(100) DEFAULT NULL COMMENT '处置详情';
 
 
 ALTER TABLE `doc_opt_nurse` ADD COLUMN `antibiotic` INT(1) DEFAULT NULL COMMENT '术中抗生素';

@@ -97,7 +97,7 @@ public class DocInsuredPatAgreeService extends BaseService
                 }
             }
         }
-        List<SearchMedAndInstruFormBean> resultList = docInsuredPatAgreeDao.searchMedAndInstru(filter, systemSearchFormBean.getBeid());
+        List<SearchMedAndInstruFormBean> resultList = docInsuredPatAgreeDao.searchMedAndInstru(filter, systemSearchFormBean);
         return resultList;
     }
 }

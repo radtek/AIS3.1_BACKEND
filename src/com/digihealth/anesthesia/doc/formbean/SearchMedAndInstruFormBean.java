@@ -35,6 +35,12 @@ public class SearchMedAndInstruFormBean
      */
     @ApiModelProperty(value = "类型")
     private Integer type;
+    
+    /**
+     * 拼音码
+     */
+    @ApiModelProperty(value = "拼音码")
+    private String pinYin;
 
     public Integer getType()
     {
@@ -85,4 +91,13 @@ public class SearchMedAndInstruFormBean
     {
         this.price = price;
     }
+
+	public String getPinYin() {
+		return pinYin;
+	}
+
+	public void setPinYin(String pinYin) {
+		this.pinYin = pinYin;
+	}
+    
 }

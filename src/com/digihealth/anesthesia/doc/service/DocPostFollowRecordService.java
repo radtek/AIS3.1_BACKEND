@@ -26,6 +26,7 @@ import com.digihealth.anesthesia.doc.po.DocPostFollowGeneral;
 import com.digihealth.anesthesia.doc.po.DocPostFollowRecord;
 import com.digihealth.anesthesia.doc.po.DocPostFollowSpinal;
 import com.digihealth.anesthesia.doc.po.DocPostFollowYxrm;
+import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.sysMng.po.BasUser;
 
 /**
@@ -71,6 +72,7 @@ public class DocPostFollowRecordService extends BaseService {
 	@Transactional
 	public void savePostFollowRecord(PostFollowRecordFormBean record) {
 		DocPostFollowRecord postFollowRecord = record.getPostFollowRecord();
+		setSelectValue(postFollowRecord);
 		List<DocPostFollowAnalgesic> postFollowAnalgesicInfoLs = record.getPostFollowAnalgesicInfo();
 		List<DocPostFollowGeneral> postFollowGeneralInfoLs = record.getPostFollowGeneralInfo();
 		List<DocPostFollowSpinal> postFollowSpinalInfoLs = record.getPostFollowSpinalInfo();
@@ -137,4 +139,7 @@ public class DocPostFollowRecordService extends BaseService {
 	            "2", "麻醉科术后随访单", JsonType.jsonType(postFollowRecord),user, getBeid());
 	}
 
+	private void setSelectValue(DocPostFollowRecord postFollowRecord) {
+		postFollowRecord.setPostDoctorAdvice(String.valueOf(postFollowRecord.getPostDoctorAdviceMap()));
+    }
 }

@@ -50,6 +50,11 @@ public class DocOptRiskEvaluationController extends BaseController {
 		ResponseValue resp = new ResponseValue();
 		logger.info("-------------------begin searchOptRiskEvaluationByRegOptId-------------------");
 		DocOptRiskEvaluation optRisk = docOptRiskEvaluationService.searchOptRiskEvaluationByRegOptId(optRiskEvaluation);
+		if (null == optRisk) {
+            resp.setResultCode("80000001");
+            resp.setResultMessage("手术风险评估表不存在!");
+            return resp.getJsonStr();
+        }
 		SearchSafeCheckRegOptFormBean searchRegOptByIdFormBean = basRegOptService.searchSafeCheckRegOptById(optRiskEvaluation.getRegOptId());
 		DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(optRiskEvaluation.getRegOptId());
 		

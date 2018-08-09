@@ -88,7 +88,23 @@ public class BasDispatchController extends BaseController{
 		logger.info("end printDispatchItem");
 		return resp.getJsonStr();
 	}
-    
+
+	/**
+	 * 打印排班(本溪局点)
+	 * @param baseQuery
+	 * @return
+	 */
+	@RequestMapping(value = "/printDispatchItemSYBX")
+	@ResponseBody
+	@ApiOperation(value="打印排班",httpMethod="POST",notes="打印排班")
+	public String printDispatchItemSYBX(@ApiParam(name="baseQuery", value ="系统查询参数") @RequestBody BaseInfoQuery baseQuery) {
+		logger.info("begin printDispatchItem");
+		ResponseValue resp = new ResponseValue();
+		resp.put("resultList", basDispatchService.printDispatchItemSYBX(baseQuery));
+		logger.info("end printDispatchItem");
+		return resp.getJsonStr();
+	}
+
     /**
      * 创建紧急手术排程
      * @param BasDispatch
@@ -322,7 +338,24 @@ public class BasDispatchController extends BaseController{
         logger.info("end dispatchOperation");
         return resp.getJsonStr();
     }
-    
+
+    /**
+     * 创建手术排程
+     * @param BasDispatch
+     * @return
+     */
+    @RequestMapping(value = "/dispatchOperationSYBX")
+    @ResponseBody
+    @ApiOperation(value = "创建手术排程", httpMethod = "POST", notes = "创建手术排程")
+    public String dispatchOperationSYBX(@ApiParam(name = "dispatchFormBean", value = "排程信息操作对象") @RequestBody DispatchOperationFormBean dispatchFormBean)
+    {
+        logger.info("begin dispatchOperation");
+        ResponseValue resp = new ResponseValue();
+        basDispatchService.saveDispatchSYBX(dispatchFormBean, resp);
+        logger.info("end dispatchOperation");
+        return resp.getJsonStr();
+    }
+
     @RequestMapping(value = "/changeOperRoom")
     @ResponseBody
     @ApiOperation(value = "更改手术室", httpMethod = "POST", notes = "更改手术室")
@@ -470,7 +503,22 @@ public class BasDispatchController extends BaseController{
         logger.info("end searchNoEndListSchedule");
         return resp.getJsonStr();
     }
-    
+
+    /**
+     * 根据条件查询未排班的的列表  列表排班(本溪定制)
+     * @return
+     */
+    @RequestMapping(value = "/searchNoEndListScheduleSYBX")
+    @ResponseBody
+    @ApiOperation(value="根据条件查询未排班的的列表 ",httpMethod="POST",notes="根据条件查询未排班的的列表 ")
+    public String searchNoEndListScheduleSYBX(@ApiParam(name="baseQuery", value ="系统查询参数") @RequestBody BaseInfoQuery baseQuery){
+        logger.info("begin searchNoEndListSchedule");
+        ResponseValue resp = new ResponseValue();
+        resp.put("resultList", basDispatchService.searchAllDispatchListSYBX(baseQuery));
+        logger.info("end searchNoEndListSchedule");
+        return resp.getJsonStr();
+    }
+
     /**
      * 根据条件查询未排班的的列表  列表排班
      * @return

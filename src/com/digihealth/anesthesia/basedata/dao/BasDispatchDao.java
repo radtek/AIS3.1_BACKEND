@@ -114,6 +114,7 @@ public interface BasDispatchDao extends CrudDao<BasDispatch>{
      */
     public List<SearchListScheduleFormBean> searchAllDispatchList(@Param("baseQuery")BaseInfoQuery baseQuery);
     public List<SearchListScheduleFormBean> searchAllDispatchListYXRM(@Param("baseQuery")BaseInfoQuery baseQuery);
+    public List<SearchListScheduleFormBean> searchAllDispatchListSYBX(@Param("baseQuery")BaseInfoQuery baseQuery);
     
     public List<SearchListScheduleFormBean> searchNoEndDispatch(@Param("filter")String filter, @Param("baseQuery")BaseInfoQuery baseQuery);
     

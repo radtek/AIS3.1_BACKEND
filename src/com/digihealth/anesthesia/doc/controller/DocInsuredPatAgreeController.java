@@ -106,7 +106,7 @@ public class DocInsuredPatAgreeController extends BaseController
         logger.debug("-----------------begin searchMedAndInstru--------------------");
         ResponseValue resp = new ResponseValue();
         List<SearchMedAndInstruFormBean> resultList = docInsuredPatAgreeService.searchMedAndInstru(systemSearchFormBean);
-        resp.put("medAndInstruList", resultList);
+        resp.put("resultList", resultList);
         logger.debug("-----------------end searchMedAndInstru--------------------");
         return resp.getJsonStr(); 
     }

@@ -1,7 +1,10 @@
 package com.digihealth.anesthesia.doc.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +18,8 @@ import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.common.web.BaseController;
 import com.digihealth.anesthesia.doc.formbean.PostFollowRecordFormBean;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
+import com.digihealth.anesthesia.doc.po.DocPostFollowRecord;
+import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
 import com.digihealth.anesthesia.evt.formbean.SearchRegOptByIdFormBean;
 import com.digihealth.anesthesia.evt.po.EvtOptLatterDiag;
@@ -46,7 +51,7 @@ public class DocPostFollowRecordController extends BaseController {
         ResponseValue resp = new ResponseValue();
         String regOptId = map.get("regOptId").toString();
         PostFollowRecordFormBean postFollowRecordFormBean = docPostFollowRecordService.getPostFollowRecord(regOptId);
-        
+        setMapValue(postFollowRecordFormBean.getPostFollowRecord());
         resp.put("postFollowRecord", postFollowRecordFormBean);
         
         SearchFormBean searchBean = new SearchFormBean();
@@ -137,4 +142,9 @@ public class DocPostFollowRecordController extends BaseController {
 		docPostFollowRecordService.savePostFollowRecord(record);
 		return resp.getJsonStr();
 	}
+
+    private void setMapValue(DocPostFollowRecord postFollowRecord) {
+        JSONObject jasonObject1 = JSONObject.fromObject(postFollowRecord.getPostDoctorAdvice());
+        postFollowRecord.setPostDoctorAdviceMap(null == jasonObject1 ? new HashMap<String, Object>() : jasonObject1);
+    }
 }

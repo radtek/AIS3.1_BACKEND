@@ -139,7 +139,15 @@ public class BasDispatchService extends BaseService {
         }
         return list;
     }
-    
+
+	public List<SearchDispatchFormBean> printDispatchItemSYBX(BaseInfoQuery baseQuery) {
+		if (StringUtils.isBlank(baseQuery.getBeid())) {
+			baseQuery.setBeid(getBeid());
+		}
+		List<SearchDispatchFormBean> list = basDispatchDao.printSchudle(baseQuery);
+		return list;
+	}
+
     /**
      * 批量排程信息保存
      * 
@@ -557,6 +565,80 @@ public class BasDispatchService extends BaseService {
         }
     }
 
+	/**
+     * 批量排程信息保存(本溪局点)
+     * 
+     * @param dispatchList
+     * @throws Exception
+     */
+    @Transactional
+    public void saveDispatchSYBX(DispatchOperationFormBean dispatchFormBean, ResponseValue result) {
+        for (BasDispatch dispatch : dispatchFormBean.getDispatchList()) {
+            if (StringUtils.isBlank(dispatch.getBeid())) {
+                dispatch.setBeid(getBeid());
+            }
+
+            Controller controller = controllerDao.getControllerById(dispatch.getRegOptId());
+            // 如果此排班信息已经为术中了，则不允许调整排班信息
+            if (controller != null) {
+                if (!controller.getState().equals(OperationState.NO_SCHEDULING) && !controller.getState().equals(OperationState.PREOPERATIVE)) {
+                    result.put("resultCode", "30000003");
+                    result.put("resultMessage", "手术排班修改出错，该排班信息状态错误！");
+                    return;
+                }
+            }
+
+            // 获取手术人员信息
+            BasRegOpt regOpt = basRegOptDao.searchRegOptById(dispatch.getRegOptId());
+            /**
+             * 根据当前操作排程人员类型判断可修改字段的范围 RoleType = N可以修改除麻醉医生意外的其他字段 RoleType =
+             * A只可以修改麻醉医生字段
+             */
+            BasDispatch disObj = basDispatchDao.getDispatchOper(dispatch.getRegOptId());
+            if (disObj == null) {
+                dispatch.setOperRegDate(regOpt.getOperaDate());
+                basDispatchDao.insert(dispatch);
+            } else {
+                dispatch.setOperRegDate(disObj.getOperRegDate());
+                String anesthetistId = disObj.getAnesthetistId();
+                String perfusiondoctorId = disObj.getPerfusionDoctorId();
+                if ("ANAES_DIRECTOR".equals(dispatchFormBean.getRoleType()) || "ADMIN".equals(dispatchFormBean.getRoleType())) {
+                    anesthetistId = dispatch.getAnesthetistId();
+                    perfusiondoctorId = dispatch.getPerfusionDoctorId();
+                }
+                if ("HEAD_NURSE".equals(dispatchFormBean.getRoleType()) || "ADMIN".equals(dispatchFormBean.getRoleType())) {
+                    BeanUtils.copyProperties(dispatch, disObj, new String[]{"isHold"});
+                }
+                disObj.setAnesthetistId(anesthetistId);
+                disObj.setPerfusionDoctorId(perfusiondoctorId);
+                disObj.setOperRegDate(dispatch.getOperaDate());
+                if (StringUtils.isNotBlank(disObj.getOperRoomId())
+                    && StringUtils.isNotBlank(disObj.getPcs())
+                    && StringUtils.isNotBlank(disObj.getOperRegDate())
+                    && StringUtils.isNotBlank(disObj.getStartTime())
+                    && ((StringUtils.isNotBlank(disObj.getAnesthetistId()) && 0 == regOpt.getIsLocalAnaes()) || 1 == regOpt.getIsLocalAnaes()) 
+                    && StringUtils.isNotBlank(disObj.getCircunurseId1())) 
+                {
+                    disObj.setIsHold(0);
+                }
+                basDispatchDao.update(disObj);
+            }
+
+            // 排程完成后，修改手术信息表手术时间
+            if (StringUtils.isNotBlank(dispatch.getOperaDate())) {
+                regOpt.setOperaDate(dispatch.getOperaDate());
+                saveRegOpt(regOpt);
+            }
+
+            // 排程完成
+            if (DISPATCH_SAVE.equals(disObj.getIsHold())) {
+                saveDispatchSuccess(dispatch, dispatchFormBean.getRoleType());
+                /*OperBaseDataService operBaseDataService = SpringContextHolder.getBean("operBaseDataService");
+                operBaseDataService.sendScheduleToHis(regOpt.getRegOptId());*/
+            }
+
+        }
+    }
 
 	/**
 	 * 更改手术室
@@ -1072,7 +1154,19 @@ public class BasDispatchService extends BaseService {
         }
         return basDispatchDao.searchAllDispatchListYXRM(baseQuery);
     }
-    
+
+    /**
+     * 根据条件查询未排班的的列表(本溪)
+     * @param baseQuery
+     * @return
+     */
+    public List<SearchListScheduleFormBean> searchAllDispatchListSYBX(BaseInfoQuery baseQuery){
+        if (StringUtils.isBlank(baseQuery.getBeid()))
+        {
+            baseQuery.setBeid(getBeid());
+        }
+        return basDispatchDao.searchAllDispatchListSYBX(baseQuery);
+    }
    
     public String getFilterStr(BaseInfoQuery baseQuery) {
         String filter = "";
