@@ -2141,7 +2141,7 @@ and t1.state in ('06','07') and t1.beid = #{beid} and t1.isLocalAnaes = '0' and 
 		SELECT * FROM(
 	        SELECT t1.name,t1.sex,t1.age,t1.ageMon,t1.ageDay,t1.hid,t1.operaDate,t1.operatorName,t1.designedOptName,t1.regOptId,
 			(SELECT NAME FROM bas_user s WHERE s.userName = t2.anesthetistId AND s.beid = #{searchFormBean.beid}) AS anesthetistName ,
-			t1.isLocalAnaes,t1.deptName,t3.asaLevel,(SELECT codeName FROM bas_sys_code WHERE groupId = 'operat_category' AND codeValue=t1.emergency AND beid = #{searchFormBean.beid}) emergency,
+			t1.isLocalAnaes,t1.deptName,t3.asaLevel,(SELECT codeName FROM bas_sys_dict_item WHERE groupId = 'operat_category' AND codeValue=t1.emergency AND beid = #{searchFormBean.beid}) emergency,
 			CONCAT_WS(',',(SELECT NAME FROM bas_user s WHERE s.userName = t2.circunurseId1 AND s.beid = #{searchFormBean.beid}),(SELECT NAME FROM bas_user s WHERE s.userName = t2.circunurseId2 AND s.beid = #{searchFormBean.beid})) circunurseName,
 			IF(t1.isLocalAnaes > 0,t1.designedAnaesMethodName,(SELECT GROUP_CONCAT(NAME) FROM evt_real_anaes_method m WHERE m.docId = t3.anaRecordId)) anaesMethodName,t3.anaesStartTime,t3.`anaRecordId` docId,
 			IF((SELECT count(*) FROM doc_post_follow_record a,doc_post_follow_spinal b, bas_reg_opt c, doc_anaes_record d
@@ -2172,7 +2172,7 @@ and t1.state in ('06','07') and t1.beid = #{beid} and t1.isLocalAnaes = '0' and 
 		SELECT * FROM(
 	        SELECT t1.name,t1.sex,t1.age,t1.ageMon,t1.ageDay,t1.hid,t1.operaDate,t1.operatorName,t1.designedOptName,t1.regOptId,
 			(SELECT NAME FROM bas_user s WHERE s.userName = t2.anesthetistId AND s.beid = #{searchFormBean.beid}) AS anesthetistName ,
-			t1.isLocalAnaes,t1.deptName,t3.asaLevel,(SELECT codeName FROM bas_sys_code WHERE groupId = 'operat_category' AND codeValue=t1.emergency AND beid = #{searchFormBean.beid}) emergency,
+			t1.isLocalAnaes,t1.deptName,t3.asaLevel,(SELECT codeName FROM bas_sys_dict_item WHERE groupId = 'operat_category' AND codeValue=t1.emergency AND beid = #{searchFormBean.beid}) emergency,
 			CONCAT_WS(',',(SELECT NAME FROM bas_user s WHERE s.userName = t2.circunurseId1 AND s.beid = #{searchFormBean.beid}),(SELECT NAME FROM bas_user s WHERE s.userName = t2.circunurseId2 AND s.beid = #{searchFormBean.beid})) circunurseName,
 			IF(t1.isLocalAnaes > 0,t1.designedAnaesMethodName,(SELECT GROUP_CONCAT(NAME) FROM evt_real_anaes_method m WHERE m.docId = t3.anaRecordId)) anaesMethodName,t3.anaesStartTime,t3.`anaRecordId` docId,
 			IF((SELECT count(*) FROM doc_post_follow_record a,doc_post_follow_general b, bas_reg_opt c, doc_anaes_record d
