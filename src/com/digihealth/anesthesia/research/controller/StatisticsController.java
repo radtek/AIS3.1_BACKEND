@@ -2498,7 +2498,23 @@ public class StatisticsController extends BaseController {
 		rep.put("total", total);
 		return rep.getJsonStr();
 	}
-	
+
+	/**
+     * 查询术后麻醉登记查询
+     * @param systemSearchFormBean
+     * @return
+     */
+    @RequestMapping(value = "/searchAnaesRegInfoListSYBX")
+    @ResponseBody
+    @ApiOperation(value="查询术后麻醉登记查询",httpMethod="POST",notes="查询术后麻醉登记查询")
+    public String searchAnaesRegInfoListSYBX(@ApiParam(name="searchFormBean", value ="查询参数") @RequestBody SystemSearchFormBean searchFormBean){
+        ResponseValue rep = new ResponseValue();
+        int total = statisticsService.searchTotalByAnaesRegInfoListSYBX(searchFormBean);
+        rep.put("anaesRegInfoList", statisticsService.searchAnaesRegInfoListSYBX(searchFormBean));
+        rep.put("total", total);
+        return rep.getJsonStr();
+    }
+
 	/**
 	 * 查询术后镇痛登记
 	 * @param systemSearchFormBean

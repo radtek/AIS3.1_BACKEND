@@ -57,7 +57,7 @@
 	</select>
 
 	<select id="queryPackagesItemList" resultType="com.digihealth.anesthesia.doc.po.DocPackagesItem">
-		SELECT a.*,ck.`enable` FROM doc_packages_item a left join bas_reg_opt b on a.regOptId = b.regOptId
+		SELECT a.*,ck.`enable`,ck.spec FROM doc_packages_item a left join bas_reg_opt b on a.regOptId = b.regOptId
 			LEFT JOIN bas_charge_item ck  on a.chargeItemId = ck.chargeItemId
 		where 1 = 1 
 	 		${filter} 

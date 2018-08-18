@@ -25,12 +25,10 @@ import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.utils.BasRegOptUtils;
 import com.digihealth.anesthesia.basedata.utils.CustomConfigureUtil;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
-import com.digihealth.anesthesia.common.config.Constants;
-import com.digihealth.anesthesia.common.config.Global;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.utils.DateUtils;
-import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.web.BaseController;
+import com.digihealth.anesthesia.doc.po.DocAnaesPacuRec;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.evt.formbean.CancleRegOptFormBean;
 import com.digihealth.anesthesia.evt.formbean.SearchConditionFormBean;
@@ -168,7 +166,26 @@ public class BasRegOptController extends BaseController {
 		logger.info("-----------------begin checkOperation-----------------");
 		return respValue.getJsonStr();
 	}
-	
+
+	/**
+     * 
+     * @discription 审核
+     * @author chengwang
+     * @created 2015-10-19 下午5:21:17
+     * @param ids
+     * @return
+     */
+    @RequestMapping(value = "/checkOperationSYBX")
+    @ResponseBody
+    @ApiOperation(value="审核",httpMethod="POST",notes="审核")
+    public String checkOperationSYBX(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
+        logger.info("-----------------begin checkOperationSYBX-----------------");
+        ResponseValue respValue = new ResponseValue();
+        controllerService.checkOperationSYBX(map.get("regOptIds").toString(), OperationState.NO_SCHEDULING, OperationState.NOT_REVIEWED,respValue);
+        logger.info("-----------------begin checkOperationSYBX-----------------");
+        return respValue.getJsonStr();
+    }
+
     /**
 	 * 
 	 * @discription 获取单个手术室即将进行手术的病人列表
@@ -731,6 +748,13 @@ public class BasRegOptController extends BaseController {
 		}
 		resp.setResultCode("1");
 		resp.setResultMessage("查询基础信息成功!");
+		/**
+		 * 黔南州中医院需要返回
+		 */
+		DocAnaesPacuRec pacuRec = docAnaesPacuRecService.getAnaesPacuRecByRegOptId(regOptId);
+		if(null != pacuRec){
+			regOpt.setPacuId(pacuRec.getId());	
+		}
 		resp.put("resultRegOpt", regOpt);
 		resp.put("resultDispatch", dispatch);
 		logger.info("-----------------end getRegOptApplicationById-----------------");

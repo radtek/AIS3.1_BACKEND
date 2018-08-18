@@ -21,6 +21,18 @@ public class ConnectionManager {
     private static String YXRM_HIS_JDBC_USERNAME = Global.getJdbcConfig("yxrm.jdbc.username.oracle");
     private static String YXRM_HIS_JDBC_PASSWORD = Global.getJdbcConfig("yxrm.jdbc.password.oracle");
 
+    /**
+     * 本溪市中心医院HIS数据库连接
+     */
+	private static String SYBX_JDBC_SQLSERVER_DRIVER_CLASS = Global.getJdbcConfig("sybx.jdbc.driver.sqlserver");
+    private static String SYBX_JDBC_SQLSERVER_URL = Global.getJdbcConfig("sybx.jdbc.url.sqlserver");
+    private static String SYBX_JDBC_SQLSERVER_USERNAME = Global.getJdbcConfig("sybx.jdbc.username.sqlserver");
+    private static String SYBX_JDBC_SQLSERVER_PASSWORD = Global.getJdbcConfig("sybx.jdbc.password.sqlserver");
+    
+    private static String SYBX_JDBC_YY_SQLSERVER_DRIVER_CLASS = Global.getJdbcConfig("sybx.jdbc.yy.driver.sqlserver");
+    private static String SYBX_JDBC_YY_SQLSERVER_URL = Global.getJdbcConfig("sybx.jdbc.yy.url.sqlserver");
+    private static String SYBX_JDBC_YY_SQLSERVER_USERNAME = Global.getJdbcConfig("sybx.jdbc.yy.username.sqlserver");
+    private static String SYBX_JDBC_YY_SQLSERVER_PASSWORD = Global.getJdbcConfig("sybx.jdbc.yy.password.sqlserver");
 	/**
 	 * 从连接池拿Connection
 	 * 
@@ -62,7 +74,35 @@ public class ConnectionManager {
         return getConnection(YXRM_HIS_JDBC_DRIVER_CLASS,YXRM_HIS_JDBC_URL,YXRM_HIS_JDBC_USERNAME,YXRM_HIS_JDBC_PASSWORD);
     }
     //--------------------------------------------------永兴人民医院--------------------------------------------------------------
-    
+
+	//--------------------------------------------------沈阳本溪--------------------------------------------------------------
+	/**
+     * 连接沈阳本溪his系统数据库
+     * 从连接池拿Connection
+     * 
+     * getConnection和connectionHolder.get()的区别
+     * connectionHolder.get()是尝试从ThreadLocal中获取Connection,如果没有,返回null,如果有,直接返回.
+     * getConnection也是尝试从ThreadLocal中获取Connection,如果没有,则创建一个,然后返回,如果有,直接返回.
+     */
+    public static Connection getSYBXHisConnection() {
+        logger.info("LIS_JDBC_DRIVER_CLASS = " +SYBX_JDBC_SQLSERVER_DRIVER_CLASS);
+        return getConnection(SYBX_JDBC_SQLSERVER_DRIVER_CLASS,SYBX_JDBC_SQLSERVER_URL,SYBX_JDBC_SQLSERVER_USERNAME,SYBX_JDBC_SQLSERVER_PASSWORD);
+    }
+
+    /**
+     * 连接用友系统数据库
+     * 从连接池拿Connection
+     * 
+     * getConnection和connectionHolder.get()的区别
+     * connectionHolder.get()是尝试从ThreadLocal中获取Connection,如果没有,返回null,如果有,直接返回.
+     * getConnection也是尝试从ThreadLocal中获取Connection,如果没有,则创建一个,然后返回,如果有,直接返回.
+     */
+    public static Connection getSYBXYYConnection() {
+        logger.info("LIS_JDBC_DRIVER_CLASS = " +SYBX_JDBC_YY_SQLSERVER_DRIVER_CLASS);
+        return getConnection(SYBX_JDBC_YY_SQLSERVER_DRIVER_CLASS,SYBX_JDBC_YY_SQLSERVER_URL,SYBX_JDBC_YY_SQLSERVER_USERNAME,SYBX_JDBC_YY_SQLSERVER_PASSWORD);
+    }
+    //--------------------------------------------------沈阳本溪--------------------------------------------------------------
+
     /**
 	 * Connection使用完毕,关闭
 	 * 此处的Connection是从连接池中拿出来的,关闭Connection实质上是让Connection恢复空闲状态

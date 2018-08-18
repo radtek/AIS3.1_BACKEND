@@ -433,8 +433,19 @@ public class BasRegOpt {
 	@ApiModelProperty(value = "是否领取耗材 0 未领取 ， 1 已经领取")
     private Integer outInstrument;
 	
+	private String pacuId;
 	
-    public Integer getOutInstrument() {
+	
+	
+    public String getPacuId() {
+		return pacuId;
+	}
+
+	public void setPacuId(String pacuId) {
+		this.pacuId = pacuId;
+	}
+
+	public Integer getOutInstrument() {
 		return outInstrument;
 	}
 

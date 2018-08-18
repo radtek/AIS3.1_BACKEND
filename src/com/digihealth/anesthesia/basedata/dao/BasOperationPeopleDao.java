@@ -36,6 +36,8 @@ public interface BasOperationPeopleDao extends CrudDao<BasOperationPeople>{
     
     public BasOperationPeople selectByCode(@Param("code")String code, @Param("beid") String beid);
     
+    public List<BasOperationPeople> selectPeoplesByCode(@Param("code")String code, @Param("beid") String beid);
+    
     public int updateEnable(@Param("beid") String beid);
 
 	public int initData(@Param("basOperationPeople")BasOperationPeople basOperationPeople, @Param("random")String random);

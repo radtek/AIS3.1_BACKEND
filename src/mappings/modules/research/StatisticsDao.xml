@@ -571,6 +571,99 @@ and t1.state in ('06','07') and t1.beid = #{beid} and t1.isLocalAnaes = '0' and 
         </if>) a
     </select>
     
+    <select id="searchTotalByAnaesRegInfoListSYBX" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+            SELECT * FROM (
+			SELECT anaesRecord.*,IF(anaesRecord.operAnaesTime>0,anaesRecord.operAnaesTime,0) anaesTime FROM (
+				SELECT b.regOptId, b.operaDate,b.name,b.sex,b.age,b.ageMon,b.ageDay,b.hid,b.bed,b.regionName,
+					(IF(b.isLocalAnaes = 0,(SELECT GROUP_CONCAT(NAME) FROM evt_opt_latter_diag sod WHERE d.anaRecordId = sod.docId ), b.diagnosisName ) )optLatterDiag,
+					(IF(b.isLocalAnaes = 0,(SELECT GROUP_CONCAT(NAME) FROM evt_opt_real_oper soro WHERE d.anaRecordId = soro.docId ),(SELECT operatorName FROM doc_opt_nurse t WHERE t.regOptId = b.regOptId ) ) )optRealOper,
+					(IF(b.isLocalAnaes =0,(SELECT GROUP_CONCAT(NAME) FROM evt_real_anaes_method sram WHERE d.anaRecordId = sram.docId ORDER BY sram.anaMedId ),b.designedAnaesMethodName)) realAnaesMethod,
+					operStartTime,operEndTime,d.anaesStartTime,
+					ROUND(IFNULL((UNIX_TIMESTAMP(operEndTime) - UNIX_TIMESTAMP(operStartTime))/60,0),2) operTime,
+					ROUND(IFNULL((UNIX_TIMESTAMP(IFNULL(anaesEndTime,outOperRoomTime)) - UNIX_TIMESTAMP(anaesStartTime))/60,0),2) operAnaesTime,
+					(SELECT bas_user.`name` FROM bas_dispatch p,bas_user WHERE p.regOptId = b.regOptId AND p.anesthetistId = bas_user.username AND bas_user.`beid` = #{beid}) anaesDoc,
+					(SELECT GROUP_CONCAT(NAME) FROM evt_shift_change c,bas_user WHERE c.docId = d.anaRecordId AND c.shiftChangePeopleId = bas_user.username AND bas_user.`beid` = #{beid}) shiftAnaesDoc
+				FROM bas_reg_opt b,doc_anaes_record d  
+				WHERE b.regOptId=d.regOptId 
+				AND   b.state IN ('06','07')
+				AND   b.beid = #{beid}
+				 ) anaesRecord
+			) X
+		WHERE 1 = 1
+		<if test="filters != null">
+            <foreach collection="filters" item="filter" open=" " close=" " >
+                <if test="filter.field != null and filter.field != '' ">
+                    <choose>
+                        <when test="filter.field == 'startTime' ">
+                            <if test="filter.value != null and filter.value != ''">
+                                and operaDate &gt;= #{filter.value}
+                            </if>
+                        </when>
+                        <when test="filter.field == 'endTime' ">
+                            <if test="filter.value != null and filter.value != ''">
+                                and operaDate &lt;= #{filter.value}
+                            </if>
+                        </when>
+                        <otherwise>
+                            <if test="filter.value != null and filter.value != ''">
+                                AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+                            </if>
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>) a
+    </select>
+
+    <select id="searchAnaesRegInfoListSYBX" resultType="com.digihealth.anesthesia.research.formbean.SearchAnaesRegInfo">
+		  SELECT * FROM (
+			SELECT anaesRecord.*,IF(anaesRecord.operAnaesTime>0,anaesRecord.operAnaesTime,0) anaesTime FROM (
+				SELECT b.regOptId, b.operaDate,b.name,b.sex,b.age,b.ageMon,b.ageDay,b.hid,b.bed,b.regionName,
+					(IF(b.isLocalAnaes = 0,(SELECT GROUP_CONCAT(NAME) FROM evt_opt_latter_diag sod WHERE d.anaRecordId = sod.docId ), b.diagnosisName ) )optLatterDiag,
+					(IF(b.isLocalAnaes = 0,(SELECT GROUP_CONCAT(NAME) FROM evt_opt_real_oper soro WHERE d.anaRecordId = soro.docId ),(SELECT operatorName FROM doc_opt_nurse t  WHERE t.regOptId = b.regOptId ) ) )optRealOper,
+					(IF(b.isLocalAnaes =0,(SELECT GROUP_CONCAT(NAME) FROM evt_real_anaes_method sram WHERE d.anaRecordId = sram.docId ORDER BY sram.anaMedId ),b.designedAnaesMethodName)) realAnaesMethod,
+					operStartTime,operEndTime,d.anaesStartTime,
+					ROUND(IFNULL((UNIX_TIMESTAMP(operEndTime) - UNIX_TIMESTAMP(operStartTime))/60,0),2) operTime,
+					ROUND(IFNULL((UNIX_TIMESTAMP(IFNULL(anaesEndTime,outOperRoomTime)) - UNIX_TIMESTAMP(anaesStartTime))/60,0),2) operAnaesTime,
+					(SELECT bas_user.`name` FROM bas_dispatch p,bas_user WHERE p.regOptId = b.regOptId AND p.anesthetistId = bas_user.username AND bas_user.`beid` = #{searchFormBean.beid}) anaesDoc,
+					(SELECT GROUP_CONCAT(NAME) FROM evt_shift_change c,bas_user WHERE c.docId = d.anaRecordId AND c.shiftChangePeopleId = bas_user.username AND bas_user.`beid` = #{searchFormBean.beid}) shiftAnaesDoc
+				FROM bas_reg_opt b,doc_anaes_record d  
+				WHERE b.regOptId=d.regOptId 
+				AND   b.state IN ('06','07')
+				AND   b.beid = #{searchFormBean.beid}
+				 ) anaesRecord
+			) X
+		WHERE 1 = 1
+		<if test="filters != null">
+            <foreach collection="filters" item="filter" open=" " close=" " >
+                <if test="filter.field != null and filter.field != '' ">
+                    <choose>
+                        <when test="filter.field == 'startTime' ">
+                            <if test="filter.value != null and filter.value != ''">
+                                and operaDate &gt;= #{filter.value}
+                            </if>
+                        </when>
+                        <when test="filter.field == 'endTime' ">
+                            <if test="filter.value != null and filter.value != ''">
+                                and operaDate &lt;= #{filter.value}
+                            </if>
+                        </when>
+                        <otherwise>
+                            <if test="filter.value != null and filter.value != ''">
+                                AND ${filter.field} LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+                            </if>
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>
+		order by ${searchFormBean.sort} ${searchFormBean.orderBy}
+		<if test="searchFormBean.pageSize != null">
+			limit #{searchFormBean.pageNo},#{searchFormBean.pageSize}
+		</if>
+	</select>
+
     <select id="searchPatGroupByDept" resultType="com.digihealth.anesthesia.research.formbean.AnaesDocObserveTimeCount">
         select count(*) total,IF(deptName IS NULL OR deptName = '','无',deptName) name from doc_anaes_record r,bas_reg_opt t 
         where r.regOptId=t.regOptId and t.beid = #{beid}

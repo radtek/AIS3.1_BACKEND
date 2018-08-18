@@ -546,7 +546,32 @@ public class StatisticsService extends BaseService{
 		}
 		return statisticsDao.searchTotalByAnaesRegInfoList(filters, getBeid());
 	}
-	
+
+	public List<SearchAnaesRegInfo> searchAnaesRegInfoListSYBX(SystemSearchFormBean searchFormBean) {
+        if (StringUtils.isBlank(searchFormBean.getBeid())) {
+            searchFormBean.setBeid(getBeid());
+        }
+        if(StringUtils.isBlank(searchFormBean.getSort())){
+            searchFormBean.setSort("operaDate");
+        }
+        if(StringUtils.isBlank(searchFormBean.getOrderBy())){
+            searchFormBean.setOrderBy("DESC");
+        }
+        List<Filter> filters = searchFormBean.getFilters();
+        if(filters.size()==0){
+            filters = new ArrayList<Filter>();
+        }
+        return statisticsDao.searchAnaesRegInfoListSYBX(searchFormBean,filters);
+    }
+
+    public Integer searchTotalByAnaesRegInfoListSYBX(SystemSearchFormBean searchFormBean) {
+        List<Filter> filters = searchFormBean.getFilters();
+        if(filters.size()==0){
+            filters = new ArrayList<Filter>();
+        }
+        return statisticsDao.searchTotalByAnaesRegInfoListSYBX(filters, getBeid());
+    }
+
 	public List<AnaesDocObserveTimeCount> searchPatGroupByDept(SystemSearchFormBean searchFormBean){
 		if(StringUtils.isBlank(searchFormBean.getBeid())) {
 			searchFormBean.setBeid(getBeid());

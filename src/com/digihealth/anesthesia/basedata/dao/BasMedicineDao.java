@@ -47,6 +47,8 @@ public interface BasMedicineDao {
     
     public BasMedicine selectByCode(@Param("code")String code, @Param("beid")String beid);
     
+    public List<BasMedicine> selectMedicinesByCode(@Param("code")String code, @Param("beid")String beid);
+    
     public int updateEnable(@Param("beid")String beid);
 
 	public int initData(@Param("basMedicine")BasMedicine basMedicine, @Param("random")String random);

@@ -40,6 +40,7 @@ import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
+import com.digihealth.anesthesia.doc.po.DocOptRiskEvaluation;
 import com.digihealth.anesthesia.evt.formbean.CancleRegOptFormBean;
 import com.digihealth.anesthesia.evt.formbean.Filter;
 import com.digihealth.anesthesia.evt.po.EvtParticipant;
@@ -47,6 +48,7 @@ import com.digihealth.anesthesia.evt.service.EvtParticipantService;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceQNZZY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceSYZXYY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceYXRM;
+import com.digihealth.anesthesia.interfacedata.service.OperBaseDataServiceSYBX;
 import com.digihealth.anesthesia.sysMng.po.BasDictItem;
 import com.digihealth.anesthesia.sysMng.po.BasUser;
 
@@ -141,11 +143,61 @@ public class BasDispatchService extends BaseService {
     }
 
 	public List<SearchDispatchFormBean> printDispatchItemSYBX(BaseInfoQuery baseQuery) {
-		if (StringUtils.isBlank(baseQuery.getBeid())) {
-			baseQuery.setBeid(getBeid());
-		}
-		List<SearchDispatchFormBean> list = basDispatchDao.printSchudle(baseQuery);
-		return list;
+        if (StringUtils.isBlank(baseQuery.getBeid())) {
+            baseQuery.setBeid(getBeid());
+        }
+        List<SearchDispatchFormBean> list = basDispatchDao.printSchudle(baseQuery);
+        if (null != list && list.size() > 0)
+        {
+            for (SearchDispatchFormBean sd : list)
+            {
+                String anesthetistName = sd.getAnesthetistName();
+                String perfusiondoctorName = sd.getPerfusiondoctorName();
+                if (StringUtils.isNotBlank(anesthetistName) && StringUtils.isNotBlank(perfusiondoctorName))
+                {
+                    sd.setAnesthetistName(anesthetistName + "," + perfusiondoctorName);
+                }
+                else if (StringUtils.isNotBlank(anesthetistName) && StringUtils.isBlank(perfusiondoctorName))
+                {
+                    sd.setAnesthetistName(anesthetistName);
+                }
+                else if (StringUtils.isBlank(anesthetistName) && StringUtils.isNotBlank(perfusiondoctorName))
+                {
+                    sd.setAnesthetistName(perfusiondoctorName);
+                }
+                   
+                String instrnurseName1 = sd.getInstrnurseName1();
+                String instrnurseName2 = sd.getInstrnurseName2();
+                if (StringUtils.isNotBlank(instrnurseName1) && StringUtils.isNotBlank(instrnurseName2))
+                {
+                    sd.setInstrnurseName1(instrnurseName1 + "," + instrnurseName2);
+                }
+                else if (StringUtils.isNotBlank(instrnurseName1) && StringUtils.isBlank(instrnurseName2))
+                {
+                    sd.setInstrnurseName1(instrnurseName1);
+                }
+                else if (StringUtils.isBlank(instrnurseName1) && StringUtils.isNotBlank(instrnurseName2))
+                {
+                    sd.setInstrnurseName1(instrnurseName2);
+                }
+                
+                String circunurseName1 = sd.getCircunurseName1();
+                String circunurseName2 = sd.getCircunurseName2();
+                if (StringUtils.isNotBlank(circunurseName1) && StringUtils.isNotBlank(circunurseName2))
+                {
+                    sd.setCircunurseName1(circunurseName1 + "," + circunurseName2);
+                }
+                else if (StringUtils.isNotBlank(circunurseName1) && StringUtils.isBlank(circunurseName2))
+                {
+                    sd.setCircunurseName1(circunurseName1);
+                }
+                else if (StringUtils.isBlank(circunurseName1) && StringUtils.isNotBlank(circunurseName2))
+                {
+                    sd.setCircunurseName1(circunurseName2);
+                }
+            }
+        }
+        return list;
 	}
 
     /**
@@ -633,8 +685,15 @@ public class BasDispatchService extends BaseService {
             // 排程完成
             if (DISPATCH_SAVE.equals(disObj.getIsHold())) {
                 saveDispatchSuccess(dispatch, dispatchFormBean.getRoleType());
-                /*OperBaseDataService operBaseDataService = SpringContextHolder.getBean("operBaseDataService");
-                operBaseDataService.sendScheduleToHis(regOpt.getRegOptId());*/
+                String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
+                if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
+                    logger.info("===============================发送排程信息到his===========================================");
+                    OperBaseDataServiceSYBX operBaseDataServiceSYBX = SpringContextHolder.getBean(OperBaseDataServiceSYBX.class);
+                    if(null != operBaseDataServiceSYBX)
+                    {
+                    	operBaseDataServiceSYBX.sendScheduleToHis(regOpt.getRegOptId());
+                    }
+                }
             }
 
         }
@@ -734,8 +793,11 @@ public class BasDispatchService extends BaseService {
 
             // 避免重复保存时出现数据错误，先删除原来数据再做保存
             EvtParticipant delPant = new EvtParticipant();
-            delPant.setDocId(dispatch.getRegOptId());
-            delPant.setRole(RoleType);
+            delPant.setDocId(anaesRecord.getAnaRecordId());
+            
+            if ("HEAD_NURSE".equals(RoleType)){
+            	delPant.setRole("N");
+            }
             evtParticipantDao.delete(delPant);
             // 排程完成后将麻醉医生字段的值写入术中人员表中
             if (StringUtils.isNotBlank(dispatch.getAnesthetistId())) {
@@ -838,7 +900,38 @@ public class BasDispatchService extends BaseService {
             saveDispatchSuccess(dispatch, "N");
         }
     }
-    
+
+	/**
+     * 紧急手术创建(本溪)
+     * 
+     * @param EmgencyOperationFormBean
+     * @throws Exception
+     */
+    @Transactional
+    public void createEmergencyOperationSYBX(BasRegOpt regOpt, BasDispatch dispatch, ResponseValue respValue) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("DispatchService createEmergencyOperation data:dispatch" + dispatch.toString());
+        }
+        String result = saveRegOpt(regOpt);
+        if (result.equals("true")) {
+            // 创建排程信息
+            dispatch.setRegOptId(regOpt.getRegOptId());
+            dispatch.setOperRegDate(regOpt.getOperaDate());
+            dispatch.setIsHold(DISPATCH_SAVE);
+            if (StringUtils.isBlank(dispatch.getBeid())) {
+                dispatch.setBeid(getBeid());
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("DispatchService createEmergencyOperation data:dispatch" + dispatch.toString());
+            }
+            basDispatchDao.insert(dispatch);
+
+            // 手术审核
+            checkOperationSYBX(regOpt.getRegOptId(), OperationState.PREOPERATIVE, "", respValue);
+
+            saveDispatchSuccess(dispatch, "N");
+        }
+    }
 
 	public BasDispatch getDispatchOper(String regOptId) {
 		return basDispatchDao.getDispatchOper(regOptId);
@@ -1052,6 +1145,59 @@ public class BasDispatchService extends BaseService {
                         {
                             controllerDao.checkOperation(regOptId, state, previousState);
                             creatDocument(regOpt);
+                            succCnt++;
+                        }
+                    }
+                }
+            }
+            if (idsList.size() - succCnt > 0)
+            {
+                int failCnt = idsList.size() - succCnt;
+                respValue.setResultMessage("批量审核完成!其中成功" + succCnt + "条数据," + "失败" + failCnt + "条数据");
+            }
+        }
+    }
+
+    public void checkOperationSYBX(String ids, String state,String previousState,ResponseValue respValue) {
+        List<String> idsList = new ArrayList<String>();
+        String[] idsString = ids.split(",");
+        for (int i = 0; i < idsString.length; i++) {
+            idsList.add(idsString[i]);
+        }
+        int succCnt = 0;
+        if (idsList != null)
+        {
+            if (idsList.size() > 0)
+            {
+                for (int i = 0; i < idsList.size(); i++)
+                {
+                    String regOptId = idsList.get(i);
+                    BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
+                    if (regOpt != null)
+                    {
+                        if (StringUtils.isEmpty(regOpt.getDesignedAnaesMethodName())
+                            || StringUtils.isEmpty(regOpt.getDesignedAnaesMethodCode()))
+                        {
+                            continue;
+                        }
+                    }
+                    Controller c = controllerDao.getControllerById(regOptId);
+                    if (c != null)
+                    {
+                        if (c.getState().equals(OperationState.NOT_REVIEWED))
+                        {
+                            controllerDao.checkOperation(regOptId, state, previousState);
+                            creatDocument(regOpt);                            
+                            // 本溪局点文书特殊处理
+                            // 局麻时直接将手术风险评估表置为完成
+                            if (1 == regOpt.getIsLocalAnaes())
+                            {
+                                DocOptRiskEvaluation docOptRiskEvaluation = new DocOptRiskEvaluation();
+                                docOptRiskEvaluation.setRegOptId(regOpt.getRegOptId());
+                                docOptRiskEvaluation = docOptRiskEvaluationDao.searchOptRiskEvaluationByRegOptId(docOptRiskEvaluation);
+                                docOptRiskEvaluation.setProcessState("END");
+                                docOptRiskEvaluationDao.updateByPrimaryKey(docOptRiskEvaluation);
+                            }
                             succCnt++;
                         }
                     }

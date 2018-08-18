@@ -3012,6 +3012,40 @@ public class MyObserveDataController extends BaseController {
     }
 
 	/**
+     * 正常结束手术，发送采集数据模块，并发送采集服务(本溪局点)
+     * 
+     * @return
+     */
+    @RequestMapping("/endOperationSYBX")
+    @ResponseBody
+    @ApiOperation(value = "正常结束手术", httpMethod = "POST", notes = "正常结束手术")
+    public String endOperationSYBX(@ApiParam(name = "params", value = "参数") @RequestBody EndOperationFormBean formBean) {
+        logger.info("----------------start endOperationSYBX------------------------");
+        ResponseValue res = new ResponseValue();
+        EvtAnaesEvent anaesevent = formBean.getAnaesevent();
+        logger.info("endOperation----" + anaesevent);
+        String regOptId = formBean.getRegOptId();
+        if (anaesevent != null) {
+            basMonitorDisplayService.updateEndTimeSYBX(formBean,res);
+            if (res.getResultCode().equals("1")) { // 只有成功了，才执行正常结束手术命令
+                SearchFormBean searchBean = new SearchFormBean();
+                searchBean.setDocId(anaesevent.getDocId());
+                List<EvtAnaesEvent> resultList = evtAnaesEventService.searchAnaeseventList(searchBean);
+                CmdMsg msg = new CmdMsg();
+                msg.setMsgType(MyConstants.OPERATION_STATUS_END);
+                msg.setRegOptId(regOptId);
+                res = MessageProcess.process(msg);
+                res.put("resultList", resultList);
+            }
+        } else {
+            res.setResultCode("70000000");
+            res.setResultMessage(Global.getRetMsg(res.getResultCode()));
+        }
+        logger.info("------------------end endOperationSYBX------------------------");
+        return res.getJsonStr();
+    }
+
+	/**
 	 * 强制结束手术，发送采集数据模块，并发送采集服务
 	 * 
 	 * @return

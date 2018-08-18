@@ -44,4 +44,5 @@
     <bean id="medicineStorageTask" class="com.digihealth.anesthesia.common.task.MedicineStorageTask"/> -->
     
     <!-- <import resource="spring-sync-master-qnz.xml"/> -->  <!-- 贵州黔南州的视图接口 -->
+    <!-- <import resource="spring-sync-master-sybx.xml"/> -->  <!-- 本溪的视图接口 -->
 </beans>

@@ -172,6 +172,10 @@
 	select * from bas_instrument where code = #{code} and beid = #{beid,jdbcType=VARCHAR}
 	</select>
 	
+	<select id="selectInstrumentsByCode" resultType="com.digihealth.anesthesia.basedata.po.BasInstrument">
+	select * from bas_instrument where code = #{code} and beid = #{beid,jdbcType=VARCHAR}
+	</select>
+	
 	<update id="updateEnable">
 		update bas_instrument set enable='0' where beid = #{beid,jdbcType=VARCHAR};
 	</update>

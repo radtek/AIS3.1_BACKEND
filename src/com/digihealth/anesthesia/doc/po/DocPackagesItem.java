@@ -122,9 +122,17 @@ public class DocPackagesItem {
     @ApiModelProperty(value = "排序序号")
     private Integer seq;
 	
+    private String spec;//规格
     
     
-    
+	public String getSpec() {
+		return spec;
+	}
+
+	public void setSpec(String spec) {
+		this.spec = spec;
+	}
+
 	public Date getChargeDate() {
 		return chargeDate;
 	}

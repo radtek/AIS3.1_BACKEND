@@ -223,6 +223,10 @@
 	select * from bas_operation_people where code = #{code} and beid = #{beid}
 	</select>
 	
+	<select id="selectPeoplesByCode" resultType="com.digihealth.anesthesia.basedata.po.BasOperationPeople">
+	select * from bas_operation_people where code = #{code} and beid = #{beid}
+	</select>
+
 	<update id="updateEnable">
 		update bas_operation_people set enable='0' where beid = #{beid};
 	</update>

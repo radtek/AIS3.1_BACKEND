@@ -2212,7 +2212,161 @@ public class BasMonitorDisplayService extends BaseService{
             }
         }
     }
-    
+
+    /**
+     * 
+     * 本溪局点没有去pacu操作
+     */
+    @Transactional
+    public void updateEndTimeSYBX(EndOperationFormBean formBean,ResponseValue res) {
+        EvtAnaesEvent anaesevent = formBean.getAnaesevent();
+        String docId = anaesevent.getDocId();
+        String regOptId = formBean.getRegOptId();
+        Integer code = anaesevent.getCode();
+        String leaveTo = anaesevent.getLeaveTo();
+        //String anaEventId = anaesevent.getAnaEventId();
+        
+        // 麻醉事件处理
+        ResponseValue resp = this.saveAnaes(anaesevent, res);
+        if(!resp.getResultCode().equals("1")){
+            return;
+        }
+
+        //麻醉记录单处理
+        DocAnaesRecord anaesRecord = docAnaesRecordDao.searchAnaesRecordById(docId);
+        BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
+        String bedStr = "";
+        if(StringUtils.isNotBlank(regOpt.getBed())){
+            bedStr = regOpt.getBed()+ "床的";
+        }
+        //将麻醉记录单表中的去向、出室时间进行修改，并将状态修改成为术后状态
+        if(EvtAnaesEventService.OUT_ROOM.equals(code)){
+            logger.info("---进入---手术结束------ENDOPERATION----出室去向="+leaveTo);
+            Controller controller = controllerDao.getControllerById(regOptId);
+            //当麻醉事件提交数据为出室时，需要将控制表的状态改成POSTOPERATIVE 术后
+            if(null != controller){
+                //南华版本，增加去pacu的处理
+//                if(("2").equals(leaveTo) &&(!controller.getState().equals(OperationState.POSTOPERATIVE))){
+//                    controller.setPreviousState(OperationState.SURGERY);
+//                    controller.setState(OperationState.RESUSCITATION);
+//                    //存入pacu
+//                    DocAnaesPacuRec p = docAnaesPacuRecDao.selectPacuByRegOptId(controller.getRegOptId());
+//                    if(p==null){
+//                        p = new DocAnaesPacuRec();
+//                        p.setRegOptId(controller.getRegOptId());
+//                    }
+//                    saveAnaesPacuRec(p);
+//                    
+//                }else{
+                    controller.setPreviousState(OperationState.SURGERY);
+                    controller.setState(OperationState.POSTOPERATIVE);
+                //}
+                
+                controllerDao.update(controller);
+                
+                //当状态从术中转术后时，将事件表的数据备份
+                anaesRecord.setOutOperRoomTime(DateUtils.formatLongTime(anaesevent.getOccurTime().getTime()));
+                
+                if(StringUtils.isBlank(anaesRecord.getLeaveTo())){
+                    anaesRecord.setLeaveTo(leaveTo);
+                }
+                anaesRecord.setProcessState("END");
+                //anaesRecord.setPostOperState(Integer.parseInt(controller.getState()));
+                docAnaesRecordDao.updateByPrimaryKey(anaesRecord); 
+            }
+            
+            //将消息推送到手术室大屏   结束手术
+            List<SysCodeFormbean> ls = basDictItemDao.searchSysCodeByGroupIdAndCodeValue("leave_to", anaesevent.getLeaveTo(), getBeid());
+            String leaveToName = ls.size()>0?ls.get(0).getCodeName():"";
+            WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName()+regOpt.getRegionName()+bedStr+regOpt.getName()+"手术已结束,去往"+leaveToName);
+        }else if(EvtAnaesEventService.CANCEL_OPER.equals(code)){
+            logger.info("---进入---手术取消------CANCEL_OPER----");
+            Controller controller = controllerDao.getControllerById(regOptId);
+            if(null != controller){
+                if(controller.getState().equals(OperationState.SURGERY)){
+                    controller.setState(OperationState.CANCEL);
+                    controller.setPreviousState(OperationState.SURGERY);
+                    controllerDao.update(controller);
+                }
+            }
+            
+            if(StringUtils.isNoneBlank(formBean.getReasons())){
+                BasRegOpt bro = new BasRegOpt();
+                bro.setReasons(formBean.getReasons());
+                bro.setRegOptId(regOpt.getRegOptId());
+                basRegOptDao.updateByPrimaryKeySelective(bro);
+            }
+            
+            
+            if(StringUtils.isNotEmpty(leaveTo)){
+                anaesRecord.setLeaveTo(leaveTo);
+            }else{
+                anaesRecord.setLeaveTo("1");//如果前端传递为空，则默认回病房
+            }
+            anaesRecord.setOutOperRoomTime(DateUtils.formatLongTime(anaesevent.getOccurTime().getTime()));
+            anaesRecord.setProcessState("END");
+            //anaesRecord.setPostOperState(Integer.parseInt(OperationState.CANCEL));//置为取消状态
+            docAnaesRecordDao.updateByPrimaryKeySelective(anaesRecord);
+            List<SysCodeFormbean> ls = basDictItemDao.searchSysCodeByGroupIdAndCodeValue("leave_to", anaesRecord.getLeaveTo(), getBeid());
+            String leaveToName = ls.size()>0?ls.get(0).getCodeName():"";
+            WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName()+regOpt.getRegionName()+bedStr+regOpt.getName()+"手术已取消,去往"+leaveToName);
+        }
+        
+        Date endTime = anaesevent.getOccurTime(); //获取到页面传过来的结束时间
+        Date dbEndTime = basMonitorDisplayDao.findEndTime(regOptId); //获取数据库的
+        BasMonitorDisplay md = basMonitorDisplayDao.findMonitorDisplayByInTimeLimit1(regOptId, dbEndTime); //获取最后一个正常数据点
+        if(null != dbEndTime){
+            long pageEndTimeLong = endTime.getTime();
+            long dbEndTimeLong = dbEndTime.getTime();
+            if(pageEndTimeLong > dbEndTimeLong){ // 页面传过来的数据  大于 数据库最后一个点的时间
+                if(null != md ){
+                    Integer freq = md.getFreq();
+                    List<BasMonitorDisplay> mds = null;
+                    BasMonitorDisplay mDisplay = null;
+                    List<Observe> observes = basMonitorConfigDao.searchAllAnaesObserveList(getBeid(), getCurRoomId(regOptId));
+                    observes = removeSameObserve(observes);
+                    
+                    long time = dbEndTimeLong + freq*1000;
+                    for(;time <= pageEndTimeLong;){
+                        // 新增数据点
+                        mds = new ArrayList<BasMonitorDisplay>();
+                        Timestamp tt = SysUtil.getCurrentTimeStamp(new Date(time));
+                        for (Observe observe : observes) {
+                            mDisplay = new BasMonitorDisplay();
+                            BeanUtils.copyProperties(observe, mDisplay);
+                            mDisplay.setFreq(freq);
+                            mDisplay.setValue(null); // 设值为0.0f
+                            mDisplay.setId(GenerateSequenceUtil.generateSequenceNo());
+                            mDisplay.setObserveName(observe.getName());
+                            // 设置新增时间
+                            mDisplay.setTime(tt);
+                            mDisplay.setRegOptId(regOptId);// 设置regOptId
+                            mDisplay.setIntervalTime(freq); //设置间隔时间
+                            mDisplay.setAmendFlag(3);//3 ： 人为添加  
+                            mDisplay.setOuterFlag(1);//结束手术，数据添加
+                            mds.add(mDisplay);
+                        }
+                        
+                        if (null != mds && mds.size() > 0) {
+                            int count = basMonitorDisplayDao.searchMonitorDisplayByTime(regOptId, SysUtil.getTimeFormat(new Date(time)));//查询数据库是否已存在
+                            if(count == 0){ //当没有数据的时候，才添加
+                                for (BasMonitorDisplay monitorDisplay : mds) {
+                                    basMonitorDisplayDao.insertSelective(monitorDisplay);
+                                }
+                            }
+                        }
+                        time += freq*1000;
+                    }
+                }
+                
+            }else{ // 页面传过来的时间  小于等于  数据库最后一个点的时间
+                //删除掉无用数据
+                basMonitorDisplayDao.deleteByEndTime(SysUtil.getTimeFormat(dbEndTime), regOptId);
+            }
+        }
+        
+    }
+
 	public BasMonitorDisplay findMonitorDisplayByInTimeLimit1(String regOptId,Date time){
 		return basMonitorDisplayDao.findMonitorDisplayByInTimeLimit1(regOptId, time);
 	}

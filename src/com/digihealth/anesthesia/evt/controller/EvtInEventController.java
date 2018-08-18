@@ -63,35 +63,6 @@ public class EvtInEventController extends BaseController {
 		return resp.getJsonStr();
 	}
 
-	@RequestMapping(value = "/saveIoeventSYBX")
-	@ResponseBody
-	@ApiOperation(value = "保存入量事件", httpMethod = "POST", notes = "保存入量事件")
-	public String saveIoeventGZB(@ApiParam(name = "ioevent", value = "参数") @RequestBody EvtInEvent ioevent) {
-		logger.info("begin saveIoevent");
-		ResponseValue resp = new ResponseValue();
-		ValidatorBean validatorBean = beanValidator(ioevent);
-		if (!(validatorBean.isValidator())) {
-			resp.setResultCode("10000001");
-			resp.setResultMessage(validatorBean.getMessage());
-			return resp.getJsonStr();
-		}
-		evtInEventService.saveIoeventSYBX(ioevent, resp);
-		resp.put("inEventId", ioevent.getInEventId());
-		logger.info("end saveIoevent");
-		return resp.getJsonStr();
-	}
-	
-	@RequestMapping(value = "/batchSaveIoeventSYBX")
-	@ResponseBody
-	@ApiOperation(value = "批量保存入量事件", httpMethod = "POST", notes = "批量保存入量事件")
-	public String batchSaveIoeventGZB(@ApiParam(name = "ioeventList", value = "参数") @RequestBody List<EvtInEvent> ioeventList) {
-		logger.info("begin batchSaveIoevent");
-		ResponseValue value = new ResponseValue();
-		evtInEventService.batchSaveIoeventSYBX(ioeventList, value);
-		logger.info("end batchSaveIoevent");
-		return value.getJsonStr();
-	}
-
 	@RequestMapping(value = "/batchSaveIoevent")
 	@ResponseBody
 	@ApiOperation(value = "批量保存入量事件", httpMethod = "POST", notes = "批量保存入量事件")

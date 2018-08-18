@@ -41,6 +41,8 @@ public interface BasOperdefDao extends EntityDao<String, BasOperdef>{
     
     public BasOperdef selectByCode(@Param("code")String code, @Param("beid")String beid);
     
+    public List<BasOperdef> selectOperDefsByCode(@Param("code")String code, @Param("beid")String beid);
+    
     public int updateEnable(@Param("beid")String beid);
     
     public List<BasOperdef> selectByName(@Param("name")String name, @Param("beid")String beid);

@@ -46,6 +46,8 @@ public interface BasInstrumentDao extends CrudDao<BasInstrument> {
 	public List<BasInstrument> queryInstrumentByInstrsuitId(@Param("instrsuitId")String instrsuitId, @Param("type")String type);
 	
 	public BasInstrument selectByCode(@Param("code")String code, @Param("beid")String beid);
+
+	public List<BasInstrument> selectInstrumentsByCode(@Param("code")String code, @Param("beid")String beid);
 	
 	public int updateEnable(@Param("beid")String beid);
 	

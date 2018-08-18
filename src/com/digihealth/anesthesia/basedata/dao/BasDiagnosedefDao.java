@@ -34,7 +34,9 @@ public interface BasDiagnosedefDao extends CrudDao<BasDiagnosedef> {
 	public int queryDiagnosedefListTotal(@Param("filter")String filter,@Param("systemSearchFormBean")SystemSearchFormBean systemSearchFormBean);
 	
 	public BasDiagnosedef selectByCode(@Param("code")String code, @Param("beid")String beid);
-	
+
+	public List<BasDiagnosedef> selectDiagnosedefsByCode(@Param("code")String code, @Param("beid")String beid);
+
 	public int updateEnable(@Param("beid")String beid);
 	
 	public List<BasDiagnosedef> selectByName(@Param("name")String name, @Param("beid")String beid);

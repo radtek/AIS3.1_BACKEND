@@ -90,6 +90,10 @@ public interface StatisticsDao extends BaseDao {
 	public List<SearchAnaesRegInfo> searchAnaesRegInfoList(@Param("searchFormBean") SystemSearchFormBean searchFormBean,@Param("filters") List<Filter> filters);
 	
 	public Integer searchTotalByAnaesRegInfoList(@Param("filters") List<Filter> filters, @Param("beid") String beid);
+
+	public List<SearchAnaesRegInfo> searchAnaesRegInfoListSYBX(@Param("searchFormBean") SystemSearchFormBean searchFormBean,@Param("filters") List<Filter> filters);
+
+	public Integer searchTotalByAnaesRegInfoListSYBX(@Param("filters") List<Filter> filters, @Param("beid") String beid);
 	
 	public List<AnaesDocObserveTimeCount> searchPatGroupByDept(@Param("filters") List<Filter> filters, @Param("beid") String beid);
 	
