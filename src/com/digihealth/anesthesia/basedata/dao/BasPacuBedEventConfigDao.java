@@ -33,4 +33,8 @@ public interface BasPacuBedEventConfigDao {
     List<PacuBedEventConfigFormBean> selectByBedId(@Param("deviceId") String deviceId, @Param("bedId") String bedId, @Param("beid") String beid);
     
     int deleteByBedId(@Param("deviceId") String deviceId, @Param("eventId") String eventId, @Param("bedId") String bedId);
+
+    List<BasPacuBedEventConfig> selectByBeId(@Param("beid") String beid);
+
+    int deleteByBeid(@Param("beid") String beid);
 }

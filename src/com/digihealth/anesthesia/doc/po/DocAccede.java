@@ -37,6 +37,24 @@ public class DocAccede {
 	private String anaestheitistSignTime;
 
 	/**
+	 * 麻醉辅助措施
+	 */
+	@ApiModelProperty(value = "麻醉辅助措施")
+	private String anaesAssistMeasure;
+
+	/**
+	 * 麻醉辅助措施名称
+	 */
+	@ApiModelProperty(value = "麻醉辅助措施名称")
+	private String anaesAssistMeasureName;
+
+	/**
+	 * 麻醉辅助措施集合
+	 */
+	@ApiModelProperty(value = "麻醉辅助措施集合")
+	private List<String> anaesAssistMeasureList;
+
+	/**
 	 * 患者或代理人签名
 	 */
 	@ApiModelProperty(value = "患者或代理人签名")
@@ -384,6 +402,30 @@ public class DocAccede {
 
 	public void setOtherCase(String otherCase) {
 		this.otherCase = otherCase;
+	}
+
+	public String getAnaesAssistMeasure() {
+		return anaesAssistMeasure;
+	}
+
+	public void setAnaesAssistMeasure(String anaesAssistMeasure) {
+		this.anaesAssistMeasure = anaesAssistMeasure;
+	}
+
+	public String getAnaesAssistMeasureName() {
+		return anaesAssistMeasureName;
+	}
+
+	public void setAnaesAssistMeasureName(String anaesAssistMeasureName) {
+		this.anaesAssistMeasureName = anaesAssistMeasureName;
+	}
+
+	public List<String> getAnaesAssistMeasureList() {
+		return anaesAssistMeasureList;
+	}
+
+	public void setAnaesAssistMeasureList(List<String> anaesAssistMeasureList) {
+		this.anaesAssistMeasureList = anaesAssistMeasureList;
 	}
 
 }

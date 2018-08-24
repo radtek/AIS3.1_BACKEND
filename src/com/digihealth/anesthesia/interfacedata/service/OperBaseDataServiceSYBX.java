@@ -64,6 +64,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
      * 日志对象
      */
     protected Logger logger = LoggerFactory.getLogger(getClass());
+	private BasBusEntityDao basBusEntityDao = SpringContextHolder.getBean(BasBusEntityDao.class);
     private BasDeptDao basDeptDao = SpringContextHolder.getBean(BasDeptDao.class);
     private BasOperdefDao basOperdefDao = SpringContextHolder.getBean(BasOperdefDao.class);
     private BasDiagnosedefDao basDiagnosedefDao = SpringContextHolder.getBean(BasDiagnosedefDao.class);
@@ -107,7 +108,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     String name = rs.getString("name");
                     Integer enable = rs.getInt("enable");
                     String pinyin = PingYinUtil.getFirstSpell(name);
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasOperdef> operdefList = basOperdefDao.selectOperDefsByCode(code, beid);
                     if (null != operdefList && operdefList.size() > 0)
                     {
@@ -191,7 +192,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     Integer enable = rs.getInt("enable");
                     String pinyin = PingYinUtil.getFirstSpell(name);
                     
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasOperationPeople> operationPeoples = basOperationPeopleDao.selectPeoplesByCode(code, beid);
                     if (null != operationPeoples && operationPeoples.size() > 0)
                     {
@@ -275,7 +276,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     Integer isValid = rs.getInt("is_valid");
                     String code = rs.getString("code");
                     logger.debug("=================code:=====" + code + "==================");
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                 	BasAnaesMethod basAnaesMethod = new BasAnaesMethod();
                 	basAnaesMethod.setCode(code);
                 	basAnaesMethod.setBeid(beid);
@@ -371,7 +372,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     String pinyin = PingYinUtil.getFirstSpell(name);
                     Integer enable = rs.getInt("enable");
                     
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasDiagnosedef> diagnosedefs = basDiagnosedefDao.selectDiagnosedefsByCode(code, beid);
                     if (StringUtils.isBlank(name))
                     {
@@ -435,7 +436,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
 		String sql = "select * from SZHS_Operation_Deptartment";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String beid = getBeid();
+		String beid = basBusEntityDao.getBeid();
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
@@ -509,7 +510,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String beid = getBeid();
+		String beid = basBusEntityDao.getBeid();
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
@@ -675,7 +676,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     String type = rs.getString("type");
                     String pinyin = rs.getString("pingyin");
                     Integer enable = rs.getInt("enable");
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasInstrument> instruments = basInstrumentDao.selectInstrumentsByCode(code, beid);
                     if (null != instruments && instruments.size() > 0)
                     {
@@ -763,7 +764,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     String dosageUnit = rs.getString("dosage_unit");
                     String spec = rs.getString("spec");
                     String code = rs.getString("code");
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasMedicine> medicines = basMedicineDao.selectMedicinesByCode(code, beid);
                     if (null != medicines && medicines.size() > 0)
                     {
@@ -857,7 +858,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     String minPackageUnit = rs.getString("min_package_unit");
                     Float priceMinPackage = rs.getFloat("price_min_package");
                     Integer enable = rs.getInt("enable");
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     BaseInfoQuery baseQuery = new BaseInfoQuery();
                     baseQuery.setCode(code);
                     baseQuery.setBeid(beid);
@@ -939,7 +940,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 if (!StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("charge_item_code");
-                    String beid = getBeid();
+                    String beid = basBusEntityDao.getBeid();
                     List<BasChargeItem> chargeItems = basChargeItemDao.selectByCode(code, beid);
                     String regEx = "[`~!@#$%^&*()+=|{}':;',//[//].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";  
                     Pattern p = Pattern.compile(regEx);  
@@ -1132,7 +1133,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 String s1 = rs.getString("reservenumber");
                 String s2 = rs.getString("operDate");
                 String time = DateUtils.getParseNYRTime(rs.getString("operDate"));
-                String beid = getBeid();
+                String beid = basBusEntityDao.getBeid();
                 int result = basRegOptDao.selectHisToRegOpt(rs.getString("reservenumber"), DateUtils.getParseNYRTime(rs.getString("operDate")), beid);
                 if(result<1){
 //                    for (int i = 1; i <= col; i++) {
@@ -1433,7 +1434,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         logger.info("begin sendScheduleToHis");
         BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
         
-        String beid = getBeid();
+        String beid = basBusEntityDao.getBeid();
         DispatchFormbean dispatchBean = basDispatchDao.getDispatchOperByRegOptId(regOpt.getRegOptId(), beid);
         DocAnaesRecord anaesRecord = docAnaesRecordDao.searchAnaesRecordByRegOptId(regOptId);
         

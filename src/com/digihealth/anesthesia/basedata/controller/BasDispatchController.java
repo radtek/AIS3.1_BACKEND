@@ -297,8 +297,63 @@ public class BasDispatchController extends BaseController{
         logger.info("end createEmergencyOperationSYBX");
         return respValue.getJsonStr();
     }
-    
-    
+
+    /**
+     * 创建紧急手术排程
+     * @param BasDispatch
+     * @return
+     */
+    @RequestMapping(value = "/createEmergencyOperationLLZY")
+    @ResponseBody
+    @ApiOperation(value="创建紧急手术排程",httpMethod="POST",notes="创建紧急手术排程")
+    public String createEmergencyOperationLLZY(@ApiParam(name = "emgencyOperationFormBean", value = "急诊参数对象") @RequestBody EmgencyOperationFormBean emgencyOperationFormBean) {
+        logger.info("begin createEmergencyOperationLLZY");
+        
+        ResponseValue respValue = new ResponseValue();
+        BasRegOpt regOpt = emgencyOperationFormBean.getRegOpt();
+        BasDispatch dispatch = emgencyOperationFormBean.getDispatch();
+        ValidatorBean validatorBean = beanValidator(regOpt);
+        if (!(validatorBean.isValidator()))
+        {
+            respValue.setResultCode("10000001");
+            respValue.setResultCode(validatorBean.getMessage());
+            return respValue.getJsonStr();
+        }
+        if (regOpt.getAge() == null && regOpt.getAgeMon() == null && regOpt.getAgeDay() == null)
+        {
+            respValue.setResultCode("10000001");
+            respValue.setResultCode("年、月、天必填一项");
+            return respValue.getJsonStr();
+        }
+        int age = regOpt.getAge() == null ? 0 : regOpt.getAge();
+        int ageMon = regOpt.getAgeMon() == null ? 0 : regOpt.getAgeMon();
+        int ageDay = regOpt.getAgeDay() == null ? 0 : regOpt.getAgeDay();
+        if (age < 1 && ageMon < 1 && ageDay < 1)
+        {
+            respValue.setResultCode("10000001");
+            respValue.setResultCode("年、月、天其中一项必须要大于0");
+            return respValue.getJsonStr();
+        }
+        
+        
+        ValidatorBean validatorBean1 = beanValidator(dispatch);
+        if (!(validatorBean1.isValidator()))
+        {
+            respValue.setResultCode("10000001");
+            respValue.setResultCode(validatorBean.getMessage());
+            return respValue.getJsonStr();
+        }
+        String beid = regOpt.getBeid();
+        if (StringUtils.isBlank(beid)) {
+            beid = getBeid();
+            regOpt.setBeid(beid);
+        }
+        BasRegOptUtils.IsLocalAnaesSet(regOpt);
+        BasRegOptUtils.getOtherInfo(regOpt);
+        basDispatchService.createEmergencyOperationLLZY(regOpt, dispatch, respValue);
+        logger.info("end createEmergencyOperationLLZY");
+        return respValue.getJsonStr();
+    }
 	/**
 	 * 根据传入的手术室、手术日期获取手术时间列表
 	 * @param BasDispatch

@@ -36,4 +36,6 @@ public interface BasDocumentDao {
     List<String> searchAllTables(@Param("beid")String beid);
     
     List<BasDocument> searchDocumentByTableName(@Param("tableName")String tableName);
+    
+    void deleteByBeid(@Param("beid")String beid);
 }

@@ -69,6 +69,12 @@ public class BasBusEntity {
     
 	@ApiModelProperty(value = "文书标题路径")
 	private String titlePath;
+
+    /**
+     * 源局点
+     */
+    @ApiModelProperty(value="源局点")
+    private String sourceBeid;
 	
 	
 
@@ -151,4 +157,13 @@ public class BasBusEntity {
     public void setIsCurBe(Integer isCurBe) {
         this.isCurBe = isCurBe;
     }
+
+	public String getSourceBeid() {
+		return sourceBeid;
+	}
+
+	public void setSourceBeid(String sourceBeid) {
+		this.sourceBeid = sourceBeid;
+	}
+    
 }

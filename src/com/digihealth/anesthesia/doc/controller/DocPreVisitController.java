@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.digihealth.anesthesia.basedata.formbean.DispatchFormbean;
+import com.digihealth.anesthesia.basedata.po.BasAnaesMethod;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.utils.DateUtils;
@@ -275,6 +276,93 @@ public class DocPreVisitController extends BaseController {
         return resp.getJsonStr();
     }
     
+    /**
+     * @discription 根据手术ID获取 麻醉前评估和麻醉计划文书信息 (临澧县中医医院局点)
+     * @author lius
+     * @created 2018-08-22
+     * @param regOptId
+     * @return
+     */
+    @RequestMapping(value = "/searchPreVisitByRegOptIdLLZY")
+    @ResponseBody
+    @ApiOperation(value="根据手术ID获取麻醉前评估和麻醉计划信息",httpMethod="POST",notes="根据手术ID获取麻醉前评估和麻醉计划信息")
+    public String searchPreVisitByRegOptIdLLZY(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
+        logger.info("------------------begin searchPreVisitByRegOptIdLLZY------------------");
+        ResponseValue resp = new ResponseValue();
+        String regOptId = map.get("regOptId") != null ? map.get("regOptId").toString() : "";
+        PreVisitFormBean preVisitFormBean = docPreVisitService.searchPreVisitByRegOptId(regOptId);
+        DocPreVisit preVisit = preVisitFormBean.getPreVisit();
+        if (preVisit == null) {
+            resp.setResultCode("30000001");
+            resp.setResultMessage("麻醉前评估和麻醉计划不存在!");
+            return resp.getJsonStr();
+        }
+        
+        //获取到麻醉医生名字
+        if (null == preVisit.getAnaestheitistId() || StringUtils.isBlank(preVisit.getAnaestheitistName()))
+        {
+            DispatchFormbean dispatchPeople =
+                basDispatchService.getDispatchOperByRegOptId(map.get("regOptId").toString());
+            if (dispatchPeople != null)
+            {
+                preVisit.setAnaestheitistId(dispatchPeople.getAnesthetistId() != null ? dispatchPeople.getAnesthetistId() : "");
+                preVisit.setAnaestheitistName(dispatchPeople.getAnesthetistName() != null ? dispatchPeople.getAnesthetistName() : "");
+            }
+        }
+        
+        //获取手术基本信息
+        SearchRegOptByIdFormBean searchRegOptByIdFormBean = 
+            basRegOptService.searchApplicationById(map.get("regOptId").toString());
+        if (searchRegOptByIdFormBean == null) {
+            resp.setResultCode("30000001");
+            resp.setResultMessage("手术基本信息不存在!");
+            return resp.getJsonStr();
+        }
+        
+        List<String> anaseMethodList = new ArrayList<String>();
+        String[] code = null;
+        if (null == preVisit.getDesignedAnaesCode())
+        {
+            if (StringUtils.isNotBlank(searchRegOptByIdFormBean.getDesignedAnaesMethodCode()))
+            {
+                code = searchRegOptByIdFormBean.getDesignedAnaesMethodCode().split(",");
+            }
+            preVisit.setDesignedAnaesCode(searchRegOptByIdFormBean.getDesignedAnaesMethodCode());
+            preVisit.setDesignedAnaes(searchRegOptByIdFormBean.getDesignedAnaesMethodName());
+        }
+        else
+        {
+            code = preVisit.getDesignedAnaesCode().split(",");
+        }
+        if (null != code && code.length > 0)
+        {
+            for (int i = 0; i < code.length; i++)
+            {
+                anaseMethodList.add(code[i]);
+            }
+        }
+        preVisit.setDesignedAnaesList(anaseMethodList);
+
+        List<String> anaseMethodForPlanList = new ArrayList<String>();
+        String[] codeForPlan = null;
+        if (StringUtils.isNotBlank(preVisit.getAnaesMethodCode())) {
+            codeForPlan = preVisit.getAnaesMethodCode().split(",");
+        }
+        if (null != codeForPlan && codeForPlan.length > 0) {
+            for (int i = 0; i < codeForPlan.length; i++) {
+            	anaseMethodForPlanList.add(codeForPlan[i]);
+            }
+        }
+        preVisit.setAnaesMethodList(anaseMethodForPlanList);
+        //设置页面选择框的值
+        setMapValue(preVisit);
+        
+        resp.put("result", "true");
+        resp.put("preVisitItem", preVisit);
+        resp.put("regOptItem", searchRegOptByIdFormBean);
+        logger.info("-------------------end searchPreVisitByRegOptIdLLZY-------------------");
+        return resp.getJsonStr();
+    }
     /**
      * 
      * @discription 修改术前 麻醉前评估和麻醉计划 (永兴人民医院局点用)
@@ -547,6 +635,23 @@ public class DocPreVisitController extends BaseController {
             return resp.getJsonStr();
         }
         preVisit.setDesignedAnaesCode(StringUtils.getStringByList(preVisit.getDesignedAnaesList()));
+        if (null != preVisit.getAnaesMethodList()) {
+        	List<String> anaesMethodCode = preVisit.getAnaesMethodList();
+        	String anaesMethodName = "";
+        	preVisit.setAnaesMethodCode(StringUtils.getStringByList(preVisit.getAnaesMethodList()));
+        	for (String code : anaesMethodCode) {
+        		BasAnaesMethod basAnaesMethod = basAnaesMethodService.searchAnaesMethodById(code);
+        		if (basAnaesMethod != null) {
+            		if (StringUtils.isBlank(anaesMethodName)) {
+            			anaesMethodName = basAnaesMethod.getName();
+    				}else {
+    					anaesMethodName += "," + basAnaesMethod.getName();
+    				}
+				}
+			}
+        	preVisit.setAnaesMethod(anaesMethodName);
+				
+		}
         resp = docPreVisitService.updatePreVisitByDocId(preVisit);
         logger.info("--------------------end updatePreVisit--------------------");
         return resp.getJsonStr();

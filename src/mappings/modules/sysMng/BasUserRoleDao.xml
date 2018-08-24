@@ -91,4 +91,8 @@
     where userId = #{userName,jdbcType=VARCHAR}
    and beid = #{beid,jdbcType=VARCHAR}
   </update>
+  
+  <delete id="deleteByBeId" parameterType="com.digihealth.anesthesia.sysMng.po.BasUserRole" >
+    delete from bas_user_role where beid = #{beid,jdbcType=VARCHAR}
+  </delete>
 </mapper>

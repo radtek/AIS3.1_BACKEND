@@ -1,5 +1,6 @@
 package com.digihealth.anesthesia.doc.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
 import com.digihealth.anesthesia.basedata.po.Controller;
 import com.digihealth.anesthesia.basedata.utils.UserUtils;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.JsonType;
+import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.formbean.AccedeFormBean;
 import com.digihealth.anesthesia.doc.po.DocAccede;
 import com.digihealth.anesthesia.doc.po.DocAccedeInformed;
@@ -33,6 +36,45 @@ public class DocAccedeService extends BaseService {
 	 */
 	public DocAccede searchAccedeByRegOptId(String regOptId) {
 		return docAccedeDao.searchAccedeByRegOptId(regOptId);
+	}
+
+	public DocAccede searchAccedeByRegOptIdLLZY(String regOptId) {
+		DocAccede docAccede = docAccedeDao.searchAccedeByRegOptId(regOptId);
+        if (StringUtils.isNotBlank(docAccede.getAnaesAssistMeasure())) {
+			String[] codes = docAccede.getAnaesAssistMeasure().split(",");
+			String anaesAssistMeasureName = "";
+			for (String code : codes) {
+				List<SysCodeFormbean> basDictItems = basDictItemDao.searchSysCodeByGroupIdAndCodeValue("anaes_assist_measure", code, getBeid());
+				if (basDictItems != null && basDictItems.size() > 0) {
+					if (StringUtils.isBlank(anaesAssistMeasureName)) {
+						anaesAssistMeasureName = basDictItems.get(0).getCodeName();
+					}else {
+						anaesAssistMeasureName += "、" + basDictItems.get(0).getCodeName();
+					}
+				}
+			}
+			docAccede.setAnaesAssistMeasureName(anaesAssistMeasureName);
+		}
+        List<String> anaesAssistMeasureList = new ArrayList<String>();
+        String[] code = null;
+        if (StringUtils.isNotBlank(docAccede.getAnaesAssistMeasure())) {
+            code = docAccede.getAnaesAssistMeasure().split(",");
+        }
+        if (null != code && code.length > 0) {
+            for (int i = 0; i < code.length; i++) {
+            	anaesAssistMeasureList.add(code[i]);
+            }
+        }
+        docAccede.setAnaesAssistMeasureList(anaesAssistMeasureList);
+        List<String> selectedList = new ArrayList<String>();
+        if (StringUtils.isNotBlank(docAccede.getSelected())) {
+			String[] selectedCode = docAccede.getSelected().split(",");
+			for (String selected : selectedCode) {
+				selectedList.add(selected);
+			}
+			docAccede.setSelectedList(selectedList);
+		}
+		return docAccede;
 	}
 
 	/**

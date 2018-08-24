@@ -179,6 +179,10 @@
 	select * from bas_diagnosedef where code = #{code} and beid = #{beid} 
 	</select>
 	
+	<select id="selectDiagnosedefsByCode" resultType="com.digihealth.anesthesia.basedata.po.BasDiagnosedef">
+	select * from bas_diagnosedef where code = #{code} and beid = #{beid} 
+	</select>
+	
 	<update id="updateEnable">
 		update bas_diagnosedef set enable='0' where beid = #{beid};
 	</update>

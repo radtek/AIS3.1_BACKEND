@@ -154,4 +154,7 @@
     where configureId = #{configureId,jdbcType=VARCHAR}
   </update>
 
+	<delete id="deleteByBeid" parameterType="java.lang.String">
+		delete from bas_custom_configure where beid = #{beid,jdbcType=VARCHAR}
+	</delete>
 </mapper>

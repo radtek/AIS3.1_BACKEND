@@ -730,8 +730,21 @@ public class DocPreVisit {
      */
     private Integer infectiousHave;
     
+    /**
+     * 麻醉方法(麻醉计划)
+     */
+    private String anaesMethod;
+    
+    /**
+     * 麻醉方法CODE
+     */
+    private String anaesMethodCode;
+    
     @ApiModelProperty(value = "拟行麻醉集合")
     private List<String> designedAnaesList;
+    
+    @ApiModelProperty(value = "麻醉方法(麻醉计划)集合")
+    private List<String> anaesMethodList;
 
     @ApiModelProperty(value = "简要病史对象")
     private Map<String, Object> briefHisMap;
@@ -1893,7 +1906,15 @@ public class DocPreVisit {
 		this.designedAnaesList = designedAnaesList;
 	}
 
-    public String getOtherBriefHisCond()
+    public List<String> getAnaesMethodList() {
+		return anaesMethodList;
+	}
+
+	public void setAnaesMethodList(List<String> anaesMethodList) {
+		this.anaesMethodList = anaesMethodList;
+	}
+
+	public String getOtherBriefHisCond()
     {
         return otherBriefHisCond;
     }
@@ -2077,6 +2098,22 @@ public class DocPreVisit {
 
 	public void setInfectiousHave(Integer infectiousHave) {
 		this.infectiousHave = infectiousHave;
+	}
+
+	public String getAnaesMethod() {
+		return anaesMethod;
+	}
+
+	public void setAnaesMethod(String anaesMethod) {
+		this.anaesMethod = anaesMethod;
+	}
+
+	public String getAnaesMethodCode() {
+		return anaesMethodCode;
+	}
+
+	public void setAnaesMethodCode(String anaesMethodCode) {
+		this.anaesMethodCode = anaesMethodCode;
 	}
 
 	public String getDrugAbuseCond() {

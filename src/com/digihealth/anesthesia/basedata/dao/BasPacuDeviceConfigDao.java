@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.digihealth.anesthesia.basedata.formbean.PacuDeviceConfigFormBean;
+import com.digihealth.anesthesia.basedata.po.BasPacuBedEventConfig;
 import com.digihealth.anesthesia.basedata.po.BasPacuDeviceConfig;
 import com.digihealth.anesthesia.basedata.po.BasPacuMonitorConfig;
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
@@ -34,4 +35,8 @@ public interface BasPacuDeviceConfigDao {
     List<PacuDeviceConfigFormBean> selectByBedId(@Param("bedId") String bedId, @Param("beid") String beid);
     
     List<BasPacuMonitorConfig> selectByBedIdWithOpt(@Param("bedId") String bedId, @Param("beid") String beid);
+
+    List<BasPacuDeviceConfig> selectByBeId(@Param("beid") String beid);
+    
+    int deleteByBeid(@Param("beid") String beid);
 }

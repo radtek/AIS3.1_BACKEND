@@ -39,6 +39,7 @@ import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
+import com.digihealth.anesthesia.doc.po.DocAccede;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocOptRiskEvaluation;
 import com.digihealth.anesthesia.evt.formbean.CancleRegOptFormBean;
@@ -933,6 +934,38 @@ public class BasDispatchService extends BaseService {
         }
     }
 
+	/**
+     * 紧急手术创建(临澧)
+     * 
+     * @param EmgencyOperationFormBean
+     * @throws Exception
+     */
+    @Transactional
+    public void createEmergencyOperationLLZY(BasRegOpt regOpt, BasDispatch dispatch, ResponseValue respValue) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("DispatchService createEmergencyOperationLLZY data:dispatch" + dispatch.toString());
+        }
+        String result = saveRegOpt(regOpt);
+        if (result.equals("true")) {
+            // 创建排程信息
+            dispatch.setRegOptId(regOpt.getRegOptId());
+            dispatch.setOperRegDate(regOpt.getOperaDate());
+            dispatch.setIsHold(DISPATCH_SAVE);
+            if (StringUtils.isBlank(dispatch.getBeid())) {
+                dispatch.setBeid(getBeid());
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("DispatchService createEmergencyOperationLLZY data:dispatch" + dispatch.toString());
+            }
+            basDispatchDao.insert(dispatch);
+
+            // 手术审核
+            checkOperationSYBX(regOpt.getRegOptId(), OperationState.PREOPERATIVE, "", respValue);
+            initDocDataLLZY(regOpt.getRegOptId());
+            saveDispatchSuccess(dispatch, "N");
+        }
+    }
+
 	public BasDispatch getDispatchOper(String regOptId) {
 		return basDispatchDao.getDispatchOper(regOptId);
 	}
@@ -1207,6 +1240,30 @@ public class BasDispatchService extends BaseService {
             {
                 int failCnt = idsList.size() - succCnt;
                 respValue.setResultMessage("批量审核完成!其中成功" + succCnt + "条数据," + "失败" + failCnt + "条数据");
+            }
+        }
+    }
+
+    /**
+     * 初始化文书相关数据
+     * @param ids
+     */
+    public void initDocDataLLZY(String ids) {
+        List<String> idsList = new ArrayList<String>();
+        String[] idsString = ids.split(",");
+        for (int i = 0; i < idsString.length; i++) {
+            idsList.add(idsString[i]);
+        }
+        if (idsList != null) {
+            if (idsList.size() > 0) {
+                for (int i = 0; i < idsList.size(); i++) {
+                    String regOptId = idsList.get(i);
+                    DocAccede docAccede = docAccedeDao.searchAccedeByRegOptId(regOptId);
+                    if (docAccede != null) {
+                    	docAccede.setSelected("0,0,0,0,0,0,0,0,0,1,1,1,1,1,1");
+                    	docAccedeDao.updateAccede(docAccede);
+					}
+                }
             }
         }
     }

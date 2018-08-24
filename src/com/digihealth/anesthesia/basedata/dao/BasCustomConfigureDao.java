@@ -32,4 +32,6 @@ public interface BasCustomConfigureDao {
     int updateByPrimaryKey(BasCustomConfigure record);
     
     public List<BasCustomConfigure> searchBasCustomConfigureList(@Param("baseQuery") BasCustomConfigure baseQuery,@Param("beid") String beid);
+    
+    void deleteByBeid(@Param("beid") String beid);
 }

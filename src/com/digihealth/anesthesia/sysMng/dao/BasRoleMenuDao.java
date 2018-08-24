@@ -35,4 +35,6 @@ public interface BasRoleMenuDao extends CrudDao<BasRoleMenu>{
     int deleteByRoleId(@Param("roleId")String roleId, @Param("module")String module, @Param("beid") String beid);
     
     int deleteByMenuId(@Param("menuId") String menuId, @Param("beid") String beid);
+    
+    int deleteBybeid(@Param("beid") String beid);
 }

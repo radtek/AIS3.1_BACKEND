@@ -228,4 +228,8 @@
     from bas_document
     where `table` = #{tableName,jdbcType=VARCHAR}
   </select>
+  
+  <delete id="deleteByBeid" parameterType="java.lang.String">
+  	delete from bas_document where beid = #{beid,jdbcType=VARCHAR}
+  </delete>
 </mapper>

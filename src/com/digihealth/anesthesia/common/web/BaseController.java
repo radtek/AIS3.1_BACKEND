@@ -144,9 +144,11 @@ import com.digihealth.anesthesia.doc.service.DocPostOperRegardService;
 import com.digihealth.anesthesia.doc.service.DocPreAnaesTalkRecordService;
 import com.digihealth.anesthesia.doc.service.DocPreOperVisitService;
 import com.digihealth.anesthesia.doc.service.DocPrePostVisitService;
+import com.digihealth.anesthesia.doc.service.DocPrePublicityService;
 import com.digihealth.anesthesia.doc.service.DocPreVisitService;
 import com.digihealth.anesthesia.doc.service.DocRiskEvaluatPreventCareService;
 import com.digihealth.anesthesia.doc.service.DocSafeCheckService;
+import com.digihealth.anesthesia.doc.service.DocSelfPayAccedeLlzyyService;
 import com.digihealth.anesthesia.doc.service.DocSelfPayAccedeService;
 import com.digihealth.anesthesia.doc.service.DocSelfPayInstrumentAccedeService;
 import com.digihealth.anesthesia.doc.service.DocSpinalCanalPunctureService;
@@ -347,6 +349,10 @@ public abstract class BaseController {
 	protected EvtMaterialService evtMaterialService;
 	@Autowired
 	protected DocSelfPayAccedeService docSelfPayAccedeService;
+	@Autowired
+	protected DocSelfPayAccedeLlzyyService docSelfPayAccedeLlzyyService;
+	@Autowired
+	protected DocPrePublicityService docPrePublicityService;
 	@Autowired
 	protected DocOptCareRecordService docOptCareRecordService;
 	@Autowired

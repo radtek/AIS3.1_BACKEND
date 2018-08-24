@@ -186,6 +186,18 @@ public class BasRegOptController extends BaseController {
         return respValue.getJsonStr();
     }
 
+    @RequestMapping(value = "/checkOperationLLZY")
+    @ResponseBody
+    @ApiOperation(value="审核",httpMethod="POST",notes="审核")
+    public String checkOperationLLZY(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
+        logger.info("-----------------begin checkOperationSYBX-----------------");
+        ResponseValue respValue = new ResponseValue();
+        controllerService.checkOperation(map.get("regOptIds").toString(), OperationState.NO_SCHEDULING, OperationState.NOT_REVIEWED,respValue);
+        basDispatchService.initDocDataLLZY(map.get("regOptIds").toString());
+        logger.info("-----------------begin checkOperationSYBX-----------------");
+        return respValue.getJsonStr();
+    }
+
     /**
 	 * 
 	 * @discription 获取单个手术室即将进行手术的病人列表

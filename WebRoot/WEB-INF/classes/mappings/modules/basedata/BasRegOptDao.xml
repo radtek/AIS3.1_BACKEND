@@ -143,7 +143,7 @@
 		a.designedOptName,
 		a.diagnosisName,a.operaDate,a.costsettlementState,a.reasons,c.operRoomId,
 		c.instrnurseId1,c.instrnurseId2,c.circunurseId1,c.circunurseId2,c.circuanesthetistId,c.anesthetistId,c.perfusiondoctorId,
-		a.state,a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,a.designedAnaesMethodName,a.operatorName,
+		a.state,a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,a.designedAnaesMethodName,a.operatorName,a.operSource,
 		a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp, a.assistantName, p.id AS pacuId,a.operateNumber,a.docPayState,a.nurPayState,a.createTime
 		FROM
 		bas_reg_opt a
@@ -573,7 +573,7 @@
 		"anesthetistName",
 		u5.name AS "circuanesthetistName",a.state,(SELECT codeName FROM bas_sys_dict_item
 		sc WHERE sc.groupId = 'operation_state' AND sc.codeValue = a.state AND sc.beid = #{beid})
-		AS "stateName",a.emergency,a.hypersusceptibility,a.optLevel,
+		AS "stateName",a.emergency,a.hypersusceptibility,a.optLevel,a.operSource,
 		a.designedAnaesMethodName,a.operatorName,a.height,a.weight,LEFT(a.operaDate,10)
 		FROM (select * from bas_reg_opt where beid = #{beid}) a
 		LEFT JOIN (select * from bas_dispatch where beid = #{beid}) c ON a.regOptId = c.regOptId
@@ -637,7 +637,7 @@
 		a.state,
 		(SELECT codeName FROM bas_sys_dict_item sc WHERE sc.groupId = 'operation_state' AND sc.codeValue = a.state AND sc.beid = #{beid}) AS "stateName",
 		a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,
-		a.designedAnaesMethodName,a.operatorName,a.height,a.weight
+		a.designedAnaesMethodName,a.operatorName,a.height,a.weight,a.operSource
 		FROM
 		bas_reg_opt a , bas_dispatch c ,(select * from bas_operroom where beid = #{beid}) m
 		WHERE a.`regOptId` = c.`regOptId` 
@@ -671,7 +671,7 @@
 		codeName FROM bas_sys_dict_item sc WHERE sc.groupId = 'operation_state' AND
 		sc.codeValue = a.state AND sc.beid = #{beid}) AS "stateName",
 		a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,
-		a.designedAnaesMethodName,a.operatorName,a.height,a.weight
+		a.designedAnaesMethodName,a.operatorName,a.height,a.weight,a.operSource
 		FROM
 		bas_reg_opt a , bas_dispatch c ,(select * from bas_operroom where beid = #{beid}) m,evt_shift_change d,doc_anaes_record dar
 		WHERE a.`regOptId` = c.`regOptId`

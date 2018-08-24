@@ -28,6 +28,14 @@
     where id = #{id,jdbcType=VARCHAR}
   </select>
 
+	<select id="searchAllIconSvg" resultType="com.digihealth.anesthesia.basedata.po.BasIconSvg">
+  	 select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    FROM bas_icon_svg WHERE beid = #{beid};
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from bas_icon_svg
     where id = #{id,jdbcType=VARCHAR}

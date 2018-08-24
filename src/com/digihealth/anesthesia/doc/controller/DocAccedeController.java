@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.digihealth.anesthesia.basedata.formbean.DispatchFormbean;
 import com.digihealth.anesthesia.basedata.formbean.DispatchPeopleNameFormBean;
+import com.digihealth.anesthesia.basedata.po.BasAnaesMethod;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.utils.DateUtils;
@@ -95,6 +96,56 @@ public class DocAccedeController extends BaseController {
         return resp.getJsonStr();
     }
 
+    @RequestMapping(value = "/searchAccedeByRegOptIdLLZY")
+    @ResponseBody
+    @ApiOperation(value = "根据手术ID获取麻醉同意书", httpMethod = "POST", notes = "根据手术ID获取麻醉同意书")
+    public String searchAccedeByRegOptIdLLZY(@ApiParam(name = "map", value = "统计查询参数") @RequestBody Map map) {
+        logger.info("-----------------start searchAccedeByRegOptIdLLZY-----------------");
+        ResponseValue resp = new ResponseValue();
+        String regOptId = map.get("regOptId") != null ? map.get("regOptId").toString() : "";
+        DocAccede accede = docAccedeService.searchAccedeByRegOptIdLLZY(regOptId);
+        if (accede == null) {
+            resp.setResultCode("30000002");
+            resp.setResultMessage("麻醉同意书不存在");
+            return resp.getJsonStr();
+        }
+
+        if (null == accede.getAnaestheitistId())
+        {
+            DispatchFormbean dispatchPeople = basDispatchService.getDispatchOperByRegOptId(regOptId);
+            if (dispatchPeople != null)
+            {
+                accede.setAnaestheitistId(dispatchPeople.getAnesthetistId() != null ? dispatchPeople.getAnesthetistId()
+                    : "");
+            }
+        }
+        
+        if ("NO_END".equals(accede.getProcessState()))
+        {
+            DocAnaesRecord ansRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+            String docId = ansRecord.getAnaRecordId();
+            SearchFormBean searchBean = new SearchFormBean();
+            searchBean.setDocId(docId);
+            List<EvtShiftChange> shiftChangeList = evtShiftChangeService.searchShiftChangeList(searchBean);
+            if (null != shiftChangeList && shiftChangeList.size() > 0)
+            {
+                accede.setAnaestheitistId(shiftChangeList.get(shiftChangeList.size() - 1).getShiftChangePeopleId());
+            }
+        }
+        
+        if (null == accede.getAnaestheitistSignTime()) {
+            accede.setAnaestheitistSignTime(DateUtils.getDate());
+        }
+        SearchRegOptByIdFormBean searchRegOptByIdFormBean = basRegOptService.searchApplicationById(map.get("regOptId").toString());
+        resp.put("result", "true");
+        resp.put("accedeItem", accede);
+        resp.put("regOptItem",searchRegOptByIdFormBean);
+        resp.put("accedeInformedList", docAccedeService.searchAccedeInformedListById(accede.getAccedeId()));
+
+        logger.info("-----------------end searchAccedeByRegOptIdLLZY-----------------");
+        return resp.getJsonStr();
+    }
+
 	/**
 	 * 
 	 * @discription 修改麻醉同意书
@@ -120,6 +171,9 @@ public class DocAccedeController extends BaseController {
 		DocAccede accede = accedeFormBean.getAccede();
 		accede.setAnaseMethod(StringUtils.getStringByList(accede.getAnaesMethodList()));
 		accede.setSelected(StringUtils.getStringByList(accede.getSelectedList()));
+		if (accede.getAnaesAssistMeasureList() != null) {
+        	accede.setAnaesAssistMeasure(StringUtils.getStringByList(accede.getAnaesAssistMeasureList()));
+		}
 		accedeFormBean.setAccede(accede);
 		resp = docAccedeService.updateAccede(accedeFormBean);
 		logger.info("-----------------end updateAccede-----------------");

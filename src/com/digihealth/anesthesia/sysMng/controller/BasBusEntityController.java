@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +54,15 @@ public class BasBusEntityController extends BaseController {
 				resp.setResultCode("200002");
 				resp.setResultMessage("此编号已经使用过了，请采用其他编号。");
 			} else {
-				basBusEntityService.saveBusEntity(sysBusEntity);
+				if (StringUtils.isNotBlank(sysBusEntity.getSourceBeid())) {
+					BasBusEntity basBusEntity = basBusEntityService.selectBusEntityById(sysBusEntity.getSourceBeid());
+					if (basBusEntity == null) {
+						resp.setResultCode("200002");
+						resp.setResultMessage("源局点不存在。");
+					}else {
+						basBusEntityService.saveBusEntity(sysBusEntity);
+					}
+				}
 			}
 		}
 		logger.info("--------------end saveBusEntity---------------------------");

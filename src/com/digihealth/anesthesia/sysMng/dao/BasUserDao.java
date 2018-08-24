@@ -24,6 +24,8 @@ import org.apache.ibatis.annotations.Param;
 public interface BasUserDao extends CrudDao<BasUser>{
     int deleteByPrimaryKey(@Param("userName") String userName, @Param("beid") String beid);
 
+    void deleteByBeId(@Param("beid") String beid);
+
     int insertSelective(BasUser record);
 
     BasUser selectByPrimaryKey(@Param("userName") String userName, @Param("beid") String beid);

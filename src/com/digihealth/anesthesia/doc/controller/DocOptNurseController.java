@@ -844,7 +844,7 @@ public class DocOptNurseController extends BaseController {
         optNurse.setOperationNameList(operDefList);
         optNurse.setOperatorId(operatorId);
         optNurse.setOperatorName(operatorName);
-        
+        optNurse.setBloodSignList(StringUtils.getListByString(optNurse.getBloodSign()));
         // 数据同步
         if ("1".equals("type"))
         {
@@ -1242,6 +1242,7 @@ public class DocOptNurseController extends BaseController {
         optNurse.setOperationNameList(operDefList);
         optNurse.setOperatorId(operatorId);
         optNurse.setOperatorName(operatorName);
+        optNurse.setBloodSignList(StringUtils.getListByString(optNurse.getBloodSign()));
         
         // 数据同步
         if ("1".equals("type"))

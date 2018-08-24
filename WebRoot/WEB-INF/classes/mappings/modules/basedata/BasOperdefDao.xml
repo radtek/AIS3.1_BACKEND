@@ -167,7 +167,11 @@
 	<select id="selectByCode" resultType="com.digihealth.anesthesia.basedata.po.BasOperdef">
 	select * from bas_operdef where code = #{code} and beid = #{beid}
 	</select>
-	
+
+	<select id="selectOperDefsByCode" resultType="com.digihealth.anesthesia.basedata.po.BasOperdef">
+		select * from bas_operdef where code = #{code} and beid = #{beid}
+	</select>
+
 	<select id="queryOperdefListTotal" resultType="java.lang.Integer">
 		SELECT count(*) FROM bas_operdef where 1=1 ${filter} and beid = #{systemSearchFormBean.beid} 
 	</select>

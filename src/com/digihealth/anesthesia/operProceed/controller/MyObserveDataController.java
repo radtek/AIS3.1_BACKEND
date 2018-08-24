@@ -38,6 +38,7 @@ import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.common.utils.SysUtil;
 import com.digihealth.anesthesia.common.web.BaseController;
 import com.digihealth.anesthesia.doc.formbean.AnaesRecordFormBean;
+import com.digihealth.anesthesia.doc.formbean.PreVisitFormBean;
 import com.digihealth.anesthesia.doc.po.DocAccede;
 import com.digihealth.anesthesia.doc.po.DocAnaesBeforeSafeCheck;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
@@ -2819,7 +2820,418 @@ public class MyObserveDataController extends BaseController {
         logger.info("------------------end startOper------------------------");
         return JsonType.jsonType(result);
 	}
-    
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @RequestMapping("/startOperLLZY")
+    @ResponseBody
+    public String startOperLLZY(@RequestBody SearchFormBean searchBean){
+        logger.info("----------------start startOperLLZY------------------------");
+        Map result = new HashMap();
+        try {
+        	String regOptId = searchBean.getRegOptId();
+            //麻醉记录单
+            DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+            //设置文书ID
+            searchBean.setDocId(anaesRecord.getAnaRecordId());
+            // 手术信息表
+            BasRegOpt opt = basRegOptService.searchRegOptById(regOptId);
+            //只有手术从术前到术中时，才需要将手术排程的麻醉医生、麻醉方法等数据插入到事件表
+            boolean flagInsert = false;
+            //特殊处理，在术中结束手术后，为了可以填完其他文书之后再回到麻醉记录单进行一键打印，这里将accessSource置为空
+            if ("start".equals(searchBean.getAccessSource()) && ("06".equals(opt.getState()) || "05".equals(opt.getState())))
+            {
+                searchBean.setAccessSource("");
+            }
+            //AccessSource有值时代表是术中模块进入 ,为空值时则表示术后查看麻醉记录单
+            if(StringUtils.isNotBlank(searchBean.getAccessSource())){
+                //如果已经是术后or中止状态，则直接返回给前端
+                if(("06").equals(opt.getState())){ //术后状态
+                    result.put("resultCode", "40000004");
+                    result.put("resultMessage", "当前患者("+opt.getName()+")的手术已结束!");
+                    logger.info("------------------end startOperLLZY------------------------");
+                    return JsonType.jsonType(result);
+                }else if("07".equals(opt.getState())){
+                    result.put("resultCode", "40000004");
+                    result.put("resultMessage", "当前患者("+opt.getName()+")的手术已中止!");
+                    logger.info("------------------end startOperLLZY------------------------");
+                    return JsonType.jsonType(result);
+                }
+                BaseInfoQuery baseQuery = new BaseInfoQuery();
+                //baseQuery.setOperRoomId(Global.getConfig("roomId").toString());
+                baseQuery.setState(OperationState.SURGERY);
+                /*
+                 * 同一个手术间可开始多台局麻或可开始一台全麻及多台局麻，但是不能同时开多台全麻
+                 * 
+                 * 1、当提交开始手术为局麻时直接跳过未完成手术的判断
+                 * 2、当提交开始手术为全麻时获取未完成的手术列表中存在全麻时，提示有未完成的全麻手术！
+                 */
+                if("0".equals(opt.getIsLocalAnaes())){
+                    //判断当前手术室是否存在未完成的手术，如果存在则返回错误消息
+                    List<SearchOperaPatrolRecordFormBean> operaPatrolList = basRegOptService.getOperaPatrolRecordListByRoomId(baseQuery);
+                    SearchOperaPatrolRecordFormBean po = null;
+                    if(operaPatrolList.size()>0){
+                        for (SearchOperaPatrolRecordFormBean searchOperaPatrolRecordFormBean : operaPatrolList) {
+                            if("0".equals(searchOperaPatrolRecordFormBean.getIsLocalAnaes())){
+                                po = searchOperaPatrolRecordFormBean;
+                            }
+                        }
+                        if(null != po && !po.getRegOptId().equals(searchBean.getRegOptId())){
+                            result.put("resultCode", "40000004");
+                            result.put("resultMessage", po.getOperRoomName()+"存在病人信息为："+po.getName()+",手术未完成!");
+                            result.put("id", po.getRegOptId());
+                            logger.info("------------------end startOperLLZY------------------------");
+                            return JsonType.jsonType(result);
+                        }
+                    }
+                }
+                //当source传入start表示进入手术室，需要更新状态为术中，否则不更新当前状态
+                if("start".equals(searchBean.getAccessSource())){
+                    Controller controller = controllerService.getControllerById(regOptId);
+                    if(controller.getState().equals(OperationState.PREOPERATIVE)){
+                        controllerService.changeControllerState(searchBean.getRegOptId(), OperationState.SURGERY);
+                        flagInsert = true;
+                    }
+                    //判断当前regOptId状态为术前、术中时需要发送直接给采集系统
+                    if("03,04".contains(controller.getState())){
+	                    //发送命令给数据处理模块
+	                    CmdMsg msg = new CmdMsg();
+	                    msg.setMsgType(MyConstants.OPERATION_STATUS_START);
+	                    msg.setRegOptId(searchBean.getRegOptId());
+	                    ResponseValue res = MessageProcess.process(msg);
+	                    result.put("startOper", res);
+                    }
+                }
+                //麻醉记录单
+                anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(searchBean.getRegOptId());
+                //查询入室时间处理，由于Operation存入入室事件时间是异步的，配置查询 10次麻醉记录单，如果超过，则不处理；
+                //int count = 100;
+                //for (int i = 0; i < count; i++) {
+                /*while(true){
+                    String inOperRoomTime = anaesRecord.getInOperRoomTime();
+                    if(StringUtils.isBlank(inOperRoomTime)){
+                        anaesRecord = anaesRecordService.searchAnaesRecordByRegOptId(searchBean.getRegOptId());
+                    }else{
+                        break;
+                    }
+                    Thread.sleep(1);
+                }*/
+                    
+                //}
+                logger.info("startOper===anaesRecord---"+JsonType.jsonType(anaesRecord)+"---------");
+                //设置文书ID
+                searchBean.setDocId(anaesRecord.getAnaRecordId());
+                // 手术信息表
+                opt = basRegOptService.searchRegOptById(regOptId);
+                //获取排程信息
+                BasDispatch dispatch = basDispatchService.getDispatchOper(regOptId);
+                
+                boolean flag = false;
+                //当麻醉记录表中的手术体位为空时则将排程表中的手术体位字段写入
+                if(StringUtils.isBlank(anaesRecord.getOptBody()) && StringUtils.isNotBlank(dispatch.getOptBody())){
+                    anaesRecord.setOptBody(dispatch.getOptBody());
+                    flag = true;
+                    //docAnaesRecordService.saveAnaesRecord(anaesRecord);
+                }
+                
+                //当麻醉记录表中的手术等级为空时则将基本信息表中的手术等级字段写入
+                if(StringUtils.isBlank(anaesRecord.getOptLevel()) && StringUtils.isNotBlank(opt.getOptLevel())){
+                    anaesRecord.setOptLevel(opt.getOptLevel());
+                    flag = true;
+                    //docAnaesRecordService.saveAnaesRecord(anaesRecord);
+                }
+                
+                //当麻醉记录表中的手术室为空时则将排程表中的手术室字段写入
+                if(StringUtils.isBlank(anaesRecord.getOperRoomName()) && null != dispatch.getOperRoomId())
+                {
+                    BasOperroom operroom = basOperroomService.selectEntityByPrimaryKey(dispatch.getOperRoomId().toString());
+                    anaesRecord.setOperRoomName(null == operroom ? null : operroom.getName()); 
+                    flag = true;
+                    //docAnaesRecordService.saveAnaesRecord(anaesRecord); 
+                }
+                if (flag)
+                {
+                    docAnaesRecordService.saveAnaesRecord(anaesRecord);
+                }
+                
+                if(flagInsert){
+                    // 实际麻醉方法
+                    List<EvtRealAnaesMethod> realList = evtRealAnaesMethodService.searchRealAnaesMethodList(searchBean);
+                    if(realList.size()<1){
+                    	//初始化麻醉方法时,从麻醉前评估和麻醉计划文书取麻醉方法
+                    	PreVisitFormBean preVisit = docPreVisitService.searchPreVisitByRegOptId(regOptId);
+                    	if (preVisit.getPreVisit() != null) {
+                    		if(StringUtils.isNotBlank(preVisit.getPreVisit().getAnaesMethodCode())){
+                    			String[] methodArray = preVisit.getPreVisit().getAnaesMethodCode().split(",");
+                    			String[] methodNameArray = preVisit.getPreVisit().getAnaesMethod().split(",");
+                    			for (int i = 0; i < methodArray.length; i++) {
+                    				String anaMedId = methodArray[i];
+                    				String realAnaMedName = methodNameArray[i];
+                    				EvtRealAnaesMethod realAnaesMethod = new EvtRealAnaesMethod();
+                    				realAnaesMethod.setDocId(searchBean.getDocId());
+                    				realAnaesMethod.setAnaMedId(anaMedId);
+                    				realAnaesMethod.setName(realAnaMedName);
+                    				evtRealAnaesMethodService.insertRealAnaesMethod(realAnaesMethod);
+                    			}
+                    		}
+						}
+                    }
+                    // 手术医生人员
+                    searchBean.setRole(EvtParticipantService.ROLE_OPERAT);
+                    List<EvtParticipant> participantList = evtParticipantService.searchParticipantList(searchBean);
+                    /*
+                     * 进入手术时，判断是否编辑了手术人员信息
+                     * 如果存在则跳过读取regOpt表的手术人员记录
+                     */
+                    if(participantList.size()<1){
+                         //将RegOpt表中的主刀手术医生字段写入到participant表
+                        if(StringUtils.isNotBlank(opt.getOperatorId())){
+                            String[] optArray = opt.getOperatorId().split(",");
+                            for (int i = 0; i < optArray.length; i++) {
+                                String operatorId = optArray[i];
+                                EvtParticipant participant = new EvtParticipant();
+                                participant.setDocId(searchBean.getDocId());
+                                participant.setRole(EvtParticipantService.ROLE_OPERAT);
+                                participant.setOperatorType("07"); //主刀医生
+                                participant.setUserLoginName(operatorId);
+                                evtParticipantService.insertParticipant(participant);
+                            }
+                        }
+                        //助手医生
+                        if(StringUtils.isNotBlank(opt.getAssistantId())){
+                            String[] assArray = opt.getAssistantId().split(",");
+                            for (int i = 0; i < assArray.length; i++) {
+                                String assistantId = assArray[i];
+                                EvtParticipant participant = new EvtParticipant();
+                                participant.setDocId(searchBean.getDocId());
+                                participant.setRole(EvtParticipantService.ROLE_OPERAT);
+                                participant.setOperatorType("07"); //助手医生
+                                participant.setUserLoginName(assistantId);
+                                evtParticipantService.insertParticipant(participant);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            AnaesRecordFormBean anaesRecordFormBean = new AnaesRecordFormBean();
+            BeanUtils.copyProperties(anaesRecord, anaesRecordFormBean);
+            anaesRecordFormBean.setOptBodys(StringUtils.getListByString(anaesRecordFormBean.getOptBody()));
+            // 麻醉事件
+            List<EvtAnaesEvent> anaeseventList = evtAnaesEventService.searchAnaeseventList(searchBean);
+            // 实际麻醉方法
+            List<EvtAnaesMethodFormBean> realAnaesList = evtRealAnaesMethodService.getSelectRealAnaesMethodList(searchBean);
+            // 术后诊断
+            List<DiagnosedefFormBean> optLatterDiagList = evtOptLatterDiagService.getSelectOptLatterDiagList(searchBean);
+            // 实施手术
+            List<OperDefFormBean> optRealOperList = evtOptRealOperService.getSelectOptRealOperList(searchBean);
+            //麻醉医生列表
+            searchBean.setRole(EvtParticipantService.ROLE_ANESTH);
+            List<UserInfoFormBean> anesDocList = evtParticipantService.getSelectParticipantList(searchBean);
+            
+            //手术医生列表
+            searchBean.setRole(EvtParticipantService.ROLE_OPERAT);
+            List<UserInfoFormBean> operatDocList = evtParticipantService.getSelectParticipantList(searchBean);
+            
+            //巡回护士列表
+            searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+            searchBean.setType(EvtParticipantService.OPER_TYPE_TOUR);//05
+            List<UserInfoFormBean> nurseList = evtParticipantService.getSelectParticipantList(searchBean);
+            
+            // 器械护士列表
+            searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+            searchBean.setType(EvtParticipantService.OPER_TYPE_INSTRUMENT);//04
+            List<UserInfoFormBean> instruNurseList = evtParticipantService.getSelectParticipantList(searchBean);
+            
+            // 麻醉药事件明细   麻醉前用药
+            searchBean.setType("02");
+            List<RegOptOperMedicaleventFormBean> anaesMedEvtList = evtMedicaleventService.searchMedicaleventGroupByCodeList(searchBean);
+            
+            // 治疗药事件明细   用药 
+            searchBean.setType("01");
+            List<RegOptOperMedicaleventFormBean> treatMedEvtList = evtMedicaleventService.searchMedicaleventGroupByCodeList(searchBean);
+            
+            // 镇痛药事件明细   用药 
+            searchBean.setType("03");
+            List<RegOptOperMedicaleventFormBean> analgesicMedEvtList = evtMedicaleventService.searchMedicaleventGroupByCodeList(searchBean);
+            
+            // 入药量事件
+            List<RegOptOperIoeventFormBean> inIoeventList = evtInEventService.searchIoeventGroupByDefIdList(searchBean);
+            
+            // 出药量事件
+            List<RegOptOperEgressFormBean> egressList = evtEgressService.searchEgressGroupByDefIdList(searchBean);
+            
+            //手术体位变更
+            List<OperBodyFormBean> operBodyList = evtOperBodyEventService.queryOperBodyEventList(searchBean);
+            
+            //术中监测显示项
+            BaseInfoQuery baseQuery = new BaseInfoQuery();
+            baseQuery.setRegOptId(searchBean.getRegOptId());
+            baseQuery.setEnable("1");
+            baseQuery.setPosition("0");
+            List<BasAnaesMonitorConfigFormBean> showList = basAnaesMonitorConfigService.getAnaesRecordShowListByRegOptId(baseQuery);
+            
+            //防止出现首次进入术中时没有设备启用，但是后来追加设备启用但是设备并不是默认设备的情况，及时将b_anaes_monitor_config中重复监测项的realEventId更新为启用设备的eventId
+            List<BasAnaesMonitorConfigFormBean> anaesMonitorConfigFormBeanList = basAnaesMonitorConfigService.finaAnaesList(baseQuery);
+            List<BasMonitorConfigDefault> monitorConfigDefaultList = monitorConfigDefaultService.selectAll();
+            if (null != monitorConfigDefaultList && monitorConfigDefaultList.size() > 0)
+            {
+                for (BasMonitorConfigDefault monitorConfigDefault : monitorConfigDefaultList)
+                {
+                    if (null == anaesMonitorConfigFormBeanList || anaesMonitorConfigFormBeanList.size() < 1)
+                    {
+                        break;
+                    }
+                    for (BasAnaesMonitorConfigFormBean anaesMonitorConfigFormBean : anaesMonitorConfigFormBeanList)
+                    {
+                        if (monitorConfigDefault.getEventId().equals(anaesMonitorConfigFormBean.getEventId()))
+                        {
+                            String enableEventId =
+                                basMonitorConfigService.selectEventIdByEventName(anaesMonitorConfigFormBean,searchBean.getRegOptId());
+                            anaesMonitorConfigFormBean.setRealEventId(enableEventId);
+                            BasAnaesMonitorConfig amc = new BasAnaesMonitorConfig();
+                            BeanUtils.copyProperties(anaesMonitorConfigFormBean, amc);
+                            amc.setRegOptId(searchBean.getRegOptId());
+                            basAnaesMonitorConfigService.updateByEventId(amc);
+                        }
+                    }
+                    
+                }
+            }
+            result.put("showList", anaesMonitorConfigFormBeanList);
+            
+            if ((null == anaesMonitorConfigFormBeanList || anaesMonitorConfigFormBeanList.size() <=  0) && null != showList && showList.size() > 0)
+            {
+                List<BasAnaesMonitorConfig> anaesMonitorConfigList = new ArrayList<BasAnaesMonitorConfig>();
+                for (BasAnaesMonitorConfigFormBean anaesMonitorConfigFormBean : showList)
+                {
+                    BasAnaesMonitorConfig anaesMonitorConfig = new BasAnaesMonitorConfig();
+                    BeanUtils.copyProperties(anaesMonitorConfigFormBean, anaesMonitorConfig);
+                    anaesMonitorConfig.setRegOptId(searchBean.getRegOptId());
+                    
+                    BasMonitorConfigDefault monitorConfigDefault =
+                        monitorConfigDefaultService.searchByEventName(anaesMonitorConfigFormBean.getEventName());
+                    if (null != monitorConfigDefault)
+                    {
+                        //获取到启动设备对应的eventId，如果都没启动，则取默认值
+                        String enableEventId = basMonitorConfigService.selectEventIdByEventName(anaesMonitorConfigFormBean,searchBean.getRegOptId());
+                        if (enableEventId.equals(anaesMonitorConfig.getEventId()))
+                        {
+                            anaesMonitorConfigList.add(anaesMonitorConfig);
+                        }
+                    }
+                    else
+                    {
+                        anaesMonitorConfigList.add(anaesMonitorConfig);
+                    }
+                }
+                basAnaesMonitorConfigService.saveAnaesMonitorConfig(anaesMonitorConfigList); 
+                result.put("showList", anaesMonitorConfigList);
+            }
+            
+            
+            BasMonitorConfig O2 = basMonitorConfigService.selectByEventId(MyObserveDataController.O2_EVENT_ID,regOptId);
+            
+            //左侧采集项显示
+            baseQuery.setPosition("1");
+            baseQuery.setEnable(null);
+            List<BasAnaesMonitorConfigFormBean> leftShowList = basAnaesMonitorConfigService.getAnaesRecordShowListByRegOptId(baseQuery);
+            anaesMonitorConfigFormBeanList = basAnaesMonitorConfigService.finaAnaesList(baseQuery);
+            if (null != anaesMonitorConfigFormBeanList && anaesMonitorConfigFormBeanList.size() > 0)
+            {
+                // 返回给前端的数字监测项中，不能包含O2,去除O2的监测项
+                for (int i = 0; i < anaesMonitorConfigFormBeanList.size(); i++)
+                {
+                    BasAnaesMonitorConfigFormBean mc = anaesMonitorConfigFormBeanList.get(i);
+                    if (mc.getEventId().equals(MyObserveDataController.O2_EVENT_ID))
+                    {
+                        anaesMonitorConfigFormBeanList.remove(mc);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                //因为O2为必定展示的数字监测项，所以如果anaesMonitorConfigFormBeanList为空则说明是第一次进入麻醉记录单，则需要添加O2到bas_anaes_monitor_config中
+                List<BasAnaesMonitorConfig> anaesMonitorConfigList = new ArrayList<BasAnaesMonitorConfig>();
+                BasAnaesMonitorConfig anaesMonitorConfig = new BasAnaesMonitorConfig();
+                BeanUtils.copyProperties(O2, anaesMonitorConfig);
+                anaesMonitorConfig.setRegOptId(searchBean.getRegOptId());
+                anaesMonitorConfig.setEventId(MyObserveDataController.O2_EVENT_ID); 
+                anaesMonitorConfigList.add(anaesMonitorConfig);
+                basAnaesMonitorConfigService.saveAnaesMonitorConfig(anaesMonitorConfigList);
+            }
+            
+            result.put("leftShowList", anaesMonitorConfigFormBeanList);
+            if ((null == anaesMonitorConfigFormBeanList || anaesMonitorConfigFormBeanList.size() <=  0))
+            {
+                if (null != leftShowList && leftShowList.size() > 0)
+                {
+                    List<BasAnaesMonitorConfig> anaesMonitorConfigList = new ArrayList<BasAnaesMonitorConfig>();
+                    for (BasAnaesMonitorConfigFormBean anaesMonitorConfigFormBean : leftShowList)
+                    {
+                        BasAnaesMonitorConfig anaesMonitorConfig = new BasAnaesMonitorConfig();
+                        BeanUtils.copyProperties(anaesMonitorConfigFormBean, anaesMonitorConfig);
+                        anaesMonitorConfig.setRegOptId(searchBean.getRegOptId());
+                        anaesMonitorConfigList.add(anaesMonitorConfig);
+                    }
+                    basAnaesMonitorConfigService.saveAnaesMonitorConfig(anaesMonitorConfigList);
+                }
+                result.put("leftShowList", leftShowList);
+            }
+            
+            
+            // 心电图数据
+            List<EvtElectDiogData> diogDataList = evtElectDiogDataService.searchElectDiogDataList(searchBean);
+            
+            //安全核查单
+            DocAnaesBeforeSafeCheck anaesBeforeSafeCheck = docAnaesBeforeSafeCheckService.searchAnaBeCheckByRegOptId(opt.getRegOptId());
+            DocExitOperSafeCheck exitOperSafeCheck = docExitOperSafeCheckService.searchExitOperCheckByRegOptId(opt.getRegOptId());
+            DocOperBeforeSafeCheck operBeforeSafeCheck = docOperBeforeSafeCheckService.searchOperBeCheckByRegOptId(opt.getRegOptId());
+            
+            //O2L/MIN等数据
+            //List<EvtOtherData> dataList = evtOtherDataService.selectOtherDataByObserveName(anaesRecord.getOther(), anaesRecord.getAnaRecordId());
+            
+            // 去除O2
+            List<BasMonitorConfig> monitorConfigList = basMonitorConfigService.selectMustShowListWithoutO2(regOptId);
+            
+            result.put("resultCode", "1");
+            result.put("resultMessage", "查询麻醉记录单成功!!!");
+            result.put("regOpt", opt);
+            result.put("anaesBeforeSafeCheck", null != anaesBeforeSafeCheck ? anaesBeforeSafeCheck.getProcessState() : null);
+            result.put("exitOperSafeCheck", null != exitOperSafeCheck ? exitOperSafeCheck.getProcessState() : null);
+            result.put("operBeforeSafeCheck", null != operBeforeSafeCheck ? operBeforeSafeCheck.getProcessState() : null);
+            result.put("anaesRecord", anaesRecordFormBean);
+            result.put("anaesMedEvtList", anaesMedEvtList);
+            result.put("treatMedEvtList", treatMedEvtList);
+            result.put("analgesicMedEvtList", analgesicMedEvtList);
+            result.put("realAnaesList", realAnaesList);
+            result.put("optLatterDiagList", optLatterDiagList);
+            result.put("optRealOperList", optRealOperList);
+            result.put("anaeseventList", anaeseventList);
+            result.put("inIoeventList", inIoeventList);
+            result.put("outIoeventList", egressList);
+            result.put("anesDocList", anesDocList);
+            result.put("operatDocList", operatDocList);
+            result.put("nurseList", nurseList);
+            result.put("instruNurseList", instruNurseList);
+            result.put("operBodyList", operBodyList);
+            //result.put("otherData", dataList);
+            result.put("O2", O2);//氧流量
+            result.put("diogDataList", diogDataList);
+            result.put("monitorConfigList", monitorConfigList);
+            logger.info("startOper---result-------"+JsonType.jsonType(result));
+            logger.info("------------------end startOperLLZY------------------------");
+            return JsonType.jsonType(result);
+        } catch (Exception e) {
+            //if(logger.isErrorEnabled()){
+            logger.error("startOper====="+Exceptions.getStackTraceAsString(e));
+            //}
+            result.put("resultCode", "10000000");
+            result.put("resultMessage", "系统错误，请与系统管理员联系!");
+        }
+        logger.info("------------------end startOperLLZY------------------------");
+        return JsonType.jsonType(result);
+    }
 	
 	/**
      * 修改出室时间

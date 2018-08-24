@@ -158,6 +158,7 @@ import com.digihealth.anesthesia.doc.dao.DocPreAnaesTalkRecordDao;
 import com.digihealth.anesthesia.doc.dao.DocPreOperVisitDao;
 import com.digihealth.anesthesia.doc.dao.DocPrePostVisitDao;
 import com.digihealth.anesthesia.doc.dao.DocPrePostVisitItemDao;
+import com.digihealth.anesthesia.doc.dao.DocPrePublicityDao;
 import com.digihealth.anesthesia.doc.dao.DocPreVisitDao;
 import com.digihealth.anesthesia.doc.dao.DocPrevisitAccessexamDao;
 import com.digihealth.anesthesia.doc.dao.DocPrevisitAnaesplanDao;
@@ -165,6 +166,7 @@ import com.digihealth.anesthesia.doc.dao.DocPrevisitPhyexamDao;
 import com.digihealth.anesthesia.doc.dao.DocRiskEvaluatPreventCareDao;
 import com.digihealth.anesthesia.doc.dao.DocSafeCheckDao;
 import com.digihealth.anesthesia.doc.dao.DocSelfPayAccedeDao;
+import com.digihealth.anesthesia.doc.dao.DocSelfPayAccedeLlzyyDao;
 import com.digihealth.anesthesia.doc.dao.DocSelfPayInstrumentAccedeDao;
 import com.digihealth.anesthesia.doc.dao.DocSelfPayInstrumentItemDao;
 import com.digihealth.anesthesia.doc.dao.DocSpinalCanalPunctureDao;
@@ -209,9 +211,11 @@ import com.digihealth.anesthesia.doc.po.DocPostFollowRecord;
 import com.digihealth.anesthesia.doc.po.DocPostOperRegard;
 import com.digihealth.anesthesia.doc.po.DocPreOperVisit;
 import com.digihealth.anesthesia.doc.po.DocPrePostVisit;
+import com.digihealth.anesthesia.doc.po.DocPrePublicity;
 import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare;
 import com.digihealth.anesthesia.doc.po.DocSafeCheck;
+import com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy;
 import com.digihealth.anesthesia.doc.po.DocSelfPayInstrumentAccede;
 import com.digihealth.anesthesia.doc.po.DocSpinalCanalPuncture;
 import com.digihealth.anesthesia.doc.po.DocTransferConnectRecord;
@@ -730,6 +734,10 @@ public abstract class BaseService {
     protected EvtSpecialMaterialEventDao evtSpecialMaterialEventDao;
     @Autowired
     protected DocPreAnaesTalkRecordDao docPreAnaesTalkRecordDao;
+    @Autowired
+    protected DocSelfPayAccedeLlzyyDao docSelfPayAccedeLlzyyDao;
+    @Autowired
+    protected DocPrePublicityDao docPrePublicityDao;
     
     public String getIP(){  
         String ip=request.getHeader("x-forwarded-for");  
@@ -1226,7 +1234,24 @@ public abstract class BaseService {
         	docAnalgesicInformedConsent.setAnalgesicId(GenerateSequenceUtil.generateSequenceNo());
         	docAnalgesicInformedConsentDao.insert(docAnalgesicInformedConsent);
         }
-        
+        //麻醉科自费耗材知情同意书
+        if (tables.contains("doc_self_pay_accede_llzyy"))
+        {
+        	DocSelfPayAccedeLlzyy selfPayAccedeLlzyy = new DocSelfPayAccedeLlzyy();
+        	selfPayAccedeLlzyy.setId(GenerateSequenceUtil.generateSequenceNo());
+        	selfPayAccedeLlzyy.setRegOptId(regOptId);
+        	selfPayAccedeLlzyy.setProcessState("NO_END");
+        	docSelfPayAccedeLlzyyDao.insert(selfPayAccedeLlzyy);
+        }
+        //麻醉手术室术前宣教
+        if (tables.contains("doc_pre_publicity"))
+        {
+        	DocPrePublicity docPrePublicity = new DocPrePublicity();
+        	docPrePublicity.setId(GenerateSequenceUtil.generateSequenceNo());
+        	docPrePublicity.setRegOptId(regOptId);
+        	docPrePublicity.setProcessState("NO_END");
+        	docPrePublicityDao.insert(docPrePublicity);
+        }
         DocAnaesQualityControl docAnaesQualityControl = new DocAnaesQualityControl();
         docAnaesQualityControl.setRegOptId(regOptId);
         docAnaesQualityControl.setId(GenerateSequenceUtil.generateSequenceNo());

@@ -129,6 +129,8 @@
     <result column="endocrineHave" property="endocrineHave" jdbcType="INTEGER" />
     <result column="infectiousHave" property="infectiousHave" jdbcType="INTEGER" />
     <result column="drugAbuseCond" property="drugAbuseCond" jdbcType="VARCHAR" />
+    <result column="anaesMethod" property="anaesMethod" jdbcType="VARCHAR" />
+    <result column="anaesMethodCode" property="anaesMethodCode" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -151,7 +153,8 @@
     ef, otherProblem, otherMeasures, hypertension, coronary, airwayPatency, anaesPuncture, 
     anaesPunctureCond, anesthIndica, anaesDocord, assistMeasure,asaE, organAbnormalGrade,
     glaucoma, specialTreatmentOther, riskAssessment, heartBoolHave, lungbreathHave, brainNerveHave, 
-    spineLimbHave, bloodHave, kidneyHave, digestionHave, endocrineHave, infectiousHave, drugAbuseCond
+    spineLimbHave, bloodHave, kidneyHave, digestionHave, endocrineHave, infectiousHave, drugAbuseCond,
+    anaesMethod, anaesMethodCode
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -207,7 +210,7 @@
       anaesDocord, assistMeasure, asaE, 
       organAbnormalGrade, glaucoma, specialTreatmentOther, riskAssessment, 
       heartBoolHave, lungbreathHave, brainNerveHave, spineLimbHave, bloodHave, 
-      kidneyHave, digestionHave, endocrineHave, infectiousHave, drugAbuseCond)
+      kidneyHave, digestionHave, endocrineHave, infectiousHave, drugAbuseCond, anaesMethod, anaesMethodCode)
     values (#{preVisitId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{briefHis,jdbcType=VARCHAR}, 
       #{comorbidity,jdbcType=VARCHAR}, #{drugAddiction,jdbcType=VARCHAR}, #{drugAddictionCond,jdbcType=VARCHAR}, 
       #{othComorbidity,jdbcType=VARCHAR}, #{heartBool,jdbcType=VARCHAR}, #{lungbreath,jdbcType=VARCHAR}, 
@@ -249,7 +252,7 @@
       #{organAbnormalGrade,jdbcType=INTEGER}, #{glaucoma,jdbcType=INTEGER}, #{specialTreatmentOther,jdbcType=VARCHAR},
       #{riskAssessment,jdbcType=INTEGER}, #{heartBoolHave,jdbcType=INTEGER}, #{lungbreathHave,jdbcType=INTEGER}, #{brainNerveHave,jdbcType=INTEGER}, #{spineLimbHave,jdbcType=INTEGER},
       #{bloodHave,jdbcType=INTEGER}, #{kidneyHave,jdbcType=INTEGER}, #{digestionHave,jdbcType=INTEGER}, #{endocrineHave,jdbcType=INTEGER}, #{infectiousHave,jdbcType=INTEGER},
-      #{drugAbuseCond,jdbcType=VARCHAR})
+      #{drugAbuseCond,jdbcType=VARCHAR}, #{anaesMethod,jdbcType=VARCHAR}, #{anaesMethodCode,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPreVisit" >
@@ -636,6 +639,12 @@
       <if test="drugAbuseCond != null" >
         drugAbuseCond,
       </if>
+      <if test="anaesMethod != null" >
+        anaesMethod,
+      </if>
+      <if test="anaesMethodCode != null" >
+        anaesMethodCode,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="preVisitId != null" >
@@ -1018,6 +1027,12 @@
       </if>
       <if test="drugAbuseCond != null" >
         #{drugAbuseCond,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethod != null" >
+        #{anaesMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodCode != null" >
+        #{anaesMethodCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -1403,6 +1418,12 @@
       <if test="drugAbuseCond != null" >
         drugAbuseCond = #{drugAbuseCond,jdbcType=VARCHAR},
       </if>
+      <if test="anaesMethod != null" >
+        anaesMethod = #{anaesMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesMethodCode != null" >
+        anaesMethodCode = #{anaesMethodCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
@@ -1534,7 +1555,9 @@
       digestionHave = #{digestionHave,jdbcType=INTEGER},
       endocrineHave = #{endocrineHave,jdbcType=INTEGER},
       infectiousHave = #{infectiousHave,jdbcType=INTEGER},
-      drugAbuseCond = #{drugAbuseCond,jdbcType=VARCHAR}
+      drugAbuseCond = #{drugAbuseCond,jdbcType=VARCHAR},
+      anaesMethod = #{anaesMethod,jdbcType=VARCHAR},
+      anaesMethodCode = #{anaesMethodCode,jdbcType=VARCHAR}
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
   
@@ -1665,7 +1688,9 @@
       digestionHave = #{digestionHave,jdbcType=INTEGER},
       endocrineHave = #{endocrineHave,jdbcType=INTEGER},
       infectiousHave = #{infectiousHave,jdbcType=INTEGER},
-      drugAbuseCond = #{drugAbuseCond,jdbcType=VARCHAR}
+      drugAbuseCond = #{drugAbuseCond,jdbcType=VARCHAR},
+      anaesMethod = #{anaesMethod,jdbcType=VARCHAR},
+      anaesMethodCode = #{anaesMethodCode,jdbcType=VARCHAR}
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </update>
   

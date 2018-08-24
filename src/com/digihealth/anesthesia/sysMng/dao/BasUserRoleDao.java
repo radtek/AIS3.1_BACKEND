@@ -35,4 +35,6 @@ public interface BasUserRoleDao extends CrudDao<BasUserRole>{
     List<BasUserRole> selectByPrimarykey(@Param("userName")String userName,@Param("roleId")String roleId,@Param("beid")String beid);
 
 	public int updateUserRole(@Param("userName") String userName,@Param("roleId") String roleId,@Param("beid")String beid);
+	
+	void deleteByBeId(@Param("beid")String beid);
 }

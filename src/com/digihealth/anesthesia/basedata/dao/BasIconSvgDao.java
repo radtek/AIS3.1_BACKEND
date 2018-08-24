@@ -8,6 +8,8 @@
  */
 package com.digihealth.anesthesia.basedata.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.digihealth.anesthesia.basedata.po.BasIconSvg;
@@ -28,6 +30,8 @@ public interface BasIconSvgDao {
     int updateByPrimaryKeyWithBLOBs(BasIconSvg record);
 
     int updateByPrimaryKey(BasIconSvg record);
+    
+    List<BasIconSvg> searchAllIconSvg(@Param("beid") String beid);
     
     String getSvgByIcon(@Param("icon") String icon, @Param("beid") String beid);
 }
