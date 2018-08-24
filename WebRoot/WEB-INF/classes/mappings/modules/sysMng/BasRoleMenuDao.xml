@@ -43,6 +43,10 @@
     where menuId = #{menuId,jdbcType=VARCHAR} and beid = #{beid,jdbcType=VARCHAR}
   </delete>
   
+  <delete id="deleteBybeid" parameterType="java.lang.String">
+    delete from bas_role_menu where beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+  
   <delete id="deleteByRoleId" >
     delete from bas_role_menu
     where menuId in(select id from bas_menu where module = #{module,jdbcType=VARCHAR} AND beid = #{beid,jdbcType=VARCHAR}) 

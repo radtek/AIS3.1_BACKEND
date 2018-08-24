@@ -28,13 +28,15 @@
     <result column="otherCase" property="cureContent" jdbcType="VARCHAR" />
     <result column="laryngeal" property="laryngeal" jdbcType="INTEGER" />
     <result column="brachialPlexusBlock" property="brachialPlexusBlock" jdbcType="INTEGER" />
+    <result column="anaesAssistMeasure" property="anaesAssistMeasure" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     accedeId, regOptId, other, anaestheitistId, anaestheitistSignTime, patient, patientRelationship, 
     patientSignTime, talkLocation, flag, processState, selected, diagnosisName, anaseMethodCode, 
     anaseMethod, otherRisk, patientChoose, trachealTntubation, catheterizationArtery, 
-    centralCatheter, spinalPuncture, cureContent, specialCase, otherCase, laryngeal,brachialPlexusBlock
+    centralCatheter, spinalPuncture, cureContent, specialCase, otherCase, laryngeal,brachialPlexusBlock,
+    anaesAssistMeasure
   </sql>
 
 	<select id="searchAccedeByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocAccede">
@@ -69,7 +71,7 @@
       selected, diagnosisName, anaseMethodCode, 
       anaseMethod, otherRisk, patientChoose, 
       trachealTntubation, catheterizationArtery, 
-      centralCatheter, spinalPuncture, cureContent, specialCase, otherCase, laryngeal,brachialPlexusBlock)
+      centralCatheter, spinalPuncture, cureContent, specialCase, otherCase, laryngeal,brachialPlexusBlock, anaesAssistMeasure)
     values (#{accedeId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{other,jdbcType=VARCHAR}, 
       #{anaestheitistId,jdbcType=VARCHAR}, #{anaestheitistSignTime,jdbcType=VARCHAR}, 
       #{patient,jdbcType=VARCHAR}, #{patientRelationship,jdbcType=VARCHAR}, #{patientSignTime,jdbcType=VARCHAR}, 
@@ -78,7 +80,8 @@
       #{anaseMethod,jdbcType=VARCHAR}, #{otherRisk,jdbcType=VARCHAR}, #{patientChoose,jdbcType=VARCHAR}, 
       #{trachealTntubation,jdbcType=INTEGER}, #{catheterizationArtery,jdbcType=INTEGER}, 
       #{centralCatheter,jdbcType=INTEGER}, #{spinalPuncture,jdbcType=INTEGER}, #{cureContent,jdbcType=VARCHAR}, 
-      #{specialCase,jdbcType=VARCHAR}, #{otherCase,jdbcType=VARCHAR}, #{laryngeal,jdbcType=INTEGER}, #{laryngeal,jdbcType=INTEGER})
+      #{specialCase,jdbcType=VARCHAR}, #{otherCase,jdbcType=VARCHAR}, #{laryngeal,jdbcType=INTEGER}, #{brachialPlexusBlock,jdbcType=INTEGER},
+      #{anaesAssistMeasure,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAccede" >
@@ -162,6 +165,9 @@
       <if test="brachialPlexusBlock != null" >
         brachialPlexusBlock,
       </if>
+      <if test="anaesAssistMeasure != null" >
+        anaesAssistMeasure,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accedeId != null" >
@@ -241,6 +247,9 @@
       </if>
       <if test="brachialPlexusBlock != null" >
         #{brachialPlexusBlock,jdbcType=INTEGER},
+      </if>
+      <if test="anaesAssistMeasure != null" >
+        #{anaesAssistMeasure,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -323,6 +332,9 @@
       <if test="brachialPlexusBlock != null" >
         brachialPlexusBlock = #{brachialPlexusBlock,jdbcType=INTEGER},
       </if>
+      <if test="anaesAssistMeasure != null" >
+        anaesAssistMeasure = #{anaesAssistMeasure,jdbcType=VARCHAR},
+      </if>
     </set>
     where accedeId = #{accedeId,jdbcType=VARCHAR}
   </update>
@@ -353,7 +365,8 @@
       specialCase = #{specialCase,jdbcType=VARCHAR},
       otherCase = #{otherCase,jdbcType=VARCHAR},
       laryngeal = #{laryngeal,jdbcType=INTEGER},
-      brachialPlexusBlock = #{brachialPlexusBlock,jdbcType=INTEGER}
+      brachialPlexusBlock = #{brachialPlexusBlock,jdbcType=INTEGER},
+      anaesAssistMeasure = #{anaesAssistMeasure,jdbcType=VARCHAR}
     where accedeId = #{accedeId,jdbcType=VARCHAR}
   </update>
 

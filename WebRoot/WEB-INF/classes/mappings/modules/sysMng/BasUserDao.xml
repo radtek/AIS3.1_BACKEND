@@ -204,6 +204,9 @@
       and beid = #{beid,jdbcType=VARCHAR}
   </delete>
 
+	<delete id="deleteByBeId" parameterType="map" >
+    delete from bas_user where beid = #{beid,jdbcType=VARCHAR}
+  </delete>
 	<!-- 逻辑删除用户 -->
 	<update id="delete">
 		UPDATE bas_user SET 
