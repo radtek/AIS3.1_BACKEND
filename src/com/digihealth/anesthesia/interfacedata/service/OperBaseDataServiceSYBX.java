@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,6 +14,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import com.digihealth.anesthesia.basedata.dao.BasBusEntityDao;
 import com.digihealth.anesthesia.basedata.dao.BasDeptDao;
 import com.digihealth.anesthesia.basedata.dao.BasDiagnosedefDao;
 import com.digihealth.anesthesia.basedata.dao.BasDispatchDao;
+import com.digihealth.anesthesia.basedata.dao.BasDocumentDao;
 import com.digihealth.anesthesia.basedata.dao.BasInstrumentDao;
 import com.digihealth.anesthesia.basedata.dao.BasMedicineDao;
 import com.digihealth.anesthesia.basedata.dao.BasOperationPeopleDao;
@@ -35,6 +38,7 @@ import com.digihealth.anesthesia.basedata.po.BasAnaesMethod;
 import com.digihealth.anesthesia.basedata.po.BasChargeItem;
 import com.digihealth.anesthesia.basedata.po.BasDept;
 import com.digihealth.anesthesia.basedata.po.BasDiagnosedef;
+import com.digihealth.anesthesia.basedata.po.BasDispatch;
 import com.digihealth.anesthesia.basedata.po.BasInstrument;
 import com.digihealth.anesthesia.basedata.po.BasMedicine;
 import com.digihealth.anesthesia.basedata.po.BasOperationPeople;
@@ -42,6 +46,7 @@ import com.digihealth.anesthesia.basedata.po.BasOperdef;
 import com.digihealth.anesthesia.basedata.po.BasPrice;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.po.BasRegion;
+import com.digihealth.anesthesia.basedata.po.Controller;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.ConnectionManager;
 import com.digihealth.anesthesia.common.utils.DateUtils;
@@ -50,11 +55,92 @@ import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.PingYinUtil;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
+import com.digihealth.anesthesia.doc.dao.DocAccedeDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesBeforeSafeCheckDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesMedicineAccedeDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesPlanDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesPostopDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesPreDiscussRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesQualityControlDao;
 import com.digihealth.anesthesia.doc.dao.DocAnaesRecordDao;
-import com.digihealth.anesthesia.doc.dao.DocPatInspectItemDao;
-import com.digihealth.anesthesia.doc.dao.DocPatInspectRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryAllergicReactionDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryAppendixCanalDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryAppendixGenDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryAppendixVisitDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryDao;
+import com.digihealth.anesthesia.doc.dao.DocAnaesSummaryVenipunctureDao;
+import com.digihealth.anesthesia.doc.dao.DocAnalgesicInformedConsentDao;
+import com.digihealth.anesthesia.doc.dao.DocAnalgesicRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocBloodTransRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocDifficultCaseDiscussDao;
+import com.digihealth.anesthesia.doc.dao.DocExitOperSafeCheckDao;
+import com.digihealth.anesthesia.doc.dao.DocGeneralAnaesDao;
+import com.digihealth.anesthesia.doc.dao.DocInsuredPatAgreeDao;
+import com.digihealth.anesthesia.doc.dao.DocLaborAnalgesiaAccedeDao;
+import com.digihealth.anesthesia.doc.dao.DocNerveBlockDao;
+import com.digihealth.anesthesia.doc.dao.DocNurseInterviewRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocOperBeforeSafeCheckDao;
+import com.digihealth.anesthesia.doc.dao.DocOptCareRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocOptNurseDao;
+import com.digihealth.anesthesia.doc.dao.DocOptRiskEvaluationDao;
+import com.digihealth.anesthesia.doc.dao.DocPatOutRangeAgreeDao;
+import com.digihealth.anesthesia.doc.dao.DocPatRescurRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocPatShuttleTransferDao;
+import com.digihealth.anesthesia.doc.dao.DocPlacentaHandleAgreeDao;
+import com.digihealth.anesthesia.doc.dao.DocPostFollowRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocPostOperRegardDao;
+import com.digihealth.anesthesia.doc.dao.DocPreOperVisitDao;
+import com.digihealth.anesthesia.doc.dao.DocPrePostVisitDao;
+import com.digihealth.anesthesia.doc.dao.DocPreVisitDao;
+import com.digihealth.anesthesia.doc.dao.DocRiskEvaluatPreventCareDao;
+import com.digihealth.anesthesia.doc.dao.DocSafeCheckDao;
+import com.digihealth.anesthesia.doc.dao.DocSelfPayInstrumentAccedeDao;
+import com.digihealth.anesthesia.doc.dao.DocSpinalCanalPunctureDao;
+import com.digihealth.anesthesia.doc.dao.DocTransferConnectRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocVeinAccedeDao;
+import com.digihealth.anesthesia.doc.po.DocAccede;
+import com.digihealth.anesthesia.doc.po.DocAnaesBeforeSafeCheck;
+import com.digihealth.anesthesia.doc.po.DocAnaesMedicineAccede;
+import com.digihealth.anesthesia.doc.po.DocAnaesPlan;
+import com.digihealth.anesthesia.doc.po.DocAnaesPostop;
+import com.digihealth.anesthesia.doc.po.DocAnaesPreDiscussRecord;
+import com.digihealth.anesthesia.doc.po.DocAnaesQualityControl;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
-import com.digihealth.anesthesia.evt.dao.EvtOptRealOperDao;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummary;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummaryAllergicReaction;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummaryAppendixCanal;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummaryAppendixGen;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummaryAppendixVisit;
+import com.digihealth.anesthesia.doc.po.DocAnaesSummaryVenipuncture;
+import com.digihealth.anesthesia.doc.po.DocAnalgesicInformedConsent;
+import com.digihealth.anesthesia.doc.po.DocAnalgesicRecord;
+import com.digihealth.anesthesia.doc.po.DocBloodTransRecord;
+import com.digihealth.anesthesia.doc.po.DocDifficultCaseDiscuss;
+import com.digihealth.anesthesia.doc.po.DocExitOperSafeCheck;
+import com.digihealth.anesthesia.doc.po.DocGeneralAnaes;
+import com.digihealth.anesthesia.doc.po.DocInsuredPatAgree;
+import com.digihealth.anesthesia.doc.po.DocLaborAnalgesiaAccede;
+import com.digihealth.anesthesia.doc.po.DocNerveBlock;
+import com.digihealth.anesthesia.doc.po.DocNurseInterviewRecord;
+import com.digihealth.anesthesia.doc.po.DocOperBeforeSafeCheck;
+import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
+import com.digihealth.anesthesia.doc.po.DocOptNurse;
+import com.digihealth.anesthesia.doc.po.DocOptRiskEvaluation;
+import com.digihealth.anesthesia.doc.po.DocPatOutRangeAgree;
+import com.digihealth.anesthesia.doc.po.DocPatRescurRecord;
+import com.digihealth.anesthesia.doc.po.DocPatShuttleTransfer;
+import com.digihealth.anesthesia.doc.po.DocPlacentaHandleAgree;
+import com.digihealth.anesthesia.doc.po.DocPostFollowRecord;
+import com.digihealth.anesthesia.doc.po.DocPostOperRegard;
+import com.digihealth.anesthesia.doc.po.DocPreOperVisit;
+import com.digihealth.anesthesia.doc.po.DocPrePostVisit;
+import com.digihealth.anesthesia.doc.po.DocPreVisit;
+import com.digihealth.anesthesia.doc.po.DocRiskEvaluatPreventCare;
+import com.digihealth.anesthesia.doc.po.DocSafeCheck;
+import com.digihealth.anesthesia.doc.po.DocSelfPayInstrumentAccede;
+import com.digihealth.anesthesia.doc.po.DocSpinalCanalPuncture;
+import com.digihealth.anesthesia.doc.po.DocTransferConnectRecord;
+import com.digihealth.anesthesia.doc.po.DocVeinAccede;
 import com.digihealth.anesthesia.sysMng.dao.BasUserDao;
 
 @Service
@@ -77,6 +163,9 @@ public class OperBaseDataServiceSYBX extends BaseService{
     private BasUserDao basUserDao = SpringContextHolder.getBean(BasUserDao.class);
     private DocAnaesRecordDao docAnaesRecordDao = SpringContextHolder.getBean(DocAnaesRecordDao.class);
     private BasDispatchDao basDispatchDao = SpringContextHolder.getBean(BasDispatchDao.class);
+    private ControllerDao controllerDao = SpringContextHolder.getBean(ControllerDao.class);
+    private BasDocumentDao basDocumentDao = SpringContextHolder.getBean(BasDocumentDao.class);
+    
 	/**
 	 * 获取外部系统视图VIEW_OPERATION_NAME，并插入当前数据库
 	 * 手术名称数据同步  his不提供code值 
@@ -92,7 +181,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -100,7 +189,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             }
             while (rs.next())
             {
-                if(!StringUtils.isEmpty(rs.getString(1)))
+                if(!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     //手术名称为空，则不需插入到数据库中
                     String code = rs.getString("code");
@@ -174,7 +263,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -183,7 +272,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             System.out.println("============================");
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("code");
                     logger.debug("=================code:=====" + code + "==================");
@@ -260,7 +349,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
 		try
         {
 		    conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -269,7 +358,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             //basAnaesMethodDao.updateEnable();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String name = rs.getString("name");
                     String pinyin = PingYinUtil.getFirstSpell(name);
@@ -281,7 +370,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 	basAnaesMethod.setCode(code);
                 	basAnaesMethod.setBeid(beid);
                     List<BasAnaesMethod> anaesMethods = basAnaesMethodDao.selectEntityList(basAnaesMethod);
-                    if (StringUtils.isBlank(name))
+                    if (org.apache.commons.lang3.StringUtils.isBlank(name))
                     {
                         continue;
                     }
@@ -356,7 +445,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -365,7 +454,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             //basDiagnosedefDao.updateEnable();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("code");
                     String name = rs.getString("name");
@@ -374,7 +463,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     
                     String beid = basBusEntityDao.getBeid();
                     List<BasDiagnosedef> diagnosedefs = basDiagnosedefDao.selectDiagnosedefsByCode(code, beid);
-                    if (StringUtils.isBlank(name))
+                    if (org.apache.commons.lang3.StringUtils.isBlank(name))
                     {
                         continue;
                     }
@@ -440,7 +529,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -449,12 +538,12 @@ public class OperBaseDataServiceSYBX extends BaseService{
             //basDeptDao.updateEnable();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String name = rs.getString("name");
                     Integer enable = rs.getInt("enable");
                     String id = rs.getString("deptid");
-                    if (StringUtils.isBlank(name))
+                    if (org.apache.commons.lang3.StringUtils.isBlank(name))
                     {
                         continue;
                     }
@@ -514,7 +603,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -522,7 +611,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             }
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String name = rs.getString("name");
                     String regionId = rs.getString("regionId");
@@ -661,7 +750,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXYYConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -669,7 +758,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             }
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("code");
                     String name = rs.getString("name");
@@ -688,7 +777,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                                 instrument.setEnable(enable);
                                 instrument.setName(name);
                                 instrument.setType(type);
-                                instrument.setPinYin(StringUtils.isBlank(pinyin) ? PingYinUtil.getFirstSpell(name) : pinyin); 
+                                instrument.setPinYin(org.apache.commons.lang3.StringUtils.isBlank(pinyin) ? PingYinUtil.getFirstSpell(name) : pinyin); 
                                 basInstrumentDao.update(instrument);
                             }
                             
@@ -744,7 +833,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -753,7 +842,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             //basMedicineDao.updateEnable();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String type = rs.getString("type");
                     Integer enable = rs.getInt("enable");
@@ -840,7 +929,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             if (null == rs)
             {
@@ -849,7 +938,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             //basPriceDao.updateEnable();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("code");
                     String spec = rs.getString("spec");
@@ -933,11 +1022,11 @@ public class OperBaseDataServiceSYBX extends BaseService{
         try
         {
             conn = ConnectionManager.getSYBXHisConnection();
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next())
             {
-                if (!StringUtils.isEmpty(rs.getString(1)))
+                if (!org.apache.commons.lang3.StringUtils.isEmpty(rs.getString(1)))
                 {
                     String code = rs.getString("charge_item_code");
                     String beid = basBusEntityDao.getBeid();
@@ -951,7 +1040,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
 
                     
                     String chargeItemName = rs.getString("charge_item_name");
-                    if(StringUtils.isNotBlank(chargeItemName)){
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(chargeItemName)){
                     	chargeItemName = chargeItemName.replaceAll("[^a-zA-Z_\u4e00-\u9fa5]", "");
                     }
                     logger.info("----------------------------"+chargeItemName+"-----------------------------");
@@ -962,7 +1051,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     //logger.info("----------------------------"+rs.getString("pinyin").toString().trim()+"-----------------------------");
                     
                     String pinyin = rs.getString("pinyin");
-                    if(StringUtils.isNotBlank(pinyin)){
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(pinyin)){
                     	pinyin = pinyin.replaceAll("[^a-zA-Z]", "");
                     }
 
@@ -1114,7 +1203,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
         
 		logger.info("-------end synHisSysUserList-----------");
 	}*/
-	
+
 	@Transactional
 	public void synHisOperList(){
         logger.info("---------------------begin synHisOperList------------------------");
@@ -1324,7 +1413,11 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     regOpt.setEndTime(rs.getString("operEndTime"));
                     regOpt.setHyperSusceptiBility(rs.getString("dragAllergy"));
                     regOpt.setOptLevel(rs.getString("operLevel"));
-                    regOpt.setEmergency(0);
+//                    regOpt.setEmergency(0);
+                    
+                    if(!StringUtils.isEmpty(rs.getString("operType"))){
+            			regOpt.setEmergency(Integer.parseInt(rs.getString("operType").trim()));
+            		}
                     //regOpt.setCutLevel(rs.getString("IncisionLevel"));
                     if(StringUtils.isNotBlank(rs.getString("incisionlevel"))){
                         Integer cutLevel = null;
@@ -1403,7 +1496,19 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     int resultInsert = basRegOptDao.insert(regOpt);
 //                    operatelogService.saveOperatelog(regOptId, operatelogService.OPT_TYPE_INFO_SAVE,
 //                            operatelogService.OPT_MODULE_INTERFACE, "HIS手术通知单", JsonType.jsonType(regOpt));
+                    Controller controller = new Controller();
+                    controller.setRegOptId(regOpt.getRegOptId());
+                    controller.setCostsettlementState("0");
                     
+                    //如果是急诊手术，则直接将手术状态变为未排班，并且创建手术文书
+                    if (1 == regOpt.getEmergency()) {
+                        controller.setState(OperationState.NO_SCHEDULING);
+                        creatDocument(regOpt);
+                    } else {
+                        controller.setState(OperationState.NOT_REVIEWED);
+                    }
+                    controllerDao.update(controller);
+                    initDocDataSYBX(regOpt.getRegOptId());
                 }
             }
             logger.info("synHisOperList=============while end===============");
@@ -1458,14 +1563,14 @@ public class OperBaseDataServiceSYBX extends BaseService{
             cstmt.setInt(1, Integer.parseInt(regOpt.getPreengagementnumber()));//his手术单号
             cstmt.setInt(2, 212);//科室id
             cstmt.setString(3, regOpt.getHid());//住院号
-            String aprq = regOpt.getOperaDate()+" "+(StringUtils.isNotBlank(dispatchBean.getStartTime()) ? dispatchBean.getStartTime() : "00:00")+":00";
+            String aprq = regOpt.getOperaDate()+" "+(org.apache.commons.lang3.StringUtils.isNotBlank(dispatchBean.getStartTime()) ? dispatchBean.getStartTime() : "00:00")+":00";
             String ssrq = anaesRecord.getOperStartTime();
             logger.debug("================安排日期：" + aprq);
             logger.debug("================手术日期：" + ssrq);
             cstmt.setTimestamp(4, new java.sql.Timestamp(DateUtils.getParseTime(aprq).getTime()));//手术安排日期
             cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(ssrq).getTime()));//手术日期
             String designed = regOpt.getDesignedOptCode();
-            if (StringUtils.isNoneBlank(designed))
+            if (org.apache.commons.lang3.StringUtils.isNoneBlank(designed))
             {
                 String[] designedAry = designed.split(",");
                 BasOperdef operdef = basOperdefDao.queryOperdefById(designedAry[0]);
@@ -1477,7 +1582,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             }
             cstmt.setString(7, dispatchBean.getOperRoomName());//手术房间
             cstmt.setString(8, dispatchBean.getPcs()+"");//手术台号
-            if (!StringUtils.isEmpty(regOpt.getOperatorId()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getOperatorId()))
             {
                 String[] operator = regOpt.getOperatorId().split(",");
                 BasOperationPeople op1 = basOperationPeopleDao.queryOperationPeopleById(operator[0]);
@@ -1493,7 +1598,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 cstmt.setString(10, "");//手术医师2
                 cstmt.setString(32, "");//手术医师3
             }
-            if (!StringUtils.isEmpty(regOpt.getAssistantId()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getAssistantId()))
             {
                 String[] assistant = regOpt.getAssistantId().split(",");
                 BasOperationPeople assistant1 = basOperationPeopleDao.queryOperationPeopleById(assistant[0]);
@@ -1540,7 +1645,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             cstmt.setString(23, null);  //手术要求
             cstmt.setString(24, null);  //注意事项
             cstmt.setString(25, basUserDao.selectHisIdByUserName(regOpt.getCreateUser(), beid));
-            if (!StringUtils.isEmpty(regOpt.getDesignedOptCode()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getDesignedOptCode()))
             {
                 String[] designedOptCode = regOpt.getDesignedOptCode().split(",");
                 BasOperdef operdef1 = basOperdefDao.queryOperdefById(designedOptCode[0]);
@@ -1557,7 +1662,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 cstmt.setInt(28, 0);  //手术内(编)码(三)
             }
             
-            if (!StringUtils.isEmpty(regOpt.getDesignedOptName()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getDesignedOptName()))
             {
                 String[] designedOptName = regOpt.getDesignedOptName().split(",");
                 cstmt.setString(29, designedOptName[0]);  //手术名称(一)
@@ -1577,7 +1682,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
             cstmt.setString(43, null);  //洗手护士(三)
             cstmt.setString(44, null);  //巡回护士(三)
             
-            if (!StringUtils.isEmpty(regOpt.getDiagnosisCode()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getDiagnosisCode()))
             {
                 String[] diagnosisCode = regOpt.getDiagnosisCode().split(",");
                 BasDiagnosedef diagnosedef1 = basDiagnosedefDao.searchDiagnosedefById(diagnosisCode[0]);
@@ -1597,7 +1702,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 cstmt.setInt(51, 0);  //诊断序号(四)
             }
             
-            if (!StringUtils.isEmpty(regOpt.getDiagnosisName()))
+            if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getDiagnosisName()))
             {
                 String[] diagnosisName = regOpt.getDiagnosisName().split(",");
                 cstmt.setString(46, diagnosisName[0]);  //诊断名称(一)
@@ -1631,7 +1736,474 @@ public class OperBaseDataServiceSYBX extends BaseService{
         logger.info("end sendScheduleToHis");
          
     }
-	
+
+	/** 
+     * 创建文书
+     * <功能详细描述>
+     * @param regOpt
+     * @see [类、类#方法、类#成员]
+     */
+    @Override
+	public void creatDocument(BasRegOpt regOpt)
+    {
+        List<String> tables = basDocumentDao.searchAllTables(basBusEntityDao.getBeid());
+        String regOptId = regOpt.getRegOptId();
+        
+        if (tables.contains("doc_pre_visit"))
+        {
+            DocPreVisit preVisit = new DocPreVisit();
+            DocPreVisitDao docPreVisitDao = SpringContextHolder.getBean(DocPreVisitDao.class);
+            preVisit.setPreVisitId(GenerateSequenceUtil.generateSequenceNo());
+            preVisit.setRegOptId(regOptId);
+            preVisit.setProcessState("NO_END");
+            docPreVisitDao.insert(preVisit);
+        }
+        
+        if (tables.contains("doc_pre_oper_visit"))
+        {
+            // 创建术前访视单
+            DocPreOperVisit docPreOperVisit = new DocPreOperVisit();
+            DocPreOperVisitDao docPreOperVisitDao = SpringContextHolder.getBean(DocPreOperVisitDao.class);
+            docPreOperVisit.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPreOperVisit.setRegOptId(regOptId);
+            docPreOperVisit.setProcessState("NO_END");
+            docPreOperVisitDao.insert(docPreOperVisit);
+        }
+        
+        if (tables.contains("doc_labor_analgesia_accede"))
+        {
+            // 创建分娩镇痛同意书
+            DocLaborAnalgesiaAccede laborAccede = new DocLaborAnalgesiaAccede();
+            DocLaborAnalgesiaAccedeDao docLaborAnalgesiaAccedeDao = SpringContextHolder.getBean(DocLaborAnalgesiaAccedeDao.class);
+            laborAccede.setLaborId(GenerateSequenceUtil.generateSequenceNo());
+            laborAccede.setRegOptId(regOptId);
+            laborAccede.setProcessState("NO_END");
+            docLaborAnalgesiaAccedeDao.insert(laborAccede);
+        }
+        
+        if (tables.contains("doc_accede"))
+        {
+            // 创建麻醉同意书
+            DocAccede accede = new DocAccede();
+            DocAccedeDao docAccedeDao = SpringContextHolder.getBean(DocAccedeDao.class);
+            accede.setAccedeId(GenerateSequenceUtil.generateSequenceNo());
+            accede.setRegOptId(regOptId);
+            accede.setFlag("1");
+            accede.setProcessState("NO_END");
+            docAccedeDao.insert(accede);
+        }
+        
+        if (tables.contains("doc_anaes_plan"))
+        {
+            //麻醉计划单
+            DocAnaesPlan anaesPlan = new DocAnaesPlan();
+            DocAnaesPlanDao docAnaesPlanDao = SpringContextHolder.getBean(DocAnaesPlanDao.class);
+            anaesPlan.setRegOptId(regOptId);
+            anaesPlan.setProcessState("NO_END");
+            anaesPlan.setId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesPlanDao.insert(anaesPlan);
+        }
+        
+        if (tables.contains("doc_pat_out_range_agree"))
+        {
+            //医疗保险病人超范围用药同意书
+            DocPatOutRangeAgree patOutRangeAgree = new DocPatOutRangeAgree();
+            DocPatOutRangeAgreeDao docPatOutRangeAgreeDao = SpringContextHolder.getBean(DocPatOutRangeAgreeDao.class);
+            patOutRangeAgree.setRegOptId(regOptId);
+            patOutRangeAgree.setProcessState("NO_END");
+            patOutRangeAgree.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPatOutRangeAgreeDao.insert(patOutRangeAgree);
+        }
+        
+        if (tables.contains("doc_pre_post_visit"))
+        {
+            //手术病人术前术后访问记录单
+            DocPrePostVisit prePostVisit = new DocPrePostVisit();
+            DocPrePostVisitDao docPrePostVisitDao = SpringContextHolder.getBean(DocPrePostVisitDao.class);
+            prePostVisit.setRegOptId(regOptId);
+            prePostVisit.setProcessState("NO_END");
+            prePostVisit.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPrePostVisitDao.insert(prePostVisit);
+        }
+        
+        if (tables.contains("doc_pat_shuttle_transfer"))
+        {
+            //手术患者接送交接单
+            DocPatShuttleTransfer patShuttleTransfer = new DocPatShuttleTransfer();
+            DocPatShuttleTransferDao docPatShuttleTransferDao = SpringContextHolder.getBean(DocPatShuttleTransferDao.class);
+            patShuttleTransfer.setRegOptId(regOptId);
+            patShuttleTransfer.setProcessState("NO_END");
+            patShuttleTransfer.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPatShuttleTransferDao.insert(patShuttleTransfer);
+        }
+        
+        if (tables.contains("doc_opt_risk_evaluation"))
+        {
+            //创建手术风险评估单 
+            DocOptRiskEvaluation optRiskEvaluatio = new DocOptRiskEvaluation();
+            DocOptRiskEvaluationDao docOptRiskEvaluationDao = SpringContextHolder.getBean(DocOptRiskEvaluationDao.class);
+            optRiskEvaluatio.setRegOptId(regOptId);
+            optRiskEvaluatio.setOptRiskEvaluationId(GenerateSequenceUtil.generateSequenceNo());
+            optRiskEvaluatio.setProcessState("NO_END");
+            optRiskEvaluatio.setFlag("1");
+            docOptRiskEvaluationDao.insert(optRiskEvaluatio);
+        }
+        
+        if (tables.contains("doc_anaes_record"))
+        {
+            //创建麻醉记录单
+            DocAnaesRecord anaesRecord = new DocAnaesRecord();
+            anaesRecord.setAnaRecordId(GenerateSequenceUtil.generateSequenceNo());
+            anaesRecord.setOther("O2L/min");
+            anaesRecord.setProcessState("NO_END");
+            anaesRecord.setRegOptId(regOptId);
+            docAnaesRecordDao.insert(anaesRecord);
+        }
+        
+        if (tables.contains("doc_anaes_summary"))
+        {
+            //麻醉总结单
+            DocAnaesSummary anaesSummary = new DocAnaesSummary();
+            DocAnaesSummaryDao docAnaesSummaryDao = SpringContextHolder.getBean(DocAnaesSummaryDao.class);
+            anaesSummary.setRegOptId(regOptId);
+            anaesSummary.setProcessState("NO_END");
+            anaesSummary.setAnaSumId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryDao.insert(anaesSummary);
+            //椎管内麻醉
+            DocAnaesSummaryAppendixCanal anaesSummaryAppendixCanal = new DocAnaesSummaryAppendixCanal();
+            DocAnaesSummaryAppendixCanalDao docAnaesSummaryAppendixCanalDao = SpringContextHolder.getBean(DocAnaesSummaryAppendixCanalDao.class);
+            anaesSummaryAppendixCanal.setAnaSumId(anaesSummary.getAnaSumId());
+            anaesSummaryAppendixCanal.setAnaSumAppCanId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryAppendixCanalDao.insert(anaesSummaryAppendixCanal);
+            //全麻
+            DocAnaesSummaryAppendixGen anaesSummaryAppendixGen = new DocAnaesSummaryAppendixGen();
+            DocAnaesSummaryAppendixGenDao docAnaesSummaryAppendixGenDao = SpringContextHolder.getBean(DocAnaesSummaryAppendixGenDao.class);
+            anaesSummaryAppendixGen.setAnaSumId(anaesSummary.getAnaSumId());
+            anaesSummaryAppendixGen.setAnaSumAppGenId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryAppendixGenDao.insert(anaesSummaryAppendixGen);
+            //术后访视
+            DocAnaesSummaryAppendixVisit anaesSummaryAppendixVisit = new DocAnaesSummaryAppendixVisit();
+            DocAnaesSummaryAppendixVisitDao docAnaesSummaryAppendixVisitDao = SpringContextHolder.getBean(DocAnaesSummaryAppendixVisitDao.class);
+            anaesSummaryAppendixVisit.setAnaSumId(anaesSummary.getAnaSumId());
+            anaesSummaryAppendixVisit.setAnesSumVisId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryAppendixVisitDao.insert(anaesSummaryAppendixVisit);
+            //椎管内穿刺
+            DocSpinalCanalPuncture spinalCanalPuncture = new DocSpinalCanalPuncture();
+            DocSpinalCanalPunctureDao docSpinalCanalPunctureDao = SpringContextHolder.getBean(DocSpinalCanalPunctureDao.class);
+            spinalCanalPuncture.setAnaSumId(anaesSummary.getAnaSumId());
+            spinalCanalPuncture.setSpinalCanalId(GenerateSequenceUtil.generateSequenceNo());
+            docSpinalCanalPunctureDao.insert(spinalCanalPuncture);
+            //神经阻滞
+            DocNerveBlock nerveBlock = new DocNerveBlock();
+            DocNerveBlockDao docNerveBlockDao = SpringContextHolder.getBean(DocNerveBlockDao.class);
+            nerveBlock.setAnaSumId(anaesSummary.getAnaSumId());
+            nerveBlock.setNerveBlockId(GenerateSequenceUtil.generateSequenceNo());
+            docNerveBlockDao.insert(nerveBlock);
+            //全身麻醉
+            DocGeneralAnaes generalAnaes = new DocGeneralAnaes();
+            DocGeneralAnaesDao docGeneralAnaesDao = SpringContextHolder.getBean(DocGeneralAnaesDao.class);
+            generalAnaes.setAnaSumId(anaesSummary.getAnaSumId());
+            generalAnaes.setGeneralAnaesId(GenerateSequenceUtil.generateSequenceNo());
+            docGeneralAnaesDao.insert(generalAnaes);
+            //并发症
+            DocAnaesSummaryAllergicReaction anaesSummaryAllergicReaction = new DocAnaesSummaryAllergicReaction();
+            DocAnaesSummaryAllergicReactionDao docAnaesSummaryAllergicReactionDao = SpringContextHolder.getBean(DocAnaesSummaryAllergicReactionDao.class);
+            anaesSummaryAllergicReaction.setAnaSumId(anaesSummary.getAnaSumId());
+            anaesSummaryAllergicReaction.setAnaSumAllReaId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryAllergicReactionDao.insert(anaesSummaryAllergicReaction);
+            //中心静脉穿刺
+            DocAnaesSummaryVenipuncture  anaesSummaryVenipuncture = new DocAnaesSummaryVenipuncture();
+            DocAnaesSummaryVenipunctureDao docAnaesSummaryVenipunctureDao = SpringContextHolder.getBean(DocAnaesSummaryVenipunctureDao.class);
+            anaesSummaryVenipuncture.setAnaSumId(anaesSummary.getAnaSumId());
+            anaesSummaryVenipuncture.setAnesSumVenId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesSummaryVenipunctureDao.insert(anaesSummaryVenipuncture);
+        }
+        
+        if (tables.contains("doc_opt_care_record"))
+        {
+            //创建手术护理记录文书
+            DocOptCareRecord optCareRecord = new DocOptCareRecord();
+            DocOptCareRecordDao docOptCareRecordDao = SpringContextHolder.getBean(DocOptCareRecordDao.class);
+            optCareRecord.setRegOptId(regOptId);
+            optCareRecord.setId(GenerateSequenceUtil.generateSequenceNo());
+            optCareRecord.setProcessState("NO_END");
+            docOptCareRecordDao.insert(optCareRecord);
+        }
+        
+        if (tables.contains("doc_opt_nurse"))
+        {
+            //创建手术清点记录
+            DocOptNurse optNurse = new DocOptNurse();
+            DocOptNurseDao docOptNurseDao = SpringContextHolder.getBean(DocOptNurseDao.class);
+            optNurse.setRegOptId(regOptId);
+            optNurse.setOptNurseId(GenerateSequenceUtil.generateSequenceNo());
+            optNurse.setProcessState("NO_END");
+            docOptNurseDao.insert(optNurse);
+        }
+        
+        if (tables.contains("doc_safe_check"))
+        {
+            //创建手术核查单
+            DocSafeCheck safeCheck = new DocSafeCheck();
+            DocSafeCheckDao docSafeCheckDao = SpringContextHolder.getBean(DocSafeCheckDao.class);
+            safeCheck.setRegOptId(regOptId);
+            safeCheck.setProcessState("NO_END");
+            safeCheck.setSafCheckId(GenerateSequenceUtil.generateSequenceNo());
+            docSafeCheckDao.insert(safeCheck);
+            DocAnaesBeforeSafeCheck anaesBeforeSafeCheck = new DocAnaesBeforeSafeCheck();
+            DocAnaesBeforeSafeCheckDao docAnaesBeforeSafeCheckDao = SpringContextHolder.getBean(DocAnaesBeforeSafeCheckDao.class);
+            anaesBeforeSafeCheck.setRegOptId(regOptId);
+            anaesBeforeSafeCheck.setAnesBeforeId(GenerateSequenceUtil.generateSequenceNo());
+            anaesBeforeSafeCheck.setProcessState("NO_END");
+            docAnaesBeforeSafeCheckDao.insert(anaesBeforeSafeCheck);
+            DocOperBeforeSafeCheck operBeforeSafeCheck = new DocOperBeforeSafeCheck();
+            DocOperBeforeSafeCheckDao docOperBeforeSafeCheckDao = SpringContextHolder.getBean(DocOperBeforeSafeCheckDao.class);
+            operBeforeSafeCheck.setRegOptId(regOptId);
+            operBeforeSafeCheck.setOperBeforeId(GenerateSequenceUtil.generateSequenceNo());
+            operBeforeSafeCheck.setProcessState("NO_END");
+            docOperBeforeSafeCheckDao.insert(operBeforeSafeCheck);
+            DocExitOperSafeCheck exitOperSafeCheck = new DocExitOperSafeCheck();
+            DocExitOperSafeCheckDao docExitOperSafeCheckDao = SpringContextHolder.getBean(DocExitOperSafeCheckDao.class);
+            exitOperSafeCheck.setRegOptId(regOptId);
+            exitOperSafeCheck.setProcessState("NO_END");
+            exitOperSafeCheck.setExitOperId(GenerateSequenceUtil.generateSequenceNo());
+            docExitOperSafeCheckDao.insert(exitOperSafeCheck);
+        }
+        
+        if (tables.contains("doc_post_follow_record"))
+        {
+            //术后随访记录单
+            DocPostFollowRecord postFollowRecord = new DocPostFollowRecord();
+            DocPostFollowRecordDao docPostFollowRecordDao = SpringContextHolder.getBean(DocPostFollowRecordDao.class);
+            postFollowRecord.setRegOptId(regOptId);
+            postFollowRecord.setProcessState("NO_END");
+            postFollowRecord.setPostFollowId(GenerateSequenceUtil.generateSequenceNo());
+            docPostFollowRecordDao.insert(postFollowRecord);
+        }
+        
+        if (tables.contains("doc_insured_pat_agree"))
+        {
+            //参保患者特殊用药、卫材知情单
+            DocInsuredPatAgree insuredPatAgree = new DocInsuredPatAgree();
+            DocInsuredPatAgreeDao docInsuredPatAgreeDao = SpringContextHolder.getBean(DocInsuredPatAgreeDao.class);
+            insuredPatAgree.setRegOptId(regOptId);
+            insuredPatAgree.setProcessState("NO_END");
+            insuredPatAgree.setId(GenerateSequenceUtil.generateSequenceNo());
+            docInsuredPatAgreeDao.insert(insuredPatAgree);
+        }
+        
+        if (tables.contains("doc_transfer_connect_record"))
+        {
+            // 手术病人转运交接记录单
+            DocTransferConnectRecord transferConnectRecord = new DocTransferConnectRecord();
+            DocTransferConnectRecordDao docTransferConnectRecordDao = SpringContextHolder.getBean(DocTransferConnectRecordDao.class);
+            transferConnectRecord.setRegOptId(regOptId);
+            transferConnectRecord.setProcessState("NO_END");
+            transferConnectRecord.setId(GenerateSequenceUtil.generateSequenceNo());
+            docTransferConnectRecordDao.insert(transferConnectRecord);
+        }
+        
+        if (tables.contains("doc_placenta_handle_agree"))
+        {
+            // 胎盘处置知情同意书
+            DocPlacentaHandleAgree placentaHandleAgree = new DocPlacentaHandleAgree();
+            DocPlacentaHandleAgreeDao docPlacentaHandleAgreeDao = SpringContextHolder.getBean(DocPlacentaHandleAgreeDao.class);
+            placentaHandleAgree.setRegOptId(regOptId);
+            placentaHandleAgree.setProcessState("NO_END");
+            placentaHandleAgree.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPlacentaHandleAgreeDao.insert(placentaHandleAgree);
+        }
+        
+        if (tables.contains("doc_nurse_interview_record"))
+        {
+            //手术室护理工作访视记录
+            DocNurseInterviewRecord nurseInterviewRecord = new DocNurseInterviewRecord();
+            DocNurseInterviewRecordDao docNurseInterviewRecordDao = SpringContextHolder.getBean(DocNurseInterviewRecordDao.class);
+            nurseInterviewRecord.setRegOptId(regOptId);
+            nurseInterviewRecord.setProcessState("NO_END");
+            nurseInterviewRecord.setId(GenerateSequenceUtil.generateSequenceNo());
+            docNurseInterviewRecordDao.insert(nurseInterviewRecord);
+        }
+        
+        if (tables.contains("doc_post_oper_regard"))
+        {
+            // 术后回视
+            DocPostOperRegard docPostOperRegard = new DocPostOperRegard();
+            DocPostOperRegardDao docPostOperRegardDao = SpringContextHolder.getBean(DocPostOperRegardDao.class);
+            docPostOperRegard.setRegOptId(regOptId);
+            docPostOperRegard.setProcessState("NO_END");
+            docPostOperRegard.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPostOperRegardDao.insert(docPostOperRegard);
+        }
+        
+        if (tables.contains("doc_anaes_postop"))
+        {
+            //麻醉后访视记录单
+            DocAnaesPostop docAnaesPostop = new DocAnaesPostop();
+            DocAnaesPostopDao docAnaesPostopDao = SpringContextHolder.getBean(DocAnaesPostopDao.class);
+            docAnaesPostop.setRegOptId(regOptId);
+            docAnaesPostop.setProcessState("NO_END");
+            docAnaesPostop.setAnaPostopId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesPostopDao.insert(docAnaesPostop);
+        }
+        
+        if (tables.contains("doc_analgesic_record"))
+        {
+            //自控记录单
+            DocAnalgesicRecord analgesic = new DocAnalgesicRecord();
+            DocAnalgesicRecordDao docAnalgesicRecordDao = SpringContextHolder.getBean(DocAnalgesicRecordDao.class);
+            analgesic.setRegOptId(regOptId);
+            analgesic.setProcessState("NO_END");
+            analgesic.setState(OperationState.SURGERY);
+            analgesic.setId(GenerateSequenceUtil.generateSequenceNo());
+            docAnalgesicRecordDao.insert(analgesic);
+        }
+        
+        if (tables.contains("doc_anaes_medicine_accede"))
+        {
+            //手术麻醉使用药品知情同意书
+            DocAnaesMedicineAccede anaesMedicineAccede = new DocAnaesMedicineAccede();
+            DocAnaesMedicineAccedeDao docAnaesMedicineAccedeDao = SpringContextHolder.getBean(DocAnaesMedicineAccedeDao.class);
+            anaesMedicineAccede.setRegOptId(regOptId);
+            anaesMedicineAccede.setProcessState("NO_END");
+            anaesMedicineAccede.setId(GenerateSequenceUtil.generateSequenceNo());
+            docAnaesMedicineAccedeDao.insert(anaesMedicineAccede);
+        }
+        
+        if (tables.contains("doc_self_pay_instrument_accede"))
+        {
+            //手术麻醉使用自费及高价耗材知情同意书
+            DocSelfPayInstrumentAccede selfPayInstrumentAccede = new DocSelfPayInstrumentAccede();
+            DocSelfPayInstrumentAccedeDao docSelfPayInstrumentAccedeDao = SpringContextHolder.getBean(DocSelfPayInstrumentAccedeDao.class);
+            selfPayInstrumentAccede.setRegOptId(regOptId);
+            selfPayInstrumentAccede.setProcessState("NO_END");
+            selfPayInstrumentAccede.setId(GenerateSequenceUtil.generateSequenceNo());
+            docSelfPayInstrumentAccedeDao.insert(selfPayInstrumentAccede);
+        }
+        
+        if (tables.contains("doc_vein_accede"))
+        {
+            //静脉麻醉知情同意书
+            DocVeinAccede docVeinAccede = new DocVeinAccede();
+            DocVeinAccedeDao docVeinAccedeDao = SpringContextHolder.getBean(DocVeinAccedeDao.class);
+            docVeinAccede.setRegOptId(regOptId);
+            docVeinAccede.setProcessState("NO_END");
+            docVeinAccede.setId(GenerateSequenceUtil.generateSequenceNo());
+            docVeinAccedeDao.insert(docVeinAccede);
+        }
+        
+        if (tables.contains("doc_risk_evaluat_prevent_care"))
+        {
+            //手术病人术前风险评估及预防护理记录单
+            DocRiskEvaluatPreventCare docRiskEvaluatPreventCare = new DocRiskEvaluatPreventCare();
+            DocRiskEvaluatPreventCareDao docRiskEvaluatPreventCareDao = SpringContextHolder.getBean(DocRiskEvaluatPreventCareDao.class);
+            docRiskEvaluatPreventCare.setRegOptId(regOptId);
+            docRiskEvaluatPreventCare.setProcessState("NO_END");
+            docRiskEvaluatPreventCare.setId(GenerateSequenceUtil.generateSequenceNo());
+            docRiskEvaluatPreventCareDao.insert(docRiskEvaluatPreventCare);
+        }
+        
+        if (tables.contains("doc_blood_trans_record"))
+        {
+            //临床输血记录单
+            DocBloodTransRecord docBloodTransRecord = new DocBloodTransRecord();
+            DocBloodTransRecordDao docBloodTransRecordDao = SpringContextHolder.getBean(DocBloodTransRecordDao.class);
+            docBloodTransRecord.setRegOptId(regOptId);
+            docBloodTransRecord.setProcessState("NO_END");
+            docBloodTransRecord.setBloodTransId(GenerateSequenceUtil.generateSequenceNo());
+            docBloodTransRecordDao.insert(docBloodTransRecord);
+        }
+        
+        if (tables.contains("doc_difficult_case_discuss"))
+        {
+            //疑难病人讨论记录
+            DocDifficultCaseDiscuss difficultCaseDiscuss = new DocDifficultCaseDiscuss();
+            DocDifficultCaseDiscussDao docDifficultCaseDiscussDao = SpringContextHolder.getBean(DocDifficultCaseDiscussDao.class);
+            difficultCaseDiscuss.setRegOptId(regOptId);
+            difficultCaseDiscuss.setProcessState("NO_END");
+            difficultCaseDiscuss.setId(GenerateSequenceUtil.generateSequenceNo());
+            docDifficultCaseDiscussDao.insert(difficultCaseDiscuss);
+        }
+        
+        if (tables.contains("doc_pat_rescue_record"))
+        {
+            //危重病人抢救记录
+            DocPatRescurRecord patRescurRecord = new DocPatRescurRecord();
+            DocPatRescurRecordDao docPatRescurRecordDao = SpringContextHolder.getBean(DocPatRescurRecordDao.class);
+            patRescurRecord.setRegOptId(regOptId);
+            patRescurRecord.setProcessState("NO_END");
+            patRescurRecord.setId(GenerateSequenceUtil.generateSequenceNo());
+            docPatRescurRecordDao.insert(patRescurRecord);
+        }
+        
+        if (tables.contains("doc_anaes_pre_discuss_record"))
+        {
+            //危重病人抢救记录
+        	DocAnaesPreDiscussRecord docAnaesPreDiscussRecord = new DocAnaesPreDiscussRecord();
+        	DocAnaesPreDiscussRecordDao docAnaesPreDiscussRecordDao = SpringContextHolder.getBean(DocAnaesPreDiscussRecordDao.class);
+        	docAnaesPreDiscussRecord.setRegOptId(regOptId);
+        	docAnaesPreDiscussRecord.setProcessState("NO_END");
+        	docAnaesPreDiscussRecord.setPreDiscussId(GenerateSequenceUtil.generateSequenceNo());
+        	docAnaesPreDiscussRecordDao.insert(docAnaesPreDiscussRecord);
+        }
+        
+        if (tables.contains("doc_analgesic_informed_consent"))
+        {
+            //术后（术前）镇痛知情同意书
+        	DocAnalgesicInformedConsent docAnalgesicInformedConsent = new DocAnalgesicInformedConsent();
+        	DocAnalgesicInformedConsentDao docAnalgesicInformedConsentDao = SpringContextHolder.getBean(DocAnalgesicInformedConsentDao.class);
+        	docAnalgesicInformedConsent.setRegOptId(regOptId);
+        	docAnalgesicInformedConsent.setProcessState("NO_END");
+        	docAnalgesicInformedConsent.setAnalgesicId(GenerateSequenceUtil.generateSequenceNo());
+        	docAnalgesicInformedConsentDao.insert(docAnalgesicInformedConsent);
+        }        
+        
+        DocAnaesQualityControl docAnaesQualityControl = new DocAnaesQualityControl();
+        DocAnaesQualityControlDao docAnaesQualityControlDao = SpringContextHolder.getBean(DocAnaesQualityControlDao.class);
+        docAnaesQualityControl.setRegOptId(regOptId);
+        docAnaesQualityControl.setId(GenerateSequenceUtil.generateSequenceNo());
+        docAnaesQualityControlDao.insert(docAnaesQualityControl);
+        
+        //在审核的时候  生成排程信息记录 
+        int dispatchCount = basDispatchDao.searchDistchByRegOptId(regOptId);
+        if(dispatchCount<1){
+            BasDispatch dispatch = new BasDispatch();
+            dispatch.setRegOptId(regOptId);
+            dispatch.setBeid(basBusEntityDao.getBeid());
+            basDispatchDao.insert(dispatch);
+        }
+    }
+
+    public void initDocDataSYBX(String ids) {
+        List<String> idsList = new ArrayList<String>();
+        String[] idsString = ids.split(",");
+        for (int i = 0; i < idsString.length; i++) {
+            idsList.add(idsString[i]);
+        }
+        if (idsList != null) {
+            if (idsList.size() > 0) {
+                for (int i = 0; i < idsList.size(); i++) {
+                    String regOptId = idsList.get(i);
+                    DocPreVisitDao docPreVisitDao = SpringContextHolder.getBean(DocPreVisitDao.class);
+            		DocPreVisit preVisit = docPreVisitDao.searchPreVisitByRegOptId(regOptId);
+                    if (preVisit != null) {
+        	        	preVisit.setRiskAssessment(1);
+        	        	preVisit.setHeartBoolHave(1);
+        	        	preVisit.setLungbreathHave(1);
+        	        	preVisit.setBrainNerveHave(1);
+        	        	preVisit.setSpineLimbHave(1);
+        	        	preVisit.setBloodHave(1);
+        	        	preVisit.setKidneyHave(1);
+        	        	preVisit.setDigestionHave(1);
+        	        	preVisit.setEndocrineHave(1);
+        	        	preVisit.setInfectiousHave(1);
+            	        docPreVisitDao.updatePreVisit(preVisit);
+					}
+                }
+            }
+        }
+    }
+
     /**
      * 手术取消时信息回传HIS
      * @param regOpt
@@ -1733,7 +2305,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
     }
     
     public static String StringNumberFilter(String str) throws PatternSyntaxException {
-        if(StringUtils.isBlank(str)){
+        if(org.apache.commons.lang3.StringUtils.isBlank(str)){
             return str;
         }
         // 只允许字母和数字
@@ -1745,7 +2317,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
     }
     
     public static String StringFilter(String str) throws PatternSyntaxException {
-        if(StringUtils.isBlank(str)){
+        if(org.apache.commons.lang3.StringUtils.isBlank(str)){
             return str;
         }
         // 只允许字母和数字

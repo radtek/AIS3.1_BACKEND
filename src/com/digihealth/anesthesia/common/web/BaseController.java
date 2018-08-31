@@ -136,6 +136,7 @@ import com.digihealth.anesthesia.doc.service.DocOptNurseService;
 import com.digihealth.anesthesia.doc.service.DocOptRiskEvaluationService;
 import com.digihealth.anesthesia.doc.service.DocPackagesItemService;
 import com.digihealth.anesthesia.doc.service.DocPatOutRangeAgreeService;
+import com.digihealth.anesthesia.doc.service.DocPatPrevisitRecordService;
 import com.digihealth.anesthesia.doc.service.DocPatRescurRecordService;
 import com.digihealth.anesthesia.doc.service.DocPatShuttleTransferService;
 import com.digihealth.anesthesia.doc.service.DocPlacentaHandleAgreeService;
@@ -604,7 +605,8 @@ public abstract class BaseController {
 	protected EvtSpecialMaterialEventService evtSpecialMaterialEventService;
 	@Autowired
 	protected DocPreAnaesTalkRecordService docPreAnaesTalkRecordService;
-	
+	@Autowired
+	protected DocPatPrevisitRecordService docPatPrevisitRecordService;
 	
 	/**
 	 * 日志对象

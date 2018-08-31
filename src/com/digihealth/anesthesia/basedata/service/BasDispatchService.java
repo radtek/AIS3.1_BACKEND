@@ -42,10 +42,12 @@ import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.po.DocAccede;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocOptRiskEvaluation;
+import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.evt.formbean.CancleRegOptFormBean;
 import com.digihealth.anesthesia.evt.formbean.Filter;
 import com.digihealth.anesthesia.evt.po.EvtParticipant;
 import com.digihealth.anesthesia.evt.service.EvtParticipantService;
+import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceHNHTYY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceQNZZY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceSYZXYY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceYXRM;
@@ -522,6 +524,125 @@ public class BasDispatchService extends BaseService {
     
     
     
+    /**
+     * 批量排程信息保存
+     * 
+     * @param dispatchList
+     * @throws Exception
+     */
+    @Transactional
+    public void saveDispatchHNHTYY(DispatchOperationFormBean dispatchFormBean, ResponseValue result)
+    {
+    	 String beid = getBeid();
+         for (BasDispatch dispatch : dispatchFormBean.getDispatchList())
+         {
+             if (StringUtils.isBlank(dispatch.getBeid()))
+             {
+                 dispatch.setBeid(beid);
+             }
+             // 获取手术人员信息
+             BasRegOpt regOpt = basRegOptDao.searchRegOptById(dispatch.getRegOptId());
+             Controller controller = controllerDao.getControllerById(dispatch.getRegOptId());
+             // 如果此排班信息已经为术中了，则不允许调整排班信息
+             if (controller != null)
+             {
+                 if (!controller.getState().equals(OperationState.NO_SCHEDULING)
+                     && !controller.getState().equals(OperationState.PREOPERATIVE))
+                 {
+                     List<SysCodeFormbean> codeLs =
+                         basDictItemDao.searchSysCodeByGroupIdAndCodeValue("operation_state",
+                             controller.getState(),
+                             beid);
+                     String stateName = "";
+                     if (null != codeLs && codeLs.size() > 0)
+                     {
+                         stateName = codeLs.get(0).getCodeName();
+                     }
+                     result.setResultCode("30000003");
+                     result.setResultMessage("姓名为：" + regOpt.getName() + "手术排班修改出错，该排班信息状态已到'" + stateName
+                         + "',不为未排班或术前状态！");
+                     return;
+                 }
+             }
+             /**
+              * 根据当前操作排程人员类型判断可修改字段的范围 RoleType = N可以修改除麻醉医生意外的其他字段 RoleType = A只可以修改麻醉医生字段
+              */
+             BasDispatch disObj = basDispatchDao.getDispatchOper(dispatch.getRegOptId());
+             if (disObj == null)
+             {
+                 dispatch.setOperRegDate(regOpt.getOperaDate());
+                 basDispatchDao.insert(dispatch);
+             }
+             else
+             {
+                 disObj.setOperRegDate(regOpt.getOperaDate());
+                 
+                 if (StringUtils.isNotBlank(dispatch.getPcs()))
+                 {
+                     disObj.setPcs(dispatch.getPcs());
+                 }
+                 else
+                 {
+                     List<BasDictItem> pcsList = basDispatchDao.getNoUsePcsList(disObj);
+                     if (null != pcsList && pcsList.size() > 0)
+                     {
+                         disObj.setPcs(pcsList.get(0).getCodeValue());
+                     }
+                     else
+                     {
+                         disObj.setPcs(basDispatchDao.autoGetPcs(disObj.getOperRoomId(), disObj.getOperRegDate(), beid));
+                     }
+                 }
+                 disObj.setOperRoomId(dispatch.getOperRoomId());
+                 disObj.setStartTime(dispatch.getStartTime());
+                 if ("HEAD_NURSE".equals(dispatchFormBean.getRoleType()) || "ADMIN".equals(dispatchFormBean.getRoleType()))
+                 {
+                     //BeanUtils.copyProperties(dispatch, disObj, new String[] {"isHold"}); // 不替换isHold的值
+                     disObj.setCircunurseId1(dispatch.getCircunurseId1());
+                     disObj.setCircunurseId2(dispatch.getCircunurseId2());
+                     disObj.setInstrnurseId1(dispatch.getInstrnurseId1());
+                     disObj.setInstrnurseId2(dispatch.getInstrnurseId2());
+                     
+                 }
+                 if ("ANAES_DIRECTOR".equals(dispatchFormBean.getRoleType()) || "ADMIN".equals(dispatchFormBean.getRoleType()))
+                 {
+                     disObj.setAnesthetistId(dispatch.getAnesthetistId());
+                     disObj.setCircuAnesthetistId(dispatch.getCircuAnesthetistId());
+                 }
+                 if (StringUtils.isNotBlank(disObj.getOperRoomId())
+                     && ((0 == regOpt.getIsLocalAnaes() && StringUtils.isNotBlank(disObj.getAnesthetistId()) || 1 == regOpt.getIsLocalAnaes()))
+                     && StringUtils.isNotBlank(disObj.getCircunurseId1()))
+                 {
+                     disObj.setIsHold(0);
+                 }
+                 
+                 basDispatchDao.update(disObj);
+             }
+             
+             // 排程完成后，修改手术信息表手术时间
+             if (StringUtils.isNotBlank(dispatch.getOperaDate())) {
+                 regOpt.setOperaDate(dispatch.getOperaDate());
+                 regOpt.setRemark(dispatch.getRemark());
+                 saveRegOpt(regOpt);
+             }
+             
+             // 排程完成
+             if (DISPATCH_SAVE.equals(disObj.getIsHold()))
+             {
+                saveDispatchSuccess(disObj, dispatchFormBean.getRoleType());
+                String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
+                if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
+                    logger.info("===============================发送手术排班信息到his===========================================");
+                    HisInterfaceServiceHNHTYY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceHNHTYY.class);
+                    hisInterfaceService.sendDispatchToHis(disObj, regOpt);
+                }
+            }
+        }
+    }
+    
+    
+    
+    
 	/**
      * 批量排程信息保存（永兴人民局点）
      * 
@@ -929,7 +1050,7 @@ public class BasDispatchService extends BaseService {
 
             // 手术审核
             checkOperationSYBX(regOpt.getRegOptId(), OperationState.PREOPERATIVE, "", respValue);
-
+            initDocDataSYBX(regOpt.getRegOptId());
             saveDispatchSuccess(dispatch, "N");
         }
     }
@@ -1140,6 +1261,8 @@ public class BasDispatchService extends BaseService {
 			}
 			regOpt.setCreateTime(DateUtils.formatDateTime(new Date()));
 			regOpt.setBeid(getBeid());
+	        regOpt.setOutMedicine(0);
+	        regOpt.setOutInstrument(0);
 			basRegOptDao.insert(regOpt);
 			if ("1".equals(regOpt.getGetData())) {
 				return JsonType.jsonType(basRegOptDao.searchRegOptById(regOpt.getRegOptId()));
@@ -1258,10 +1381,53 @@ public class BasDispatchService extends BaseService {
             if (idsList.size() > 0) {
                 for (int i = 0; i < idsList.size(); i++) {
                     String regOptId = idsList.get(i);
+                    BasRegOpt basRegOpt = basRegOptDao.searchRegOptById(regOptId);
+                    if(basRegOpt != null) {
+                    	if(basRegOpt.getEmergency() == 1) {
+                    		DocPreVisit docPreVisit = docPreVisitDao.searchPreVisitByRegOptId(regOptId);
+                    		if(docPreVisit != null) {
+                    			docPreVisit.setAsaE("1");
+                    			docPreVisitDao.updatePreVisit(docPreVisit);
+                    		}
+                    	}
+                    }
                     DocAccede docAccede = docAccedeDao.searchAccedeByRegOptId(regOptId);
                     if (docAccede != null) {
                     	docAccede.setSelected("0,0,0,0,0,0,0,0,0,1,1,1,1,1,1");
                     	docAccedeDao.updateAccede(docAccede);
+					}
+                }
+            }
+        }
+    }
+
+    /**
+     * 初始化文书相关数据
+     * @param ids
+     */
+    public void initDocDataSYBX(String ids) {
+        List<String> idsList = new ArrayList<String>();
+        String[] idsString = ids.split(",");
+        for (int i = 0; i < idsString.length; i++) {
+            idsList.add(idsString[i]);
+        }
+        if (idsList != null) {
+            if (idsList.size() > 0) {
+                for (int i = 0; i < idsList.size(); i++) {
+                    String regOptId = idsList.get(i);
+            		DocPreVisit preVisit = docPreVisitDao.searchPreVisitByRegOptId(regOptId);
+                    if (preVisit != null) {
+        	        	preVisit.setRiskAssessment(1);
+        	        	preVisit.setHeartBoolHave(1);
+        	        	preVisit.setLungbreathHave(1);
+        	        	preVisit.setBrainNerveHave(1);
+        	        	preVisit.setSpineLimbHave(1);
+        	        	preVisit.setBloodHave(1);
+        	        	preVisit.setKidneyHave(1);
+        	        	preVisit.setDigestionHave(1);
+        	        	preVisit.setEndocrineHave(1);
+        	        	preVisit.setInfectiousHave(1);
+            	        docPreVisitDao.updatePreVisit(preVisit);
 					}
                 }
             }

@@ -144,6 +144,7 @@ import com.digihealth.anesthesia.doc.dao.DocPatInspectItemDao;
 import com.digihealth.anesthesia.doc.dao.DocPatInspectRecordDao;
 import com.digihealth.anesthesia.doc.dao.DocPatOutRangeAgreeDao;
 import com.digihealth.anesthesia.doc.dao.DocPatOutRangeItemDao;
+import com.digihealth.anesthesia.doc.dao.DocPatPrevisitRecordDao;
 import com.digihealth.anesthesia.doc.dao.DocPatRescurRecordDao;
 import com.digihealth.anesthesia.doc.dao.DocPatShuttleTransferContentDao;
 import com.digihealth.anesthesia.doc.dao.DocPatShuttleTransferDao;
@@ -204,6 +205,7 @@ import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
 import com.digihealth.anesthesia.doc.po.DocOptNurse;
 import com.digihealth.anesthesia.doc.po.DocOptRiskEvaluation;
 import com.digihealth.anesthesia.doc.po.DocPatOutRangeAgree;
+import com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord;
 import com.digihealth.anesthesia.doc.po.DocPatRescurRecord;
 import com.digihealth.anesthesia.doc.po.DocPatShuttleTransfer;
 import com.digihealth.anesthesia.doc.po.DocPlacentaHandleAgree;
@@ -735,6 +737,8 @@ public abstract class BaseService {
     @Autowired
     protected DocPreAnaesTalkRecordDao docPreAnaesTalkRecordDao;
     @Autowired
+    protected DocPatPrevisitRecordDao docPatPrevisitRecordDao;
+    @Autowired
     protected DocSelfPayAccedeLlzyyDao docSelfPayAccedeLlzyyDao;
     @Autowired
     protected DocPrePublicityDao docPrePublicityDao;
@@ -1252,6 +1256,17 @@ public abstract class BaseService {
         	docPrePublicity.setProcessState("NO_END");
         	docPrePublicityDao.insert(docPrePublicity);
         }
+        if (tables.contains("doc_pat_previsit_record"))
+        {
+            //患者随访管理
+        	DocPatPrevisitRecord docPatPrevisitRecord = new DocPatPrevisitRecord();
+        	docPatPrevisitRecord.setRegOptId(regOptId);
+        	docPatPrevisitRecord.setProcessState("NO_END");
+        	docPatPrevisitRecord.setPatVisitId(GenerateSequenceUtil.generateSequenceNo());
+        	docPatPrevisitRecordDao.insert(docPatPrevisitRecord);
+        }
+        
+        
         DocAnaesQualityControl docAnaesQualityControl = new DocAnaesQualityControl();
         docAnaesQualityControl.setRegOptId(regOptId);
         docAnaesQualityControl.setId(GenerateSequenceUtil.generateSequenceNo());

@@ -1635,7 +1635,7 @@ public class QCManagerController extends BaseController{
         			boolean flag = true;
         			String contents = "";
         			for (DocPostFollowSpinal postFollowSpinal : extList) {
-        				if((null == postFollowSpinal.getCognitObstacle() || postFollowSpinal.getCognitObstacle()==0) 
+        				if((null == postFollowSpinal.getSevereHeadache() || postFollowSpinal.getSevereHeadache()==0) 
         						&& (null == postFollowSpinal.getLeftLimbsFeelImp()|| postFollowSpinal.getLeftLimbsFeelImp()==0) 
         						&& (null == postFollowSpinal.getRightLimbsFeelImp() || postFollowSpinal.getRightLimbsFeelImp()==0)
         						&& (null == postFollowSpinal.getLeftMoveFeelImp()|| postFollowSpinal.getLeftMoveFeelImp()==0)

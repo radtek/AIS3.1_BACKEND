@@ -132,7 +132,7 @@ import com.google.common.base.Objects;
 
 @Service
 @Transactional(readOnly = true)
-public class HisInterfaceServiceSYZXYY
+public class HisInterfaceServiceHNHTYY
 {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -1178,8 +1178,6 @@ public class HisInterfaceServiceSYZXYY
                         regOpt.setState(OperationState.NO_SCHEDULING);
                         regOpt.setRegOptId(regOpt.getRegOptId());
                         regOpt.setCostsettlementState("0");
-                        regOpt.setOutMedicine(0);
-                        regOpt.setOutInstrument(0);
                         basRegOptDao.insert(regOpt);
                         
 //                        Controller controller = new Controller();
@@ -1218,7 +1216,6 @@ public class HisInterfaceServiceSYZXYY
     	regOpt.setStartTime(row.getOperStartTime());
     	regOpt.setCreateTime(DateUtils.getDateTime());
         regOpt.setOptLevel(row.getOperLevel());
-
         //regOpt.setRegionId(row.getRegionId().trim());
         
         //logger.info("-------------"+row.toString()+"-------------");

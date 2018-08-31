@@ -31,5 +31,5 @@ public interface TmpMedPayTempDao {
     
     List<TmpMedPayTemp> searchMedChargeListById(@Param("chargeMedTempId")String chargeMedTempId,@Param("chargedType")String chargedType);
     
-    List<DocEventBilling> queryItemListByChargeTempId(@Param("chargeMedTempId")String chargeMedTempId);
+    List<DocEventBilling> queryItemListByChargeTempId(@Param("chargeMedTempId")String chargeMedTempId, @Param("beid")String beid);
 }

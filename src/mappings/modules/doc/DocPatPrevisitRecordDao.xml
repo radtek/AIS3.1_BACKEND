@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPatPrevisitRecordDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord" >
+    <id column="patVisitId" property="patVisitId" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="conscious" property="conscious" jdbcType="VARCHAR" />
+    <result column="consciousOther" property="consciousOther" jdbcType="VARCHAR" />
+    <result column="anaphylaxis" property="anaphylaxis" jdbcType="VARCHAR" />
+    <result column="anaphylaxisOther" property="anaphylaxisOther" jdbcType="VARCHAR" />
+    <result column="surgeryHis" property="surgeryHis" jdbcType="VARCHAR" />
+    <result column="surgeryHisOther" property="surgeryHisOther" jdbcType="VARCHAR" />
+    <result column="implants" property="implants" jdbcType="VARCHAR" />
+    <result column="implantsOther" property="implantsOther" jdbcType="VARCHAR" />
+    <result column="pacemaker" property="pacemaker" jdbcType="VARCHAR" />
+    <result column="hepatitis" property="hepatitis" jdbcType="VARCHAR" />
+    <result column="infectionOther" property="infectionOther" jdbcType="VARCHAR" />
+    <result column="skin" property="skin" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="nature" property="nature" jdbcType="VARCHAR" />
+    <result column="skinOther" property="skinOther" jdbcType="VARCHAR" />
+    <result column="nutritionState" property="nutritionState" jdbcType="VARCHAR" />
+    <result column="activityState" property="activityState" jdbcType="VARCHAR" />
+    <result column="limbsFeel" property="limbsFeel" jdbcType="VARCHAR" />
+    <result column="limbsPosition" property="limbsPosition" jdbcType="VARCHAR" />
+    <result column="limbsNature" property="limbsNature" jdbcType="VARCHAR" />
+    <result column="psychologyState" property="psychologyState" jdbcType="VARCHAR" />
+    <result column="preVisitOther" property="preVisitOther" jdbcType="VARCHAR" />
+    <result column="recoveryState" property="recoveryState" jdbcType="VARCHAR" />
+    <result column="postPsychologyState" property="postPsychologyState" jdbcType="VARCHAR" />
+    <result column="wound" property="wound" jdbcType="VARCHAR" />
+    <result column="woundSituation" property="woundSituation" jdbcType="VARCHAR" />
+    <result column="complication" property="complication" jdbcType="VARCHAR" />
+    <result column="complicationContent" property="complicationContent" jdbcType="VARCHAR" />
+    <result column="workOpinion" property="workOpinion" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    patVisitId, regOptId, conscious, consciousOther, anaphylaxis, anaphylaxisOther, surgeryHis, 
+    surgeryHisOther, implants, implantsOther, pacemaker, hepatitis, infectionOther, skin, 
+    position, nature, skinOther, nutritionState, activityState, limbsFeel, limbsPosition, 
+    limbsNature, psychologyState, preVisitOther, recoveryState, postPsychologyState, 
+    wound, woundSituation, complication, complicationContent, workOpinion,processState
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_previsit_record
+    where patVisitId = #{patVisitId,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <select id="searchPatPrevisitRecordByRegOptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pat_previsit_record
+    where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_pat_previsit_record
+    where patVisitId = #{patVisitId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord" >
+    insert into doc_pat_previsit_record (patVisitId, regOptId, conscious, 
+      consciousOther, anaphylaxis, anaphylaxisOther, 
+      surgeryHis, surgeryHisOther, implants, 
+      implantsOther, pacemaker, hepatitis, 
+      infectionOther, skin, position, 
+      nature, skinOther, nutritionState, 
+      activityState, limbsFeel, limbsPosition, 
+      limbsNature, psychologyState, preVisitOther, 
+      recoveryState, postPsychologyState, wound, 
+      woundSituation, complication, complicationContent, 
+      workOpinion,processState)
+    values (#{patVisitId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{conscious,jdbcType=VARCHAR}, 
+      #{consciousOther,jdbcType=VARCHAR}, #{anaphylaxis,jdbcType=VARCHAR}, #{anaphylaxisOther,jdbcType=VARCHAR}, 
+      #{surgeryHis,jdbcType=VARCHAR}, #{surgeryHisOther,jdbcType=VARCHAR}, #{implants,jdbcType=VARCHAR}, 
+      #{implantsOther,jdbcType=VARCHAR}, #{pacemaker,jdbcType=VARCHAR}, #{hepatitis,jdbcType=VARCHAR}, 
+      #{infectionOther,jdbcType=VARCHAR}, #{skin,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, 
+      #{nature,jdbcType=VARCHAR}, #{skinOther,jdbcType=VARCHAR}, #{nutritionState,jdbcType=VARCHAR}, 
+      #{activityState,jdbcType=VARCHAR}, #{limbsFeel,jdbcType=VARCHAR}, #{limbsPosition,jdbcType=VARCHAR}, 
+      #{limbsNature,jdbcType=VARCHAR}, #{psychologyState,jdbcType=VARCHAR}, #{preVisitOther,jdbcType=VARCHAR}, 
+      #{recoveryState,jdbcType=VARCHAR}, #{postPsychologyState,jdbcType=VARCHAR}, #{wound,jdbcType=VARCHAR}, 
+      #{woundSituation,jdbcType=VARCHAR}, #{complication,jdbcType=VARCHAR}, #{complicationContent,jdbcType=VARCHAR}, 
+      #{workOpinion,jdbcType=VARCHAR},#{processState,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord" >
+    insert into doc_pat_previsit_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="patVisitId != null" >
+        patVisitId,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="conscious != null" >
+        conscious,
+      </if>
+      <if test="consciousOther != null" >
+        consciousOther,
+      </if>
+      <if test="anaphylaxis != null" >
+        anaphylaxis,
+      </if>
+      <if test="anaphylaxisOther != null" >
+        anaphylaxisOther,
+      </if>
+      <if test="surgeryHis != null" >
+        surgeryHis,
+      </if>
+      <if test="surgeryHisOther != null" >
+        surgeryHisOther,
+      </if>
+      <if test="implants != null" >
+        implants,
+      </if>
+      <if test="implantsOther != null" >
+        implantsOther,
+      </if>
+      <if test="pacemaker != null" >
+        pacemaker,
+      </if>
+      <if test="hepatitis != null" >
+        hepatitis,
+      </if>
+      <if test="infectionOther != null" >
+        infectionOther,
+      </if>
+      <if test="skin != null" >
+        skin,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="nature != null" >
+        nature,
+      </if>
+      <if test="skinOther != null" >
+        skinOther,
+      </if>
+      <if test="nutritionState != null" >
+        nutritionState,
+      </if>
+      <if test="activityState != null" >
+        activityState,
+      </if>
+      <if test="limbsFeel != null" >
+        limbsFeel,
+      </if>
+      <if test="limbsPosition != null" >
+        limbsPosition,
+      </if>
+      <if test="limbsNature != null" >
+        limbsNature,
+      </if>
+      <if test="psychologyState != null" >
+        psychologyState,
+      </if>
+      <if test="preVisitOther != null" >
+        preVisitOther,
+      </if>
+      <if test="recoveryState != null" >
+        recoveryState,
+      </if>
+      <if test="postPsychologyState != null" >
+        postPsychologyState,
+      </if>
+      <if test="wound != null" >
+        wound,
+      </if>
+      <if test="woundSituation != null" >
+        woundSituation,
+      </if>
+      <if test="complication != null" >
+        complication,
+      </if>
+      <if test="complicationContent != null" >
+        complicationContent,
+      </if>
+      <if test="workOpinion != null" >
+        workOpinion,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="patVisitId != null" >
+        #{patVisitId,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="conscious != null" >
+        #{conscious,jdbcType=VARCHAR},
+      </if>
+      <if test="consciousOther != null" >
+        #{consciousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="anaphylaxis != null" >
+        #{anaphylaxis,jdbcType=VARCHAR},
+      </if>
+      <if test="anaphylaxisOther != null" >
+        #{anaphylaxisOther,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryHis != null" >
+        #{surgeryHis,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryHisOther != null" >
+        #{surgeryHisOther,jdbcType=VARCHAR},
+      </if>
+      <if test="implants != null" >
+        #{implants,jdbcType=VARCHAR},
+      </if>
+      <if test="implantsOther != null" >
+        #{implantsOther,jdbcType=VARCHAR},
+      </if>
+      <if test="pacemaker != null" >
+        #{pacemaker,jdbcType=VARCHAR},
+      </if>
+      <if test="hepatitis != null" >
+        #{hepatitis,jdbcType=VARCHAR},
+      </if>
+      <if test="infectionOther != null" >
+        #{infectionOther,jdbcType=VARCHAR},
+      </if>
+      <if test="skin != null" >
+        #{skin,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="nature != null" >
+        #{nature,jdbcType=VARCHAR},
+      </if>
+      <if test="skinOther != null" >
+        #{skinOther,jdbcType=VARCHAR},
+      </if>
+      <if test="nutritionState != null" >
+        #{nutritionState,jdbcType=VARCHAR},
+      </if>
+      <if test="activityState != null" >
+        #{activityState,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsFeel != null" >
+        #{limbsFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsPosition != null" >
+        #{limbsPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsNature != null" >
+        #{limbsNature,jdbcType=VARCHAR},
+      </if>
+      <if test="psychologyState != null" >
+        #{psychologyState,jdbcType=VARCHAR},
+      </if>
+      <if test="preVisitOther != null" >
+        #{preVisitOther,jdbcType=VARCHAR},
+      </if>
+      <if test="recoveryState != null" >
+        #{recoveryState,jdbcType=VARCHAR},
+      </if>
+      <if test="postPsychologyState != null" >
+        #{postPsychologyState,jdbcType=VARCHAR},
+      </if>
+      <if test="wound != null" >
+        #{wound,jdbcType=VARCHAR},
+      </if>
+      <if test="woundSituation != null" >
+        #{woundSituation,jdbcType=VARCHAR},
+      </if>
+      <if test="complication != null" >
+        #{complication,jdbcType=VARCHAR},
+      </if>
+      <if test="complicationContent != null" >
+        #{complicationContent,jdbcType=VARCHAR},
+      </if>
+      <if test="workOpinion != null" >
+        #{workOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+         #{processState,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord" >
+    update doc_pat_previsit_record
+    <set >
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="conscious != null" >
+        conscious = #{conscious,jdbcType=VARCHAR},
+      </if>
+      <if test="consciousOther != null" >
+        consciousOther = #{consciousOther,jdbcType=VARCHAR},
+      </if>
+      <if test="anaphylaxis != null" >
+        anaphylaxis = #{anaphylaxis,jdbcType=VARCHAR},
+      </if>
+      <if test="anaphylaxisOther != null" >
+        anaphylaxisOther = #{anaphylaxisOther,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryHis != null" >
+        surgeryHis = #{surgeryHis,jdbcType=VARCHAR},
+      </if>
+      <if test="surgeryHisOther != null" >
+        surgeryHisOther = #{surgeryHisOther,jdbcType=VARCHAR},
+      </if>
+      <if test="implants != null" >
+        implants = #{implants,jdbcType=VARCHAR},
+      </if>
+      <if test="implantsOther != null" >
+        implantsOther = #{implantsOther,jdbcType=VARCHAR},
+      </if>
+      <if test="pacemaker != null" >
+        pacemaker = #{pacemaker,jdbcType=VARCHAR},
+      </if>
+      <if test="hepatitis != null" >
+        hepatitis = #{hepatitis,jdbcType=VARCHAR},
+      </if>
+      <if test="infectionOther != null" >
+        infectionOther = #{infectionOther,jdbcType=VARCHAR},
+      </if>
+      <if test="skin != null" >
+        skin = #{skin,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="nature != null" >
+        nature = #{nature,jdbcType=VARCHAR},
+      </if>
+      <if test="skinOther != null" >
+        skinOther = #{skinOther,jdbcType=VARCHAR},
+      </if>
+      <if test="nutritionState != null" >
+        nutritionState = #{nutritionState,jdbcType=VARCHAR},
+      </if>
+      <if test="activityState != null" >
+        activityState = #{activityState,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsFeel != null" >
+        limbsFeel = #{limbsFeel,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsPosition != null" >
+        limbsPosition = #{limbsPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="limbsNature != null" >
+        limbsNature = #{limbsNature,jdbcType=VARCHAR},
+      </if>
+      <if test="psychologyState != null" >
+        psychologyState = #{psychologyState,jdbcType=VARCHAR},
+      </if>
+      <if test="preVisitOther != null" >
+        preVisitOther = #{preVisitOther,jdbcType=VARCHAR},
+      </if>
+      <if test="recoveryState != null" >
+        recoveryState = #{recoveryState,jdbcType=VARCHAR},
+      </if>
+      <if test="postPsychologyState != null" >
+        postPsychologyState = #{postPsychologyState,jdbcType=VARCHAR},
+      </if>
+      <if test="wound != null" >
+        wound = #{wound,jdbcType=VARCHAR},
+      </if>
+      <if test="woundSituation != null" >
+        woundSituation = #{woundSituation,jdbcType=VARCHAR},
+      </if>
+      <if test="complication != null" >
+        complication = #{complication,jdbcType=VARCHAR},
+      </if>
+      <if test="complicationContent != null" >
+        complicationContent = #{complicationContent,jdbcType=VARCHAR},
+      </if>
+      <if test="workOpinion != null" >
+        workOpinion = #{workOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        processState =  #{processState,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where patVisitId = #{patVisitId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPatPrevisitRecord" >
+    update doc_pat_previsit_record
+    set regOptId = #{regOptId,jdbcType=VARCHAR},
+      conscious = #{conscious,jdbcType=VARCHAR},
+      consciousOther = #{consciousOther,jdbcType=VARCHAR},
+      anaphylaxis = #{anaphylaxis,jdbcType=VARCHAR},
+      anaphylaxisOther = #{anaphylaxisOther,jdbcType=VARCHAR},
+      surgeryHis = #{surgeryHis,jdbcType=VARCHAR},
+      surgeryHisOther = #{surgeryHisOther,jdbcType=VARCHAR},
+      implants = #{implants,jdbcType=VARCHAR},
+      implantsOther = #{implantsOther,jdbcType=VARCHAR},
+      pacemaker = #{pacemaker,jdbcType=VARCHAR},
+      hepatitis = #{hepatitis,jdbcType=VARCHAR},
+      infectionOther = #{infectionOther,jdbcType=VARCHAR},
+      skin = #{skin,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      nature = #{nature,jdbcType=VARCHAR},
+      skinOther = #{skinOther,jdbcType=VARCHAR},
+      nutritionState = #{nutritionState,jdbcType=VARCHAR},
+      activityState = #{activityState,jdbcType=VARCHAR},
+      limbsFeel = #{limbsFeel,jdbcType=VARCHAR},
+      limbsPosition = #{limbsPosition,jdbcType=VARCHAR},
+      limbsNature = #{limbsNature,jdbcType=VARCHAR},
+      psychologyState = #{psychologyState,jdbcType=VARCHAR},
+      preVisitOther = #{preVisitOther,jdbcType=VARCHAR},
+      recoveryState = #{recoveryState,jdbcType=VARCHAR},
+      postPsychologyState = #{postPsychologyState,jdbcType=VARCHAR},
+      wound = #{wound,jdbcType=VARCHAR},
+      woundSituation = #{woundSituation,jdbcType=VARCHAR},
+      complication = #{complication,jdbcType=VARCHAR},
+      complicationContent = #{complicationContent,jdbcType=VARCHAR},
+      workOpinion = #{workOpinion,jdbcType=VARCHAR},
+      processState =  #{processState,jdbcType=VARCHAR}
+    where patVisitId = #{patVisitId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

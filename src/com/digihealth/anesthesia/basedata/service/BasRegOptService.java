@@ -47,8 +47,10 @@ import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.common.utils.SysUtil;
 import com.digihealth.anesthesia.doc.formbean.AnaesPacuRecFormBean;
+import com.digihealth.anesthesia.doc.po.DocAccede;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
+import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.evt.formbean.CancleRegOptFormBean;
 import com.digihealth.anesthesia.evt.formbean.Filter;
 import com.digihealth.anesthesia.evt.formbean.SearchConditionFormBean;
@@ -531,7 +533,57 @@ public class BasRegOptService extends BaseService {
         }
         return "true";
     }
-	
+
+    @Transactional
+    public String insertRegOptLLZY(BasRegOpt regOpt) {
+        String beid = regOpt.getBeid();
+        if (StringUtils.isBlank(beid)) {
+            beid = getBeid();
+            regOpt.setBeid(beid);
+        }
+
+        // 处理拟施手术、拟施诊断、麻醉方法等字段的值。
+        BasRegOptUtils.getOtherInfo(regOpt);
+        BasRegOptUtils.IsLocalAnaesSet(regOpt);
+
+        BasDept basDept = basDeptDao.searchDeptById(regOpt.getDeptId(), beid);
+        if (basDept != null) {
+            regOpt.setDeptName(basDept.getName());
+        }
+        BasRegion basRegion = basRegionDao.searchRegionById(regOpt.getRegionId(), beid);
+        if (basRegion != null) {
+            regOpt.setRegionName(basRegion.getName());
+        }
+        BasUser user = UserUtils.getUserCache();
+        String regOptId = GenerateSequenceUtil.generateSequenceNo();
+        regOpt.setRegOptId(regOptId);
+        regOpt.setCostsettlementState("0");
+
+        regOpt.setState(OperationState.NO_SCHEDULING);
+        if (user != null) {
+            regOpt.setCreateUser(user.getUserName());
+        }
+        regOpt.setCreateTime(DateUtils.formatDateTime(new Date()));
+        regOpt.setBeid(beid);
+
+        basRegOptDao.insertSelective(regOpt);
+        creatDocument(regOpt);
+        initDocDataLLZY(regOpt.getRegOptId());
+        
+        int dispatchCount = basDispatchDao.searchDistchByRegOptId(regOpt.getRegOptId());
+        if(dispatchCount<1){
+            BasDispatch dispatch = new BasDispatch();
+            dispatch.setRegOptId(regOpt.getRegOptId());
+            dispatch.setBeid(getBeid());
+            basDispatchDao.insert(dispatch);
+        }
+        
+        if ("1".equals(regOpt.getGetData())) {
+            return JsonType.jsonType(searchRegOptById(regOptId));
+        }
+        return "true";
+    }
+
 	@Transactional
 	public void batchCreateRegOpt(int count) {
 		BaseInfoQuery query = new BaseInfoQuery();
@@ -2533,4 +2585,39 @@ public class BasRegOptService extends BaseService {
         int result = basRegOptDao.searchRegoptTotalByRoleTypeAndState(filter, user == null ? "" : user.getRoleType(), searchConditionFormBean, beid);
         return result;
     }
+
+    /**
+     * 初始化文书相关数据
+     * @param ids
+     */
+    public void initDocDataLLZY(String ids) {
+        List<String> idsList = new ArrayList<String>();
+        String[] idsString = ids.split(",");
+        for (int i = 0; i < idsString.length; i++) {
+            idsList.add(idsString[i]);
+        }
+        if (idsList != null) {
+            if (idsList.size() > 0) {
+                for (int i = 0; i < idsList.size(); i++) {
+                    String regOptId = idsList.get(i);
+                    BasRegOpt basRegOpt = basRegOptDao.searchRegOptById(regOptId);
+                    if(basRegOpt != null) {
+                    	if(basRegOpt.getEmergency() == 1) {
+                    		DocPreVisit docPreVisit = docPreVisitDao.searchPreVisitByRegOptId(regOptId);
+                    		if(docPreVisit != null) {
+                    			docPreVisit.setAsaE("1");
+                    			docPreVisitDao.updatePreVisit(docPreVisit);
+                    		}
+                    	}
+                    }
+                    DocAccede docAccede = docAccedeDao.searchAccedeByRegOptId(regOptId);
+                    if (docAccede != null) {
+                    	docAccede.setSelected("0,0,0,0,0,0,0,0,0,1,1,1,1,1,1");
+                    	docAccedeDao.updateAccede(docAccede);
+					}
+                }
+            }
+        }
+    }
+
 }

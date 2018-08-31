@@ -63,6 +63,7 @@ import com.digihealth.anesthesia.evt.po.EvtRealAnaesMethod;
 import com.digihealth.anesthesia.evt.po.EvtRescueevent;
 import com.digihealth.anesthesia.evt.service.EvtAnaesEventService;
 import com.digihealth.anesthesia.evt.service.EvtParticipantService;
+import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceHNHTYY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceQNZZY;
 import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceSYZXYY;
 import com.digihealth.anesthesia.operProceed.core.MyConstants;
@@ -2972,6 +2973,20 @@ public class MyObserveDataController extends BaseController {
                     				realAnaesMethod.setName(realAnaMedName);
                     				evtRealAnaesMethodService.insertRealAnaesMethod(realAnaesMethod);
                     			}
+                    		}else {
+                    			if(StringUtils.isNotBlank(opt.getDesignedAnaesMethodCode())){
+                                    String[] methodArray = opt.getDesignedAnaesMethodCode().split(",");
+                                    String[] methodNameArray = opt.getDesignedAnaesMethodName().split(",");
+                                    for (int i = 0; i < methodArray.length; i++) {
+                                        String anaMedId = methodArray[i];
+                                        String realAnaMedName = methodNameArray[i];
+                                        EvtRealAnaesMethod realAnaesMethod = new EvtRealAnaesMethod();
+                                        realAnaesMethod.setDocId(searchBean.getDocId());
+                                        realAnaesMethod.setAnaMedId(anaMedId);
+                                        realAnaesMethod.setName(realAnaMedName);
+                                        evtRealAnaesMethodService.insertRealAnaesMethod(realAnaesMethod);
+                                    }
+                                }
                     		}
 						}
                     }
@@ -3384,6 +3399,52 @@ public class MyObserveDataController extends BaseController {
         logger.info("------------------end endOperation------------------------");
         return res.getJsonStr();
     }
+    
+    
+    /**
+     * 正常结束手术，发送采集数据模块，并发送采集服务(黔南州中医院定制)
+     * 
+     * @return
+     */
+    @RequestMapping("/endOperationHNHTYY")
+    @ResponseBody
+    @ApiOperation(value = "正常结束手术", httpMethod = "POST", notes = "正常结束手术")
+    public String endOperationHNHTYY(@ApiParam(name = "params", value = "参数") @RequestBody EndOperationFormBean formBean) {
+        logger.info("----------------start endOperation------------------------");
+        ResponseValue res = new ResponseValue();
+        EvtAnaesEvent anaesevent = formBean.getAnaesevent();
+        logger.info("endOperation----" + anaesevent);
+        String regOptId = formBean.getRegOptId();
+        if (anaesevent != null) {
+            basMonitorDisplayService.updateEndTime(formBean,res);
+            if (res.getResultCode().equals("1")) { // 只有成功了，才执行正常结束手术命令
+                SearchFormBean searchBean = new SearchFormBean();
+                searchBean.setDocId(anaesevent.getDocId());
+                List<EvtAnaesEvent> resultList = evtAnaesEventService.searchAnaeseventList(searchBean);
+                CmdMsg msg = new CmdMsg();
+                msg.setMsgType(MyConstants.OPERATION_STATUS_END);
+                msg.setRegOptId(regOptId);
+                res = MessageProcess.process(msg);
+                res.put("resultList", resultList);
+                
+                if (EvtAnaesEventService.OUT_ROOM.equals(formBean.getAnaesevent().getCode()))
+                {
+                    String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
+                    if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
+                        logger.info("===============================发送手术麻醉记录到his===========================================");
+                        HisInterfaceServiceHNHTYY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceHNHTYY.class);
+                        //hisInterfaceService.sendAnaesRecordToHis(regOptId);
+                    }
+                }
+            }
+        } else {
+            res.setResultCode("70000000");
+            res.setResultMessage(Global.getRetMsg(res.getResultCode()));
+        }
+        logger.info("------------------end endOperation------------------------");
+        return res.getJsonStr();
+    }
+    
     
     
     /**

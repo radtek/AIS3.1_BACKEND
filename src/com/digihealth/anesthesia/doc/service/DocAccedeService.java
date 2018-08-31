@@ -127,9 +127,9 @@ public class DocAccedeService extends BaseService {
 		}
 		DocAccede accede = new DocAccede();
 		BeanUtils.copyProperties(accedeFormBean.getAccede(), accede, new String[]{"cureContent"});
-		if(null != accedeFormBean.getAccede().getCureContent()){
-			accede.setCureContent(JsonType.jsonType(accedeFormBean.getAccede().getCureContent()));
-		}
+//		if(null != accedeFormBean.getAccede().getCureContent()){
+//			accede.setCureContent(JsonType.jsonType(accedeFormBean.getAccede().getCureContent()));
+//		}
 		docAccedeDao.updateAccede(accede);
 		docAccedeInformedDao.deleteByAccedeId(accede.getAccedeId());
 		List<DocAccedeInformed> rs = accedeFormBean.getAccedeInformedList();

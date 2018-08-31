@@ -3,21 +3,22 @@ package com.digihealth.anesthesia.sysMng.service;
 import java.util.List;
 import java.util.Map;
 
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digihealth.anesthesia.basedata.formbean.BaseInfoQuery;
 import com.digihealth.anesthesia.basedata.formbean.FindAllMenuFormBean;
 import com.digihealth.anesthesia.basedata.po.BasDocument;
-import com.digihealth.anesthesia.sysMng.formbean.BasMenuFormBean;
-import com.digihealth.anesthesia.sysMng.po.BasMenu;
 import com.digihealth.anesthesia.common.config.Global;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.persistence.PKEntity;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
+import com.digihealth.anesthesia.common.utils.StringUtils;
+import com.digihealth.anesthesia.sysMng.formbean.BasMenuFormBean;
+import com.digihealth.anesthesia.sysMng.po.BasMenu;
+import com.digihealth.anesthesia.sysMng.po.BasRoleMenu;
 
 /**
  * 
@@ -215,6 +216,46 @@ public class BasMenuService extends BaseService {
 		if (null != menu.getType() && menu.getType().intValue() == 0) {
 			menu.setPermission("");
 		}
+		
+		//如果菜单中有权限被删除了，那么要将角色中的菜单权限也移除掉
+		if (null != menu.getPermission())
+		{
+		    //当前菜单的权限集合
+		    List<String> list1 = StringUtils.getListByString(menu.getPermission());
+		    
+		    BasRoleMenu params = new BasRoleMenu();
+		    params.setMenuId(menu.getId());
+		    params.setBeid(menu.getBeid());
+		    //添加了该菜单的所有角色集合
+		    List<BasRoleMenu> roleMenus = basRoleMenuDao.selectEntityList(params);
+		    if (null != roleMenus && roleMenus.size() > 0)
+		    {
+		        for (BasRoleMenu roleMenu : roleMenus)
+		        {
+		            if (StringUtils.isNotBlank(roleMenu.getPermission()))
+		            {
+		                List<String> list2 = StringUtils.getListByString(roleMenu.getPermission());
+		                for (int i = list2.size() - 1; i >=0; i--)
+		                {
+		                    //如果没有在菜单权限集合中，则移除掉
+		                    if (!list1.contains(list2.get(i)))
+		                    {
+		                        list2.remove(i);
+		                    }
+		                }
+		                String newPermission = StringUtils.getStringByList(list2);
+		                
+		                //如果权限有更改，则需要更新
+		                if (!roleMenu.getPermission().equals(newPermission))
+		                {
+		                    roleMenu.setPermission(newPermission);
+		                    basRoleMenuDao.updateByPrimaryKey(roleMenu);
+		                }
+		            }
+		        }
+		    }
+		}
+		
 		basMenuDao.updateByPrimaryKeySelective(menu);
 	}
 	

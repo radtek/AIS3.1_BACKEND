@@ -354,6 +354,9 @@ public class DocPreVisitController extends BaseController {
             }
         }
         preVisit.setAnaesMethodList(anaseMethodForPlanList);
+        if(preVisit.getAnaesMethodCode() == null) {
+        	preVisit.setAnaesMethodList(anaseMethodList);
+        }
         //设置页面选择框的值
         setMapValue(preVisit);
         

@@ -434,6 +434,24 @@ public class BasDispatchController extends BaseController{
         return resp.getJsonStr();
     }
     
+    /**
+     * 创建手术排程(湖南航天医院定制)
+     * @param BasDispatch
+     * @return
+     */
+    @RequestMapping(value = "/dispatchOperationHNHTYY")
+    @ResponseBody
+    @ApiOperation(value = "创建手术排程", httpMethod = "POST", notes = "创建手术排程")
+    public String saveDispatchHNHTYY(@ApiParam(name = "dispatchFormBean", value = "排程信息操作对象") @RequestBody DispatchOperationFormBean dispatchFormBean)
+    {
+        logger.info("begin dispatchOperation");
+        ResponseValue resp = new ResponseValue();
+        basDispatchService.saveDispatchHNHTYY(dispatchFormBean, resp);
+        logger.info("end dispatchOperation");
+        return resp.getJsonStr();
+    }
+    
+    
     
     /**
      * 创建手术排程

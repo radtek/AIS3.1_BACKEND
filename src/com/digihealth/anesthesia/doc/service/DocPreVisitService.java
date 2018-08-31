@@ -56,37 +56,6 @@ public class DocPreVisitService extends BaseService {
 	    if (null != preVisit)
 	    {
 	        String preVisitId = preVisit.getPreVisitId();
-	        if(preVisit.getRiskAssessment() == null) {
-	        	preVisit.setRiskAssessment(1);
-	        }
-	        if(preVisit.getHeartBoolHave() == null) {
-	        	preVisit.setHeartBoolHave(1);
-	        }
-	        if(preVisit.getLungbreathHave() == null) {
-	        	preVisit.setLungbreathHave(1);
-	        }
-	        if(preVisit.getBrainNerveHave() == null) {
-	        	preVisit.setBrainNerveHave(1);
-	        }
-	        if(preVisit.getSpineLimbHave() == null) {
-	        	preVisit.setSpineLimbHave(1);
-	        }
-	        if(preVisit.getBloodHave() == null) {
-	        	preVisit.setBloodHave(1);
-	        }
-	        if(preVisit.getKidneyHave() == null) {
-	        	preVisit.setKidneyHave(1);
-	        }
-	        if(preVisit.getDigestionHave() == null) {
-	        	preVisit.setDigestionHave(1);
-	        }
-	        if(preVisit.getEndocrineHave() == null) {
-	        	preVisit.setEndocrineHave(1);
-	        }
-	        if(preVisit.getInfectiousHave() == null) {
-	        	preVisit.setInfectiousHave(1);
-	        }
-	        docPreVisitDao.updatePreVisit(preVisit);
 	        DocPrevisitAccessexam docPrevisitAccessexam = docPrevisitAccessexamDao.selectByPreVisitId(preVisitId);
 	        preVisitFormBean.setPrevisitAccessexam(null != docPrevisitAccessexam ? docPrevisitAccessexam : new DocPrevisitAccessexam());
 	        DocPrevisitAnaesplan docPrevisitAnaesplan = docPrevisitAnaesplanDao.selectByPreVisitId(preVisitId);

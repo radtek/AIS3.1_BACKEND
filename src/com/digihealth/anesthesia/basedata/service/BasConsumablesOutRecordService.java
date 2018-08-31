@@ -101,7 +101,7 @@ public class BasConsumablesOutRecordService extends BaseService
 						if("2".equals(outType))
 						{
 							BasRegOpt basRegOpt = basRegOptDao.searchRegOptById(regOptId);
-							basRegOpt.setOutMedicine(1);
+							basRegOpt.setOutInstrument(1);
 							basRegOptDao.updateByPrimaryKeySelective(basRegOpt);
 						}
 						//更新取药记录表

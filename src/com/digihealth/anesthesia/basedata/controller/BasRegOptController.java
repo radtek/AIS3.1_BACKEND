@@ -182,6 +182,7 @@ public class BasRegOptController extends BaseController {
         logger.info("-----------------begin checkOperationSYBX-----------------");
         ResponseValue respValue = new ResponseValue();
         controllerService.checkOperationSYBX(map.get("regOptIds").toString(), OperationState.NO_SCHEDULING, OperationState.NOT_REVIEWED,respValue);
+        basDispatchService.initDocDataSYBX(map.get("regOptIds").toString());
         logger.info("-----------------begin checkOperationSYBX-----------------");
         return respValue.getJsonStr();
     }
@@ -190,11 +191,11 @@ public class BasRegOptController extends BaseController {
     @ResponseBody
     @ApiOperation(value="审核",httpMethod="POST",notes="审核")
     public String checkOperationLLZY(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
-        logger.info("-----------------begin checkOperationSYBX-----------------");
+        logger.info("-----------------begin checkOperationLLZY-----------------");
         ResponseValue respValue = new ResponseValue();
         controllerService.checkOperation(map.get("regOptIds").toString(), OperationState.NO_SCHEDULING, OperationState.NOT_REVIEWED,respValue);
         basDispatchService.initDocDataLLZY(map.get("regOptIds").toString());
-        logger.info("-----------------begin checkOperationSYBX-----------------");
+        logger.info("-----------------begin checkOperationLLZY-----------------");
         return respValue.getJsonStr();
     }
 
@@ -357,7 +358,47 @@ public class BasRegOptController extends BaseController {
         logger.info("-----------------end createRegOptSYZXYY-----------------");
         return resp.getJsonStr();
     }
-	
+
+	/**
+     * @discription 创建普通手术
+     * @author chengwang       
+     * @created 2015年10月30日 上午11:16:07     
+     * @param regOpt
+     * @return
+     */
+    @RequestMapping(value = "/createRegOptLLZY")
+    @ResponseBody
+    @ApiOperation(value="创建普通手术",httpMethod="POST",notes="创建普通手术")
+    public String insertRegOptLLZY(@ApiParam(name="regOpt", value ="手术信息参数") @RequestBody BasRegOpt regOpt) {
+        logger.info("-----------------begin createRegOptLLZY-----------------");
+        ResponseValue resp = new ResponseValue();
+        ValidatorBean validatorBean = beanValidator(regOpt);
+        if(!(validatorBean.isValidator())){
+            resp.setResultCode("10000001");
+            resp.setResultMessage(validatorBean.getMessage());
+            return resp.getJsonStr();
+        }
+        if(regOpt.getAge()==null&&regOpt.getAgeMon()==null&&regOpt.getAgeDay()==null){
+            resp.setResultCode("10000001");
+            resp.setResultMessage("年、月、天必填一项");
+            return resp.getJsonStr();
+        }
+        int age = regOpt.getAge()==null?0:regOpt.getAge();
+        int ageMon = regOpt.getAgeMon()==null?0:regOpt.getAgeMon();
+        int ageDay = regOpt.getAgeDay()==null?0:regOpt.getAgeDay();
+        if(age<1 && ageMon<1 && ageDay<1){
+            resp.setResultCode("10000001");
+            resp.setResultMessage("年、月、天其中一项必须要大于0");
+            return resp.getJsonStr();
+        }
+        
+        basRegOptService.insertRegOptLLZY(regOpt);
+        resp.setResultCode("1");
+        resp.setResultMessage("保存成功!");
+        logger.info("-----------------end createRegOptLLZY-----------------");
+        return resp.getJsonStr();
+    }
+
 	@RequestMapping(value = "/updateRegOptByHis")
 	@ResponseBody
 	@ApiOperation(value="修改手术信息",httpMethod="POST",notes="修改手术信息")

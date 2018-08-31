@@ -114,7 +114,7 @@ public class TmpPriChargeMedTempService extends BaseService {
 	}
 
 	public List<DocEventBilling> queryChargeMedTempById(String chargeMedTempId) {
-		return tmpMedPayTempDao.queryItemListByChargeTempId(chargeMedTempId);
+		return tmpMedPayTempDao.queryItemListByChargeTempId(chargeMedTempId, getBeid());
 	}
 
 	public List<DocPackagesItem> queryPayListByChargeTempId(String chargeMedTempId) {
@@ -156,7 +156,7 @@ public class TmpPriChargeMedTempService extends BaseService {
 
 			// 如果是修改模板时，需要先判断模板对应明细表里是否有数据，如果有就删除
 			if (operFlag) {
-				List<DocEventBilling> ls = tmpMedPayTempDao.queryItemListByChargeTempId(tmpPriChargeMedTemp.getChargeMedTempId());
+				List<DocEventBilling> ls = tmpMedPayTempDao.queryItemListByChargeTempId(tmpPriChargeMedTemp.getChargeMedTempId(), getBeid());
 				if (null != ls && ls.size() > 0) {
 					tmpMedPayTempDao.deleteByChargeTempId(tmpPriChargeMedTemp.getChargeMedTempId());
 				}
