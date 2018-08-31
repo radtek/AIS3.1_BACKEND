@@ -29,6 +29,7 @@
     from tmp_med_pay_temp t
     left JOIN bas_medicine m on t.medicineId=m.medicineId
     left JOIN bas_price p on m.code=p.code and IF(ISNULL(p.firmId),'',p.firmId) = IF(ISNULL(t.firmId), '',t.firmId)
+    AND m.beid=#{beid,jdbcType=VARCHAR} AND p.beid=#{beid,jdbcType=VARCHAR}
     where chargeMedTempId = #{chargeMedTempId,jdbcType=VARCHAR}
   </select>
   
