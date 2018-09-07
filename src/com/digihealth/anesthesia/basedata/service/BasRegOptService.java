@@ -39,9 +39,7 @@ import com.digihealth.anesthesia.common.config.Global;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.DateUtils;
-import com.digihealth.anesthesia.common.utils.Exceptions;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
-import com.digihealth.anesthesia.common.utils.HttpUtils;
 import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
@@ -238,6 +236,76 @@ public class BasRegOptService extends BaseService {
 		return resultList;
 	}
 
+	public List<SearchRegOptByLoginNameAndStateFormBean> searchRegOptByAnaesDoctorAndStateSYBX(SearchConditionFormBean searchConditionFormBean) {
+		String state = searchConditionFormBean.getState();
+		if (state != null) {
+			searchConditionFormBean.setState(searchConditionFormBean.getState().replace(" ", ""));
+		}
+		if (StringUtils.isBlank(searchConditionFormBean.getSort())) {
+			searchConditionFormBean.setSort("operaDate");
+		}
+		if (StringUtils.isBlank(searchConditionFormBean.getOrderBy())) {
+			searchConditionFormBean.setOrderBy("DESC");
+		}
+		String beid = null;
+		if (StringUtils.isBlank(searchConditionFormBean.getBeid())) {
+			beid = getBeid();
+			searchConditionFormBean.setBeid(beid);
+		} else {
+			beid = searchConditionFormBean.getBeid();
+		}
+		String filter = getFilterStr(searchConditionFormBean);
+		if ("2".equals(searchConditionFormBean.getQueryMethod())) {
+			filter += " AND c.anesthetistId IS NOT NULL";
+		}
+		BasUser user = basUserDao.getByLoginName(searchConditionFormBean.getLoginName() != null ? searchConditionFormBean.getLoginName() : "", beid);
+		List<SearchRegOptByLoginNameAndStateFormBean> resultList = new ArrayList<SearchRegOptByLoginNameAndStateFormBean>();
+		List<SearchRegOptByLoginNameAndStateFormBean> result = new ArrayList<SearchRegOptByLoginNameAndStateFormBean>();
+		if(StringUtils.isNotBlank(searchConditionFormBean.getQueryMethod()) && !"2".equals(searchConditionFormBean.getQueryMethod())){
+            result = basRegOptDao.searchAllOptList(filter,searchConditionFormBean);
+        }else{
+            result = basRegOptDao.searchRegOptByAnaesDoctorAndState(filter, user == null ? "" : user.getUserName(), user == null ? "" : user.getRoleType(), searchConditionFormBean, beid);
+        }
+		if (result != null && result.size() > 0) {
+			String regOptStr = "";
+			for (int i = 0; i < result.size(); i++) {
+				regOptStr += "'" + result.get(i).getRegOptId() + "',";
+			}
+			regOptStr = regOptStr.substring(0, regOptStr.length() - 1);
+			if ("02,03".equals(searchConditionFormBean.getState())) {
+				searchConditionFormBean.setState("03");
+			}
+			List<DocStateArrayFormbean> arrList = getDocumentState(user, searchConditionFormBean.getState(), regOptStr, beid);
+			for (int i = 0; i < result.size(); i++) {
+				SearchRegOptByLoginNameAndStateFormBean bean = result.get(i);
+				String documentState = "完成";
+				List<DocumentStateFormbean> stateFormbeanList = new ArrayList<DocumentStateFormbean>();
+				for (DocStateArrayFormbean docStateArrayFormbean : arrList) {
+					DocumentStateFormbean stateFormbean = new DocumentStateFormbean();
+					List<DocumentStateFormbean> statList = docStateArrayFormbean.getDocStateList();
+					for (DocumentStateFormbean documentStateFormbean : statList) {
+						if (bean.getRegOptId().equals(documentStateFormbean.getRegOptId())) { // 只把未完成的存入的stateFormbean中
+							if (!"END".equals(documentStateFormbean.getState())) {
+								if (1 == docStateArrayFormbean.getIsNeed()) { // 1
+																				// 必须完成
+									documentState = "未完成";
+									stateFormbean.setState("未完成");
+									stateFormbean.setName(docStateArrayFormbean.getDocName());
+									stateFormbeanList.add(stateFormbean);
+									break;
+								}
+							}
+						}
+					}
+				}
+				bean.setDocumentState(documentState);
+				bean.setDocumentStateList(stateFormbeanList);
+				resultList.add(bean);
+			}
+		}
+		return resultList;
+	}
+
 	public int searchRegOptTotalByAnaesDoctorAndState(SearchConditionFormBean searchConditionFormBean) {
 		if (StringUtils.isEmpty(searchConditionFormBean.getSort())) {
 			searchConditionFormBean.setSort("operaDate");
@@ -256,6 +324,35 @@ public class BasRegOptService extends BaseService {
 		BasUser user = basUserDao.getByLoginName(searchConditionFormBean.getLoginName() != null ? searchConditionFormBean.getLoginName() : "", beid);
 		int result = 0;
 		if(StringUtils.isNotBlank(searchConditionFormBean.getQueryMethod())){
+            result = basRegOptDao.searchTotalAllOptList(
+                    filter,searchConditionFormBean);
+        }else{
+            result = basRegOptDao.searchRegoptTotalByAnaesDoctorAndState(filter, user == null ? "" : user.getUserName(), user == null ? "" : user.getRoleType(), searchConditionFormBean, beid);
+        }
+		return result;
+	}
+
+	public int searchRegOptTotalByAnaesDoctorAndStateSYBX(SearchConditionFormBean searchConditionFormBean) {
+		if (StringUtils.isEmpty(searchConditionFormBean.getSort())) {
+			searchConditionFormBean.setSort("operaDate");
+		}
+		if (StringUtils.isEmpty(searchConditionFormBean.getOrderBy())) {
+			searchConditionFormBean.setOrderBy("DESC");
+		}
+		String beid = null;
+		if (StringUtils.isBlank(searchConditionFormBean.getBeid())) {
+			beid = getBeid();
+			searchConditionFormBean.setBeid(beid);
+		} else {
+			beid = searchConditionFormBean.getBeid();
+		}
+		String filter = getFilterStr(searchConditionFormBean);
+		if ("2".equals(searchConditionFormBean.getQueryMethod())) {
+			filter += " AND c.anesthetistId IS NOT NULL";
+		}
+		BasUser user = basUserDao.getByLoginName(searchConditionFormBean.getLoginName() != null ? searchConditionFormBean.getLoginName() : "", beid);
+		int result = 0;
+		if(StringUtils.isNotBlank(searchConditionFormBean.getQueryMethod()) && !"2".equals(searchConditionFormBean.getQueryMethod())){
             result = basRegOptDao.searchTotalAllOptList(
                     filter,searchConditionFormBean);
         }else{
@@ -827,6 +924,9 @@ public class BasRegOptService extends BaseService {
 	    
 
         if (dispatch != null && (!StringUtils.isEmpty(dispatch.getRegOptId()))) {
+        	if (dispatch.getPerfusionDoctorIdList() != null) {
+        		dispatch.setPerfusionDoctorId(StringUtils.getStringByList(dispatch.getPerfusionDoctorIdList()));
+			}
             if (StringUtils.isNotEmpty(dispatch.getOperRoomId())) {
                 dispatch.setBeid(beid);
                 basDispatchDao.update(dispatch);

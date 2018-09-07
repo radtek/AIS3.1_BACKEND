@@ -1477,7 +1477,24 @@ public class OperBaseDataServiceYXRM {
         		//String operDate = DateUtils.strToStr(rs.getString("operdate"), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss");
             	regOpt.setOperaDate(rs.getString("operdate"));
             	regOpt.setStartTime(rs.getString("operstarttime"));
-            	regOpt.setOptLevel(rs.getString("operlevel"));           	
+            	String operlevel =rs.getString("operlevel");
+            	if(StringUtils.isNotBlank(operlevel))
+            	{
+            		if("小".equals(operlevel))
+            		{
+            			regOpt.setOptLevel("一级");
+            		}else if("中".equals(operlevel))
+            		{
+            			regOpt.setOptLevel("二级");
+            		}else if("大".equals(operlevel))
+            		{
+            			regOpt.setOptLevel("三级");
+            		}else if("特".equals(operlevel))
+            		{
+            			regOpt.setOptLevel("四级");
+            		}
+            	}
+            	           	
             	if(StringUtils.isNotBlank(rs.getString("incisionlevel"))){
             		Integer cutLevel = null;
             		if("Ⅰ".equals(rs.getString("incisionlevel")))

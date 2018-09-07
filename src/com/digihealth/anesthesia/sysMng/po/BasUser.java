@@ -173,7 +173,7 @@ public class BasUser implements Serializable{
 	
 	@ApiModelProperty(value = "是否为正式人员")
     private Integer formal;
-    
+    private String hisId;
 
     public Integer getFormal()
     {
@@ -411,6 +411,14 @@ public class BasUser implements Serializable{
 
 	public void setRoleType(String roleType) {
 		this.roleType = roleType;
+	}
+
+	public String getHisId() {
+		return hisId;
+	}
+
+	public void setHisId(String hisId) {
+		this.hisId = hisId;
 	}
 
 }

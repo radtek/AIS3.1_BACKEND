@@ -3,6 +3,8 @@ package com.digihealth.anesthesia.interfacedata.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -14,10 +16,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.digihealth.anesthesia.basedata.dao.BasAnaesMethodDao;
+import com.digihealth.anesthesia.basedata.dao.BasBusEntityDao;
 import com.digihealth.anesthesia.basedata.dao.BasDiagnosedefDao;
+import com.digihealth.anesthesia.basedata.dao.BasDispatchDao;
 import com.digihealth.anesthesia.basedata.dao.BasOperationPeopleDao;
 import com.digihealth.anesthesia.basedata.dao.BasOperdefDao;
 import com.digihealth.anesthesia.basedata.dao.BasRegOptDao;
+import com.digihealth.anesthesia.basedata.formbean.DispatchFormbean;
+import com.digihealth.anesthesia.basedata.formbean.OperDefFormBean;
 import com.digihealth.anesthesia.basedata.po.BasAnaesMethod;
 import com.digihealth.anesthesia.basedata.po.BasDiagnosedef;
 import com.digihealth.anesthesia.basedata.po.BasDispatch;
@@ -29,7 +35,13 @@ import com.digihealth.anesthesia.common.utils.Exceptions;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.dao.DocAnaesRecordDao;
+import com.digihealth.anesthesia.doc.dao.DocOptCareRecordDao;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
+import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
+import com.digihealth.anesthesia.evt.dao.EvtOptRealOperDao;
+import com.digihealth.anesthesia.evt.dao.EvtRealAnaesMethodDao;
+import com.digihealth.anesthesia.evt.formbean.EvtAnaesMethodFormBean;
+import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
 import com.digihealth.anesthesia.interfaceParameters.yxrm.tempuri.Operation;
 import com.digihealth.anesthesia.interfaceParameters.yxrm.tempuri.OperationSoap;
 import com.digihealth.anesthesia.interfacedata.formbean.HisResponse;
@@ -53,16 +65,18 @@ public class HisInterfaceServiceYXRM
     */
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-	//private BasBusEntityDao basBusEntityDao = SpringContextHolder.getBean(BasBusEntityDao.class);
+	private BasBusEntityDao basBusEntityDao = SpringContextHolder.getBean(BasBusEntityDao.class);
 	private BasOperdefDao basOperdefDao = SpringContextHolder.getBean(BasOperdefDao.class);
 	private BasDiagnosedefDao basDiagnosedefDao = SpringContextHolder.getBean(BasDiagnosedefDao.class);
 	private BasOperationPeopleDao basOperationPeopleDao = SpringContextHolder.getBean(BasOperationPeopleDao.class);
 	private BasAnaesMethodDao basAnaesMethodDao = SpringContextHolder.getBean(BasAnaesMethodDao.class);
 	private BasRegOptDao basRegOptDao = SpringContextHolder.getBean(BasRegOptDao.class);
-	//private BasUserDao basUserDao = SpringContextHolder.getBean(BasUserDao.class);
+	private BasDispatchDao basDispatchDao = SpringContextHolder.getBean(BasDispatchDao.class);
 	private DocAnaesRecordDao docAnaesRecordDao = SpringContextHolder.getBean(DocAnaesRecordDao.class);
-	  
-	    
+	private EvtRealAnaesMethodDao evtRealAnaesMethodDao = SpringContextHolder.getBean(EvtRealAnaesMethodDao.class);
+	private EvtOptRealOperDao evtOptRealOperDao =  SpringContextHolder.getBean(EvtOptRealOperDao.class); 
+	private DocOptCareRecordDao docOptCareRecordDao = SpringContextHolder.getBean(DocOptCareRecordDao.class); 
+	
 	/**
      *手术排班信息回传HIS
      */
@@ -135,13 +149,134 @@ public class HisInterfaceServiceYXRM
     public String updateState(String regOptId,String state)
     {
     	String respMsg = "";
+    	String beid = basBusEntityDao.getBeid();
+    	//排班信息
+    	DispatchFormbean dispatch = basDispatchDao.getDispatchOperByRegOptId(regOptId, beid);
+    	
+    	//患者基本信息
     	BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
     	if(null != regOpt)
     	{
-    		String reservenumber = regOpt.getPreengagementnumber();
+    		String reservenumber = "";
+    		reservenumber = regOpt.getPreengagementnumber();
     		StateObj stateObj = new StateObj();
     		stateObj.setReservenumber(reservenumber);
     		stateObj.setState(state);
+    		String incisionLevel = "";
+    		if (Objects.equal(regOpt.getCutLevel(), 1))
+    	    {
+    			incisionLevel = "Ⅰ";
+    	    }
+    	    else if (Objects.equal(regOpt.getCutLevel(), 2))
+    	    {
+    	    	incisionLevel = "Ⅱ";
+    	    }
+    	    else if (Objects.equal(regOpt.getCutLevel(), 3))
+    	    {
+    	    	incisionLevel = "Ⅲ";
+    	    }
+    	    else if (Objects.equal(regOpt.getCutLevel(), 4))
+    	    {
+    	    	incisionLevel = "Ⅳ";
+    	    }
+    		stateObj.setIncisionLevel(incisionLevel);
+    		String assistantName= regOpt.getAssistantName();
+    		String name1 = "";
+    		String name2 = "";
+    		if(StringUtils.isNotBlank(assistantName))
+    		{
+    			String [] asNameArray = assistantName.split(",");
+    			if(null != asNameArray && asNameArray.length == 1)
+    			{
+    				name1 = assistantName;
+    			}else if(null != asNameArray && asNameArray.length > 1)
+    			{
+    				name1 = asNameArray[0];
+    				name2 = asNameArray[1];
+    			}
+    		}
+    		stateObj.setAssistantName(name1);
+			stateObj.setAssistantName2(name2);
+			
+    		stateObj.setOperatorName(regOpt.getOperatorName());
+    		stateObj.setAnesthetistName(dispatch.getAnesthetistName());
+    		Integer emergency = regOpt.getEmergency();
+    		stateObj.setEmergency(emergency);
+    		
+    		String anaesMethodName = "";
+    		String operStartTime = "";
+    		String operEndTime = "";
+    		String realOperationCode = "";
+    		String realOperationName = "";
+    		//局麻 
+    		if(null != emergency && emergency.intValue() == 1)
+    		{
+    			DocOptCareRecord optCareRecord = docOptCareRecordDao.selectByRegOptId(regOptId);
+    			if(null != optCareRecord)
+    			{
+    				anaesMethodName = optCareRecord.getAnaesMethodName();
+    				operStartTime = optCareRecord.getInOperRoomTime();
+    				operEndTime = optCareRecord.getOutOperRoomTime();
+            		//转换成HIS的code
+            		List<String> operationCode = new ArrayList<String>();
+            		String codes = optCareRecord.getOperationCode();
+            		if(StringUtils.isNotBlank(codes))
+            		{
+            			String [] codeArray = codes.split(",");
+            			for(int i = 0;i<codeArray.length;i++)
+            			{
+            				BasOperdef basOperdef = basOperdefDao.selectByCode(codeArray[i], beid);
+            				if(null != basOperdef)
+            				{
+            					operationCode.add(basOperdef.getCode());
+            				}
+            			}
+            		}
+            		realOperationCode = StringUtils.getStringByList(operationCode);
+            		realOperationName = optCareRecord.getOperationName();
+    			}	
+    		}else{
+    			//全麻
+    			//麻醉记录单
+    	    	DocAnaesRecord anaesRecord = docAnaesRecordDao.searchAnaesRecordByRegOptId(regOptId);
+        		List<String> anaesMethodNames = new ArrayList<String>();
+        		SearchFormBean searchBean = new SearchFormBean();
+        		searchBean.setRegOptId(regOptId);
+        		searchBean.setDocId(anaesRecord.getAnaRecordId());
+        		searchBean.setBeid(beid);
+        		List<EvtAnaesMethodFormBean> realAnaesMethodList = evtRealAnaesMethodDao.getSelectRealAnaesMethodList(searchBean);
+        		if(null != realAnaesMethodList && realAnaesMethodList.size()>0)
+        		{
+        			for( int i = 0;i<realAnaesMethodList.size();i++)
+        			{
+        				EvtAnaesMethodFormBean evtAnaesMethodFormBean = realAnaesMethodList.get(i);
+        				anaesMethodNames.add(evtAnaesMethodFormBean.getName());
+        			}
+        		}
+        		anaesMethodName = StringUtils.getStringByList(anaesMethodNames);
+        		operStartTime = anaesRecord.getOperStartTime();
+        		operEndTime = anaesRecord.getOperEndTime();
+        		
+        		List<String> operDefNames = new ArrayList<String>();
+        		List<String> operDefCodes = new ArrayList<String>();
+                List<OperDefFormBean> operDefs = evtOptRealOperDao.getSelectOptRealOperList(searchBean);
+                if (null != operDefs && operDefs.size() > 0)
+                {
+                    for (OperDefFormBean operDefFormBean : operDefs)
+                    {
+                        operDefNames.add(operDefFormBean.getName());
+                        operDefCodes.add(operDefFormBean.getCode());
+                    }
+                }
+                realOperationCode = StringUtils.getStringByList(operDefCodes);
+                realOperationName = StringUtils.getStringByList(operDefNames);
+    		}
+    		stateObj.setAnaesMethodName(anaesMethodName);
+    		stateObj.setOperStartTime(operStartTime);
+			stateObj.setOperEndTime(operEndTime);
+    		stateObj.setRealOperationCode(realOperationCode);
+    		stateObj.setRealOperationName(realOperationName);
+    		
     		try
 			{
 				String asXml = getObjectToXml(stateObj);
@@ -158,6 +293,7 @@ public class HisInterfaceServiceYXRM
 						if (!"0".equals(response.getResultCode()))
 						{
 							throw new RuntimeException(response.getResultMessage());
+							//logger.info("updateState时his端响应异常"+response.getResultMessage());
 						}
 					} else
 					{
@@ -168,7 +304,7 @@ public class HisInterfaceServiceYXRM
 			} catch (Exception e)
 			{
 				logger.info("同步"+regOpt.getName()+"的手术状态异常:"+Exceptions.getStackTraceAsString(e));
-	            throw new RuntimeException(Exceptions.getStackTraceAsString(e));
+	            //throw new RuntimeException(Exceptions.getStackTraceAsString(e));
 			}
     	}
     	
@@ -285,6 +421,7 @@ public class HisInterfaceServiceYXRM
 				
 			} catch (Exception e)
 			{
+				logger.info("术后同步HIS手术信息异常："+e.getMessage());
 				e.printStackTrace();
 			}
     	}

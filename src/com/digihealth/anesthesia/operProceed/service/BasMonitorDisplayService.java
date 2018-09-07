@@ -37,6 +37,7 @@ import com.digihealth.anesthesia.common.utils.DateUtils;
 import com.digihealth.anesthesia.common.utils.Exceptions;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.JsonType;
+import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.SysUtil;
 import com.digihealth.anesthesia.doc.po.DocAnaesPacuRec;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
@@ -49,6 +50,7 @@ import com.digihealth.anesthesia.evt.po.EvtCtlBreath;
 import com.digihealth.anesthesia.evt.po.EvtOperBodyEvent;
 import com.digihealth.anesthesia.evt.po.EvtRescueevent;
 import com.digihealth.anesthesia.evt.service.EvtAnaesEventService;
+import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceYXRM;
 import com.digihealth.anesthesia.operProceed.controller.MyObserveDataController;
 import com.digihealth.anesthesia.operProceed.core.MyConstants;
 import com.digihealth.anesthesia.operProceed.formbean.BasAnaesMonitorConfigFormBean;
@@ -2095,17 +2097,16 @@ public class BasMonitorDisplayService extends BaseService{
             String leaveToName = ls.size()>0?ls.get(0).getCodeName():"";
             WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName()+regOpt.getRegionName()+bedStr+regOpt.getName()+"手术已结束,去往"+leaveToName);
             
-            //将手术出室信息同步至his  永兴定制部分  因HIS不稳定不传消息给HIS
-            /**
+            //将手术出室信息同步至his  永兴定制部分 
             if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag))
             {
                 logger.info("===============================发送手术麻醉记录到his===========================================");
                 HisInterfaceServiceYXRM hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceYXRM.class);
                 //手术基本信息最后提交给HIS
-                hisInterfaceService.updateOperationNotice(regOptId);
+                //hisInterfaceService.updateOperationNotice(regOptId);
                 //把手术结束状态发送给HIS
                 hisInterfaceService.updateState(regOptId, "06");
-            }*/
+            }
             
         }else if(EvtAnaesEventService.CANCEL_OPER.equals(code)){
             logger.info("---进入---手术取消------CANCEL_OPER----");
@@ -2137,14 +2138,13 @@ public class BasMonitorDisplayService extends BaseService{
             docAnaesRecordDao.updateByPrimaryKey(anaesRecord);
             
             //将取消的手术信息同步至his    永兴定制部分   因HIS不稳定不传消息给HIS
-            /**
             if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag))
             {
                 logger.info("===============================发送手术麻醉记录到his===========================================");
                 HisInterfaceServiceYXRM hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceYXRM.class);
                 //把手术取消状态发送给HIS
                 hisInterfaceService.updateState(regOptId, "08");
-            }*/
+            }
             
             List<SysCodeFormbean> ls = basDictItemDao.searchSysCodeByGroupIdAndCodeValue("leave_to", anaesRecord.getLeaveTo(), getBeid());
             String leaveToName = ls.size()>0?ls.get(0).getCodeName():"";

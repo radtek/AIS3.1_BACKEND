@@ -747,7 +747,15 @@ public class BasDispatchService extends BaseService {
      */
     @Transactional
     public void saveDispatchSYBX(DispatchOperationFormBean dispatchFormBean, ResponseValue result) {
-        for (BasDispatch dispatch : dispatchFormBean.getDispatchList()) {
+    	List<BasDispatch> dispatchList = new ArrayList<BasDispatch>();
+    	for(BasDispatch dispatch : dispatchFormBean.getDispatchList()) {
+    		BasDispatch entity = new BasDispatch();
+    		dispatch.getPerfusionDoctorIdList();
+    		dispatch.setPerfusionDoctorId(StringUtils.getStringByList(dispatch.getPerfusionDoctorIdList()));
+    		BeanUtils.copyProperties(dispatch, entity);
+    		dispatchList.add(entity);
+    	}
+        for (BasDispatch dispatch : dispatchList) {
             if (StringUtils.isBlank(dispatch.getBeid())) {
                 dispatch.setBeid(getBeid());
             }
@@ -789,7 +797,6 @@ public class BasDispatchService extends BaseService {
                 if (StringUtils.isNotBlank(disObj.getOperRoomId())
                     && StringUtils.isNotBlank(disObj.getPcs())
                     && StringUtils.isNotBlank(disObj.getOperRegDate())
-                    && StringUtils.isNotBlank(disObj.getStartTime())
                     && ((StringUtils.isNotBlank(disObj.getAnesthetistId()) && 0 == regOpt.getIsLocalAnaes()) || 1 == regOpt.getIsLocalAnaes()) 
                     && StringUtils.isNotBlank(disObj.getCircunurseId1())) 
                 {
@@ -1043,6 +1050,9 @@ public class BasDispatchService extends BaseService {
             if (StringUtils.isBlank(dispatch.getBeid())) {
                 dispatch.setBeid(getBeid());
             }
+            if (dispatch.getPerfusionDoctorIdList() != null) {
+        		dispatch.setPerfusionDoctorId(StringUtils.getStringByList(dispatch.getPerfusionDoctorIdList()));
+			}
             if (logger.isDebugEnabled()) {
                 logger.debug("DispatchService createEmergencyOperation data:dispatch" + dispatch.toString());
             }
@@ -1196,7 +1206,11 @@ public class BasDispatchService extends BaseService {
 	}
 
 	public DispatchFormbean getDispatchOperByRegOptId(String regOptId) {
-		return basDispatchDao.getDispatchOperByRegOptId(regOptId, getBeid());
+		DispatchFormbean dispatchFormbean = basDispatchDao.getDispatchOperByRegOptId(regOptId, getBeid());
+		if(dispatchFormbean!=null && StringUtils.isNoneBlank(dispatchFormbean.getPerfusionDoctorId())) {
+			dispatchFormbean.setPerfusionDoctorIdList(StringUtils.getListByString(dispatchFormbean.getPerfusionDoctorId()));
+		}
+		return dispatchFormbean;
 	}
 
 	public Integer searchPersonTotalInOperRoomByStartTime(BasDispatch dis) {

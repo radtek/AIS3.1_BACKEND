@@ -480,10 +480,10 @@ public class BasDispatchController extends BaseController{
     @ApiOperation(value = "创建手术排程", httpMethod = "POST", notes = "创建手术排程")
     public String dispatchOperationSYBX(@ApiParam(name = "dispatchFormBean", value = "排程信息操作对象") @RequestBody DispatchOperationFormBean dispatchFormBean)
     {
-        logger.info("begin dispatchOperation");
+        logger.info("begin dispatchOperationSYBX");
         ResponseValue resp = new ResponseValue();
         basDispatchService.saveDispatchSYBX(dispatchFormBean, resp);
-        logger.info("end dispatchOperation");
+        logger.info("end dispatchOperationSYBX");
         return resp.getJsonStr();
     }
 

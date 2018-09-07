@@ -25,6 +25,9 @@ public class OperDefFormBean implements Serializable {
 
 	@ApiModelProperty(value = "拼音")
 	private String pinYin;
+	
+	@ApiModelProperty(value = "手术code")
+	private String code;
 
 	public String getPinYin() {
 		return pinYin;
@@ -48,6 +51,16 @@ public class OperDefFormBean implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCode()
+	{
+		return code;
+	}
+
+	public void setCode(String code)
+	{
+		this.code = code;
 	}
 
 }

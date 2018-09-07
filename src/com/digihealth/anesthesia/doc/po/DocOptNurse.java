@@ -1253,7 +1253,7 @@ public class DocOptNurse {
 	}
 
 	public List<String> getBloodSignList() {
-		return bloodSignList;
+		return bloodSignList == null ? new ArrayList<String>() : bloodSignList;
 	}
 
 	public void setBloodSignList(List<String> bloodSignList) {

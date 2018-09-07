@@ -78,4 +78,38 @@ public class DocOptCareRecordController extends BaseController {
         logger.info("----------end updateOptCareRecord---------------");
         return resp.getJsonStr();
     }
+    
+    /** 
+     * 保存手术护理单，用户还可以进行修改(永兴定制)
+     * <功能详细描述>
+     * @param optCareRecord
+     * @return
+     * @throws ParseException 
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/updateOptCareRecordYXRM")
+    @ResponseBody
+	@ApiOperation(value="保存手术护理单，用户还可以进行修改",httpMethod="POST",notes="保存手术护理单，用户还可以进行修改")
+    public String updateOptCareRecordYXRM(@ApiParam(name="optCareRecordFormBean", value ="手术护理参数") @RequestBody OptCareRecordFormBean optCareRecordFormBean) throws ParseException {
+        logger.info("----------start updateOptCareRecord---------------");
+        ResponseValue resp = new ResponseValue();
+        ValidatorBean validatorBean = beanValidator(optCareRecordFormBean);
+        if (!(validatorBean.isValidator())) {
+        	resp.setResultCode("10000001");
+        	resp.setResultMessage(validatorBean.getMessage());
+            return resp.getJsonStr();
+        }
+        if (null != optCareRecordFormBean.getInOperRoomTime() && !"".equals(optCareRecordFormBean.getInOperRoomTime())) {
+            String inOperRoomTime = optCareRecordFormBean.getInOperRoomTime().replace("Z", " UTC");
+            optCareRecordFormBean.setInOperRoomTime(inOperRoomTime);
+        }
+        
+        if (null != optCareRecordFormBean.getOutOperRoomTime() && !"".equals(optCareRecordFormBean.getOutOperRoomTime())) {
+            String outOperRoomTime = optCareRecordFormBean.getOutOperRoomTime().replace("Z", " UTC");
+            optCareRecordFormBean.setOutOperRoomTime(outOperRoomTime);
+        }
+        resp = docOptCareRecordService.updateOptCareRecordYXRM(optCareRecordFormBean);
+        logger.info("----------end updateOptCareRecord---------------");
+        return resp.getJsonStr();
+    }
 }

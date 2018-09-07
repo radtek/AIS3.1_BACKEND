@@ -71,7 +71,21 @@ public class BasRegOptController extends BaseController {
 		logger.info("-----------------end getRegOptByState-----------------");
 		return resp.getJsonStr();
 	}
-	
+
+	@RequestMapping(value = "/getRegOptByStateSYBX")
+	@ResponseBody
+	@ApiOperation(value="根据登录账号和手术状态获取病人列表信息描述类",httpMethod="POST",notes="根据登录账号和手术状态获取病人列表信息描述类")
+	public String searchRegOptByUserTypeAndStateSYBX(@ApiParam(name="searchConditionFormBean", value ="查询参数") @RequestBody SearchConditionFormBean searchConditionFormBean) {
+		logger.info("-----------------begin getRegOptByStateSYBX-----------------");
+		ResponseValue resp = new ResponseValue();
+		List<SearchRegOptByLoginNameAndStateFormBean> result = basRegOptService.searchRegOptByAnaesDoctorAndStateSYBX(searchConditionFormBean);
+		int total = basRegOptService.searchRegOptTotalByAnaesDoctorAndStateSYBX(searchConditionFormBean);
+		resp.put("resultList", result);
+		resp.put("total", total);
+		logger.info("-----------------end getRegOptByStateSYBX-----------------");
+		return resp.getJsonStr();
+	}
+
 	/**
      * 
      * @discription 根据角色和归档状态查询手术信息

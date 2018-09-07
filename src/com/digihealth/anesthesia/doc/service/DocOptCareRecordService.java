@@ -17,6 +17,7 @@ import com.digihealth.anesthesia.basedata.po.BasOperdef;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.po.Controller;
 import com.digihealth.anesthesia.basedata.utils.BasRegOptUtils;
+import com.digihealth.anesthesia.common.config.Global;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.DateUtils;
@@ -24,6 +25,7 @@ import com.digihealth.anesthesia.common.utils.Exceptions;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.PingYinUtil;
+import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.formbean.OptCareRecordFormBean;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
@@ -33,6 +35,7 @@ import com.digihealth.anesthesia.evt.formbean.SearchRegOptByIdFormBean;
 import com.digihealth.anesthesia.evt.po.EvtOptRealOper;
 import com.digihealth.anesthesia.evt.po.EvtRealAnaesMethod;
 import com.digihealth.anesthesia.evt.service.EvtParticipantService;
+import com.digihealth.anesthesia.interfacedata.service.HisInterfaceServiceYXRM;
 import com.digihealth.anesthesia.sysMng.formbean.UserInfoFormBean;
 import com.digihealth.anesthesia.websocket.WebSocketHandler;
 
@@ -421,6 +424,122 @@ public class DocOptCareRecordService extends BaseService {
 			resp.setResultMessage("系统错误，请与系统管理员联系!");
 			return resp;
 		}
+		resp.setResultCode("1");
+		resp.setResultMessage("护理记录单修改成功!");
+		return resp;
+	}
+	
+	/**
+	 * 
+	 * @discription 保存手术护理(永兴定制)
+	 * @author chengwang
+	 * @created 2015-10-20 下午1:44:18
+	 * @param preVisit
+	 * @return
+	 */
+	@Transactional
+	public ResponseValue updateOptCareRecordYXRM(OptCareRecordFormBean optCareRecordFormBean) {
+		ResponseValue resp = new ResponseValue();
+		Controller controller = controllerDao.getControllerById(optCareRecordFormBean.getRegOptId() != null ? optCareRecordFormBean.getRegOptId() : "");
+		BasRegOpt regOpt = basRegOptDao.searchRegOptById(optCareRecordFormBean.getRegOptId() != null ? optCareRecordFormBean.getRegOptId() : "");
+		if (controller == null) {
+			resp.setResultCode("70000001");
+			resp.setResultMessage("手术控制信息不存在!");
+			return resp;
+		}
+
+		DocOptCareRecord optCareRecord = new DocOptCareRecord();
+		BeanUtils.copyProperties(optCareRecordFormBean, optCareRecord, new String[] { "skin1", "negativePosition", "tourniquet", "supportMaterial", "implants", "venousInfusion2", "drainageTube", "skin2" });// 除json串的不需要传递之外，其他都传递
+
+		optCareRecord.setSkin1(JsonType.jsonType(optCareRecordFormBean.getSkin1()));
+		optCareRecord.setNegativePosition(JsonType.jsonType(optCareRecordFormBean.getNegativePosition()));
+		optCareRecord.setTourniquet(JsonType.jsonType(optCareRecordFormBean.getTourniquet()));
+		optCareRecord.setSupportMaterial(JsonType.jsonType(optCareRecordFormBean.getSupportMaterial()));
+		optCareRecord.setImplants(JsonType.jsonType(optCareRecordFormBean.getImplants()));
+		//optCareRecord.setLeaveTo(JsonType.jsonType(optCareRecordFormBean.getLeaveTo()));
+		optCareRecord.setVenousInfusion2(JsonType.jsonType(optCareRecordFormBean.getVenousInfusion2()));
+		if (null == optCareRecordFormBean.getDrainageTube())
+		{
+		    optCareRecord.setDrainageTube(optCareRecordFormBean.getDrainageTube2());
+		}
+		else
+		{
+		    optCareRecord.setDrainageTube(JsonType.jsonType(optCareRecordFormBean.getDrainageTube()));
+		}
+		optCareRecord.setSkin2(JsonType.jsonType(optCareRecordFormBean.getSkin2()));
+		optCareRecord.setAnaesMethodCode(StringUtils.getStringByList(optCareRecord.getAnaesMethodList()));
+
+		// 手术体位
+		optCareRecord.setOptbody(StringUtils.getStringByList(optCareRecordFormBean.getOptbodys()));
+		
+        List<String> shiftChangedNurseList = optCareRecordFormBean.getShiftChangedNurseList();
+        optCareRecord.setShiftChangedNurse(StringUtils.getStringByList(shiftChangedNurseList));
+
+        List<String> instrnurseList = optCareRecordFormBean.getInstrnurseList();
+        optCareRecord.setInstrnurseId(StringUtils.getStringByList(instrnurseList));
+
+        List<String> shiftChangeNurseList = optCareRecordFormBean.getShiftChangeNurseList();
+        optCareRecord.setShiftChangeNurse(StringUtils.getStringByList(shiftChangeNurseList));
+
+		getOperatiomName(optCareRecord);
+
+		// 局麻手术时，提交护理单需要将手术状态改为术后
+		if ("1".equals(controller.getIsLocalAnaes()) && "END".equals(optCareRecordFormBean.getProcessState())) {
+			controllerDao.checkOperation(optCareRecord.getRegOptId(), OperationState.POSTOPERATIVE, controller.getState());
+
+			String leaveTo = "";
+			// 将消息推送到手术室大屏
+			if (null != optCareRecordFormBean.getLeaveTo()) {
+				if ("1".equals(optCareRecordFormBean.getLeaveTo())) {
+					leaveTo = "病室";
+				}
+
+				if ("2".equals(optCareRecordFormBean.getLeaveTo())) {
+					leaveTo = "ICU";
+				}
+
+				if ("3".equals(optCareRecordFormBean.getLeaveTo())) {
+					leaveTo = "复苏室";
+				}
+
+				if ("4".equals(optCareRecordFormBean.getLeaveTo())) {
+					leaveTo = optCareRecordFormBean.getLeaveToOther();
+				}
+			}
+			WebSocketHandler.sentMessageToAllUser(regOpt.getDeptName() + regOpt.getRegionName() + regOpt.getBed() + regOpt.getName() + "手术已结束,去往" + leaveTo);
+
+			// 获取麻醉记录单信息，局麻时将手术开始时间和结束时间写入到麻醉记录单中
+			DocAnaesRecord anaesRecord = docAnaesRecordDao.searchAnaesRecordByRegOptId(optCareRecord.getRegOptId());
+			anaesRecord.setOperStartTime(optCareRecordFormBean.getInOperRoomTime());
+			anaesRecord.setInOperRoomTime(optCareRecordFormBean.getInOperRoomTime());
+			anaesRecord.setOperEndTime(optCareRecordFormBean.getOutOperRoomTime());
+			anaesRecord.setOutOperRoomTime(optCareRecordFormBean.getOutOperRoomTime());
+			anaesRecord.setOptBody(optCareRecordFormBean.getOptbody());
+			docAnaesRecordDao.updateByPrimaryKey(anaesRecord);
+			
+			//是否连接HIS
+	        String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
+			//将手术出室信息同步至his
+	        if((StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)))
+	        {
+	            logger.info("===============================发送手术麻醉记录到his===========================================");
+	            HisInterfaceServiceYXRM hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceYXRM.class);
+	            //把手术结束状态发送给HIS
+	            hisInterfaceService.updateState(regOpt.getRegOptId(), "06");
+	        }
+		}
+
+		try {
+			docOptCareRecordDao.updateByPrimaryKeySelective(optCareRecord);
+		} catch (Exception e) {
+			if (logger.isErrorEnabled()) {
+				logger.error(Exceptions.getStackTraceAsString(e));
+			}
+			resp.setResultCode("10000000");
+			resp.setResultMessage("系统错误，请与系统管理员联系!");
+			return resp;
+		}
+        
 		resp.setResultCode("1");
 		resp.setResultMessage("护理记录单修改成功!");
 		return resp;

@@ -8,6 +8,8 @@
  */
 package com.digihealth.anesthesia.basedata.po;
 
+import java.util.List;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -60,6 +62,12 @@ public class BasDispatch {
 	 */
 	@ApiModelProperty(value = "灌注医生")
 	private String perfusionDoctorId;
+
+	/**
+	 * 灌注医生集合
+	 */
+	@ApiModelProperty(value = "灌注医生集合")
+	private List<String> perfusionDoctorIdList;
 
 	/**
 	 * 手术时间
@@ -286,6 +294,14 @@ public class BasDispatch {
 
 	public void setOperaDate(String operaDate) {
 		this.operaDate = operaDate;
+	}
+
+	public List<String> getPerfusionDoctorIdList() {
+		return perfusionDoctorIdList;
+	}
+
+	public void setPerfusionDoctorIdList(List<String> perfusionDoctorIdList) {
+		this.perfusionDoctorIdList = perfusionDoctorIdList;
 	}
 
 	public String getBeid() {

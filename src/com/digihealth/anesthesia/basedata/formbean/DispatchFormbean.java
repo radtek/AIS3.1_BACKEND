@@ -1,6 +1,8 @@
 package com.digihealth.anesthesia.basedata.formbean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -56,6 +58,11 @@ public class DispatchFormbean implements Serializable {
 	 */
 	@ApiModelProperty(value = "灌注医生id")
 	private String perfusionDoctorId;
+	/**
+	 * 灌注医生集合
+	 */
+	@ApiModelProperty(value = "灌注医生集合")
+	private List<String> perfusionDoctorIdList;
 	/**
 	 * 排班
 	 */
@@ -292,6 +299,17 @@ public class DispatchFormbean implements Serializable {
 
 	public void setPerfusionDoctorId(String perfusionDoctorId) {
 		this.perfusionDoctorId = perfusionDoctorId;
+	}
+
+	public List<String> getPerfusionDoctorIdList() {
+		if (perfusionDoctorIdList == null) {
+			perfusionDoctorIdList = new ArrayList<String>();
+		}
+		return perfusionDoctorIdList;
+	}
+
+	public void setPerfusionDoctorIdList(List<String> perfusionDoctorIdList) {
+		this.perfusionDoctorIdList = perfusionDoctorIdList;
 	}
 
 	public String getHealthNurse() {

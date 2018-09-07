@@ -29,6 +29,7 @@ import com.digihealth.anesthesia.basedata.dao.BasInstrumentDao;
 import com.digihealth.anesthesia.basedata.dao.BasMedicineDao;
 import com.digihealth.anesthesia.basedata.dao.BasOperationPeopleDao;
 import com.digihealth.anesthesia.basedata.dao.BasOperdefDao;
+import com.digihealth.anesthesia.basedata.dao.BasOperroomDao;
 import com.digihealth.anesthesia.basedata.dao.BasPriceDao;
 import com.digihealth.anesthesia.basedata.dao.BasRegOptDao;
 import com.digihealth.anesthesia.basedata.dao.ControllerDao;
@@ -43,6 +44,7 @@ import com.digihealth.anesthesia.basedata.po.BasInstrument;
 import com.digihealth.anesthesia.basedata.po.BasMedicine;
 import com.digihealth.anesthesia.basedata.po.BasOperationPeople;
 import com.digihealth.anesthesia.basedata.po.BasOperdef;
+import com.digihealth.anesthesia.basedata.po.BasOperroom;
 import com.digihealth.anesthesia.basedata.po.BasPrice;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.po.BasRegion;
@@ -142,6 +144,8 @@ import com.digihealth.anesthesia.doc.po.DocSpinalCanalPuncture;
 import com.digihealth.anesthesia.doc.po.DocTransferConnectRecord;
 import com.digihealth.anesthesia.doc.po.DocVeinAccede;
 import com.digihealth.anesthesia.sysMng.dao.BasUserDao;
+import com.digihealth.anesthesia.sysMng.formbean.BasUserFormBean;
+import com.digihealth.anesthesia.sysMng.po.BasUser;
 
 @Service
 public class OperBaseDataServiceSYBX extends BaseService{
@@ -165,6 +169,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
     private BasDispatchDao basDispatchDao = SpringContextHolder.getBean(BasDispatchDao.class);
     private ControllerDao controllerDao = SpringContextHolder.getBean(ControllerDao.class);
     private BasDocumentDao basDocumentDao = SpringContextHolder.getBean(BasDocumentDao.class);
+    private BasOperroomDao basOperroomDao = SpringContextHolder.getBean(BasOperroomDao.class);
     
 	/**
 	 * 获取外部系统视图VIEW_OPERATION_NAME，并插入当前数据库
@@ -1204,6 +1209,59 @@ public class OperBaseDataServiceSYBX extends BaseService{
 		logger.info("-------end synHisSysUserList-----------");
 	}*/
 
+	/**
+	 * 同步HIS用户ID到bas_user表的hisId字段
+	 * 视图：SZHS_Operation_Anesthesia_DoctorNurse
+	 */
+	@Transactional
+	public void synHisSysUserList(){
+		logger.info("-------start synHisSysUserList-----------");
+		String beid = basBusEntityDao.getBeid();
+		Connection conn = null;
+		String sql = "select * from SZHS_Operation_Anesthesia_DoctorNurse";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+        try {
+        	conn = ConnectionManager.getSYBXHisConnection();
+            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if (null == rs) {
+                return;
+            }
+            while (rs.next()) {
+                if (!StringUtils.isEmpty(rs.getString(1))) {
+                    String id = rs.getString("id");
+                    String name = rs.getString("name");
+                    String mobile = rs.getString("mobile");
+                    String userType = rs.getString("user_type");
+                    String pinyin = PingYinUtil.getFirstSpell(name);
+                    String delFlag = rs.getString("del_flag");
+                    BasUserFormBean basUser = new BasUserFormBean();
+                    basUser.setName(name);
+                    basUser.setBeid(beid);
+                    List<BasUser> lst = basUserDao.selectEntityList(basUser);
+                    if(!lst.isEmpty() && lst.size() > 0) {
+                    	BasUser user = lst.get(0);
+                    	user.setHisId(id);
+                    	basUserDao.updateByPrimaryKey(user);
+                    }
+                }
+            }
+            
+        }
+        catch (Exception e) {
+        	logger.error("synHisSysUserList--------------"+Exceptions.getStackTraceAsString(e));
+        }
+        finally {
+            try {
+                close(conn, pstmt, rs);
+            } catch (SQLException e) {
+            	logger.error("synHisSysUserList--------------"+Exceptions.getStackTraceAsString(e));
+            }
+        }
+		logger.info("-------end synHisSysUserList-----------");
+	}
+
 	@Transactional
 	public void synHisOperList(){
         logger.info("---------------------begin synHisOperList------------------------");
@@ -1259,7 +1317,8 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     if(!StringUtils.isEmpty(rs.getString("deptId"))){
                         regOpt.setDeptId(rs.getString("deptId"));
                     }
-                    regOpt.setDeptName(rs.getString("deptName"));
+                    //his传过来的deptName是科室大类名称，这里要存临床科室
+                    regOpt.setDeptName(rs.getString("regionName"));
                     regOpt.setBed(rs.getString("bed"));
                     
                     //诊断名称
@@ -1489,10 +1548,13 @@ public class OperBaseDataServiceSYBX extends BaseService{
                     // 增加备注
                     regOpt.setRemark(rs.getString("instructions"));//从his中获取
 //                    //手术序号
+                    logger.info("-----Operate_Number:" + rs.getInt("Operate_Number"));
                     regOpt.setOperateNumber(rs.getInt("Operate_Number"));//从his中获取
                     
                     regOpt.setState(OperationState.NOT_REVIEWED);
                     regOpt.setBeid(beid);
+
+                    logger.info("-----OperateNumber:" + regOpt.getOperateNumber());
                     int resultInsert = basRegOptDao.insert(regOpt);
 //                    operatelogService.saveOperatelog(regOptId, operatelogService.OPT_TYPE_INFO_SAVE,
 //                            operatelogService.OPT_MODULE_INTERFACE, "HIS手术通知单", JsonType.jsonType(regOpt));
@@ -1568,7 +1630,11 @@ public class OperBaseDataServiceSYBX extends BaseService{
             logger.debug("================安排日期：" + aprq);
             logger.debug("================手术日期：" + ssrq);
             cstmt.setTimestamp(4, new java.sql.Timestamp(DateUtils.getParseTime(aprq).getTime()));//手术安排日期
-            cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(ssrq).getTime()));//手术日期
+            if (StringUtils.isBlank(ssrq)) {
+                cstmt.setTimestamp(5, new java.sql.Timestamp(new Date().getTime()));//手术日期
+			}else {
+				cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(ssrq).getTime()));//手术日期
+			}
             String designed = regOpt.getDesignedOptCode();
             if (org.apache.commons.lang3.StringUtils.isNoneBlank(designed))
             {
@@ -1580,7 +1646,16 @@ public class OperBaseDataServiceSYBX extends BaseService{
             {
                 cstmt.setInt(6, 0);//手术名称id
             }
-            cstmt.setString(7, dispatchBean.getOperRoomName());//手术房间
+            if(StringUtils.isNotBlank(dispatchBean.getOperRoomId())) {
+            	BasOperroom basOperroom = basOperroomDao.queryRoomListById(dispatchBean.getOperRoomId(), beid);
+            	if (basOperroom != null) {
+            		cstmt.setString(7, basOperroom.getName());//手术房间
+				}else {
+            		cstmt.setString(7, null);//手术房间
+				}
+            }else {
+            	cstmt.setString(7, null);
+			}
             cstmt.setString(8, dispatchBean.getPcs()+"");//手术台号
             if (!org.apache.commons.lang3.StringUtils.isEmpty(regOpt.getOperatorId()))
             {

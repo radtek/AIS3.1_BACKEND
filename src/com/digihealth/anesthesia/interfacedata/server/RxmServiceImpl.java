@@ -498,8 +498,23 @@ public class RxmServiceImpl extends BaseService implements RxrmService
             }
             //手术级别
             String operLevel = operList.getOperLevel();
-            regOpt.setOptLevel(operLevel);
-            
+        	if(StringUtils.isNotBlank(operLevel))
+        	{
+        		operLevel = operLevel.trim();
+        		if("小".equals(operLevel))
+        		{
+        			regOpt.setOptLevel("一级");
+        		}else if("中".equals(operLevel))
+        		{
+        			regOpt.setOptLevel("二级");
+        		}else if("大".equals(operLevel))
+        		{
+        			regOpt.setOptLevel("三级");
+        		}else if("特".equals(operLevel))
+        		{
+        			regOpt.setOptLevel("四级");
+        		}
+        	}
             
             //手术创建者
             String createUser = operList.getCreateUser();
@@ -513,6 +528,7 @@ public class RxmServiceImpl extends BaseService implements RxrmService
             if(incisionLevel != null){
                 regOpt.setCutLevel(incisionLevel);
             }*/
+        	
             if(null != operList.getIncisionLevel()){ 
                 Integer cutLevel = null;
                 if("Ⅰ".equals(operList.getIncisionLevel()))

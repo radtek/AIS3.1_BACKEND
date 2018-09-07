@@ -451,7 +451,8 @@
       professionalTitle = #{professionalTitle,jdbcType=VARCHAR},
       executiveLevel = #{executiveLevel,jdbcType=VARCHAR},
       picPath = #{picPath,jdbcType=VARCHAR},
-      formal = #{formal,jdbcType=INTEGER}
+      formal = #{formal,jdbcType=INTEGER},
+      hisId = #{hisId,jdbcType=VARCHAR}
     where userName = #{userName,jdbcType=VARCHAR}
       and beid = #{beid,jdbcType=VARCHAR}
   </update>
