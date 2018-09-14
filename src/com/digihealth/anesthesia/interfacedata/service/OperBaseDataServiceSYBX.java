@@ -1626,15 +1626,16 @@ public class OperBaseDataServiceSYBX extends BaseService{
             cstmt.setInt(2, 212);//科室id
             cstmt.setString(3, regOpt.getHid());//住院号
             String aprq = regOpt.getOperaDate()+" "+(org.apache.commons.lang3.StringUtils.isNotBlank(dispatchBean.getStartTime()) ? dispatchBean.getStartTime() : "00:00")+":00";
-            String ssrq = anaesRecord.getOperStartTime();
-            logger.debug("================安排日期：" + aprq);
-            logger.debug("================手术日期：" + ssrq);
+//            String ssrq = anaesRecord.getOperStartTime();
+            logger.debug(regOpt.getName() + "================安排日期：" + aprq);
+            logger.debug(regOpt.getName() + "================手术日期：" + aprq);
             cstmt.setTimestamp(4, new java.sql.Timestamp(DateUtils.getParseTime(aprq).getTime()));//手术安排日期
-            if (StringUtils.isBlank(ssrq)) {
-                cstmt.setTimestamp(5, new java.sql.Timestamp(new Date().getTime()));//手术日期
-			}else {
-				cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(ssrq).getTime()));//手术日期
-			}
+            cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(aprq).getTime()));//手术日期
+//            if (StringUtils.isBlank(ssrq)) {
+//                cstmt.setTimestamp(5, new java.sql.Timestamp(new Date().getTime()));//手术日期
+//			}else {
+//				cstmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getParseTime(ssrq).getTime()));//手术日期
+//			}
             String designed = regOpt.getDesignedOptCode();
             if (org.apache.commons.lang3.StringUtils.isNoneBlank(designed))
             {
@@ -1715,7 +1716,37 @@ public class OperBaseDataServiceSYBX extends BaseService{
             BasAnaesMethod anaesMethod = basAnaesMethodDao.searchAnaesMethodById(regOpt.getDesignedAnaesMethodCode());
             cstmt.setString(19, null != anaesMethod ? anaesMethod.getCode() : ""); //麻醉代码
             cstmt.setString(20, basUserDao.selectHisIdByUserName(dispatchBean.getAnesthetistId(), beid)); //麻醉医生1
-            cstmt.setString(21, null); //麻醉医生2
+            String mzys2 = null;
+            String mzys3 = null;
+            String mzys4 = null;
+            String mzys5 = null;
+            String mzys6 = null;
+            String perfusionDoctorId = dispatchBean.getPerfusionDoctorId();
+            if (StringUtils.isNoneBlank(perfusionDoctorId)) {
+				String[] ids = perfusionDoctorId.split(",");
+				if (ids.length == 1) {
+					mzys2 = basUserDao.selectHisIdByUserName(ids[0], beid);
+				} else if (ids.length == 2) {
+					mzys2 = basUserDao.selectHisIdByUserName(ids[0], beid);
+					mzys3 = basUserDao.selectHisIdByUserName(ids[1], beid);
+				} else if (ids.length == 3) {
+					mzys2 = basUserDao.selectHisIdByUserName(ids[0], beid);
+					mzys3 = basUserDao.selectHisIdByUserName(ids[1], beid);
+					mzys4 = basUserDao.selectHisIdByUserName(ids[2], beid);
+				} else if (ids.length == 4) {
+					mzys2 = basUserDao.selectHisIdByUserName(ids[0], beid);
+					mzys3 = basUserDao.selectHisIdByUserName(ids[1], beid);
+					mzys4 = basUserDao.selectHisIdByUserName(ids[2], beid);
+					mzys5 = basUserDao.selectHisIdByUserName(ids[3], beid);
+				} else if (ids.length == 5) {
+					mzys2 = basUserDao.selectHisIdByUserName(ids[0], beid);
+					mzys3 = basUserDao.selectHisIdByUserName(ids[1], beid);
+					mzys4 = basUserDao.selectHisIdByUserName(ids[2], beid);
+					mzys5 = basUserDao.selectHisIdByUserName(ids[3], beid);
+					mzys6 = basUserDao.selectHisIdByUserName(ids[4], beid);
+				}
+			}
+            cstmt.setString(21, mzys2); //麻醉医生2
             cstmt.setInt(22, regOpt.getEmergency()); //急诊标志
             cstmt.setString(23, null);  //手术要求
             cstmt.setString(24, null);  //注意事项
@@ -1750,10 +1781,10 @@ public class OperBaseDataServiceSYBX extends BaseService{
                 cstmt.setString(30, null);  //手术名称(二)
                 cstmt.setString(31, null);  //手术名称(三)
             }
-            cstmt.setString(39, null);  //麻醉医生(三)
-            cstmt.setString(40, null);  //麻醉医生(四)
-            cstmt.setString(41, null);  //麻醉医生(五)
-            cstmt.setString(42, null);  //麻醉医生(六)
+            cstmt.setString(39, mzys3);  //麻醉医生(三)
+            cstmt.setString(40, mzys4);  //麻醉医生(四)
+            cstmt.setString(41, mzys5);  //麻醉医生(五)
+            cstmt.setString(42, mzys6);  //麻醉医生(六)
             cstmt.setString(43, null);  //洗手护士(三)
             cstmt.setString(44, null);  //巡回护士(三)
             

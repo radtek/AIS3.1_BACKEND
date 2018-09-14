@@ -2467,7 +2467,7 @@ public class MyObserveDataController extends BaseController {
 	            searchBean.setAccessSource("");
 	        }
 			// 不为空则为术中访问、否则为术后访视
-			if (StringUtils.isNotBlank(accessSource)) {
+			if (StringUtils.isNotBlank(searchBean.getAccessSource())) {
 	            //如果已经是术后or中止状态，则直接返回给前端
 	            if(("06").equals(opt.getState())){ //术后状态
 	                result.put("resultCode", "40000004");

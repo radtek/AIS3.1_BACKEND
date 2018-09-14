@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +71,15 @@ public class DocInsuredPatAgreeService extends BaseService
     {
         docInsuredItemDao.deleteByPrimaryKey(insuredItem.getId());
     }
-    
+
+    @Transactional
+    public void batchDeleteInsuredItem(DocInsuredPatAgree insuredPatAgree) {
+    	List<DocInsuredItem> docInsuredItems = docInsuredItemDao.searchByInsuredId(insuredPatAgree.getId());
+    	for (DocInsuredItem docInsuredItem : docInsuredItems) {
+    		docInsuredItemDao.deleteByPrimaryKey(docInsuredItem.getId());
+		}
+    }
+
     @Transactional
     public void updateInsuredPatAgree(DocInsuredPatAgree insuredPatAgree)
     {
@@ -99,5 +108,37 @@ public class DocInsuredPatAgreeService extends BaseService
         }
         List<SearchMedAndInstruFormBean> resultList = docInsuredPatAgreeDao.searchMedAndInstru(filter, systemSearchFormBean);
         return resultList;
+    }
+
+    @Transactional
+    public ResponseValue batchSaveInsuredPatAgreeItem(InsuredPatAgreeFormBean insuredPatAgreeFormBean, ResponseValue value) {
+    	DocInsuredPatAgree docInsuredPatAgree = insuredPatAgreeFormBean.getDocInsuredPatAgree();
+    	List<DocInsuredItem> docInsuredItemList = insuredPatAgreeFormBean.getDocInsuredItemList();
+    	if (docInsuredPatAgree != null) {
+    		for (DocInsuredItem docInsuredItem : docInsuredItemList) {
+    			DocInsuredItem params = new DocInsuredItem();
+    			BeanUtils.copyProperties(docInsuredItem, params);
+    			params.setId(null);
+    			params.setInsuredId(docInsuredPatAgree.getId());
+    			params.setRegOptId(docInsuredPatAgree.getRegOptId());
+    			List<DocInsuredItem> lst = docInsuredItemDao.selectEntityList(params);
+    			if (!lst.isEmpty() && lst.size() > 0) {
+    				DocInsuredItem entity = lst.get(0);
+    				entity.setTime(docInsuredItem.getTime());
+    				entity.setPrice(docInsuredItem.getPrice());
+    				entity.setReason(docInsuredItem.getReason());
+    				docInsuredItemDao.updateByPrimaryKey(entity);
+				}else {
+					docInsuredItem.setId(GenerateSequenceUtil.generateSequenceNo());
+					docInsuredItem.setInsuredId(docInsuredPatAgree.getId());
+					docInsuredItem.setRegOptId(docInsuredPatAgree.getRegOptId());
+					docInsuredItemDao.insertSelective(docInsuredItem);
+				}
+    		}
+		}else {
+			value.setResultCode("40000002");
+			value.setResultMessage("参保患者特殊用药、卫材知情单不存在！");
+		}
+    	return value;
     }
 }

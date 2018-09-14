@@ -144,7 +144,8 @@
 		a.diagnosisName,a.operaDate,a.costsettlementState,a.reasons,c.operRoomId,
 		c.instrnurseId1,c.instrnurseId2,c.circunurseId1,c.circunurseId2,c.circuanesthetistId,c.anesthetistId,c.perfusiondoctorId,
 		a.state,a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,a.designedAnaesMethodName,a.operatorName,a.operSource,
-		a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp, a.assistantName, p.id AS pacuId,a.operateNumber,a.docPayState,a.nurPayState,a.createTime
+		a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp, a.assistantName, p.id AS pacuId,a.operateNumber,a.docPayState,a.nurPayState,
+		a.createTime, d.analgesicMethod
 		FROM
 		bas_reg_opt a
 		LEFT JOIN bas_dispatch c ON a.regOptId = c.regOptId
@@ -230,11 +231,12 @@
 						a.diagnosisName,a.operaDate,a.costsettlementState,a.reasons,c.operRoomId,
 						c.instrnurseId1,c.instrnurseId2,c.circunurseId1,c.circunurseId2,c.circuanesthetistId,c.anesthetistId,c.perfusiondoctorId,
 						a.state,a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,a.designedAnaesMethodName,a.operatorName,
-						a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp,	a.assistantName,c.pcs, p.id pacuId
+						a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp,	a.assistantName,c.pcs, p.id pacuId, d.analgesicMethod
 					FROM 
 						bas_reg_opt a
 					LEFT JOIN bas_dispatch c ON a.regOptId = c.regOptId
 					LEFT JOIN doc_anaes_pacu_rec p ON a.regOptId = p.regOptId
+					LEFT JOIN doc_anaes_record d on a.regOptId = d.regOptId
 					WHERE 1 = 1
 						${filter}
 						<if test="searchConditionFormBean.beid !=null and searchConditionFormBean.beid !=''">
@@ -326,11 +328,12 @@
 		a.diagnosisName,a.operaDate,a.costsettlementState,a.reasons,c.operRoomId,
 		c.instrnurseId1,c.instrnurseId2,c.circunurseId1,c.circunurseId2,c.circuanesthetistId,c.anesthetistId,c.perfusiondoctorId,
 		a.state,a.emergency,a.hypersusceptibility,a.optLevel,a.isLocalAnaes,a.designedAnaesMethodName,a.operatorName,
-		a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp, a.assistantName, a.operateNumber,a.docPayState,a.nurPayState,p.id pacuId
+		a.height,a.weight,a.hbsag,a.hcv,a.hiv,a.hp, a.assistantName, a.operateNumber,a.docPayState,a.nurPayState,p.id pacuId, d.analgesicMethod
 		FROM
 		bas_reg_opt a
 		LEFT JOIN bas_dispatch c ON a.regOptId = c.regOptId
 		LEFT JOIN doc_anaes_pacu_rec p ON p.regOptId = a.regOptId
+		LEFT JOIN doc_anaes_record d on a.regOptId = d.regOptId
 		WHERE 1 = 1
 		${filter}
 		AND a.beid = #{beid}

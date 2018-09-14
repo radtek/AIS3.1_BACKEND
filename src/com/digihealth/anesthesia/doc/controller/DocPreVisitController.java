@@ -18,7 +18,6 @@ import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.utils.DateUtils;
 import com.digihealth.anesthesia.common.utils.Exceptions;
-import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.common.web.BaseController;
 import com.digihealth.anesthesia.doc.formbean.PreVisitFormBean;
@@ -26,6 +25,7 @@ import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocPatInspectItem;
 import com.digihealth.anesthesia.doc.po.DocPreVisit;
 import com.digihealth.anesthesia.doc.po.DocPrevisitAccessexam;
+import com.digihealth.anesthesia.doc.po.DocPrevisitAnaesplan;
 import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
 import com.digihealth.anesthesia.evt.formbean.SearchRegOptByIdFormBean;
 import com.digihealth.anesthesia.evt.po.EvtShiftChange;
@@ -190,10 +190,15 @@ public class DocPreVisitController extends BaseController {
             setInspectItem(regOptId, accessexam);
         }
         
+        DocPrevisitAnaesplan anaesplan = preVisitFormBean.getPrevisitAnaesplan();
+        JSONObject jasonObject1 = JSONObject.fromObject(anaesplan.getRiskPreventMeasure());
+        anaesplan.setRiskPreventMeasureMap(null == jasonObject1 ? new HashMap<String, Object>() : jasonObject1);
+        
         resp.put("result", "true");
         resp.put("preVisitItem", preVisit);
         resp.put("previsitPhyexam", preVisitFormBean.getPrevisitPhyexam());
         resp.put("accessexam", accessexam);
+        resp.put("previsitAnaesplan", anaesplan);
         resp.put("regOptItem", searchRegOptByIdFormBean);
         logger.info("-------------------end searchPreVisitByRegOptId-------------------");
         return resp.getJsonStr();

@@ -20,11 +20,12 @@
     <result column="redPrescription" property="redPrescription" jdbcType="VARCHAR" />
     <result column="comMedicine" property="comMedicine" jdbcType="VARCHAR" />
     <result column="jingyi" property="jingyi" jdbcType="VARCHAR" />
+    <result column="showMedWay" property="showMedWay" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     medicineId, code, type, source, pinYin, name, spec, hisMedicineCode, briefName, dosageUnit, 
-    roughType, packageDosageAmount, enable, beid, whitePrescription, redPrescription,comMedicine, jingyi
+    roughType, packageDosageAmount, enable, beid, whitePrescription, redPrescription,comMedicine, jingyi, showMedWay
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -48,13 +49,14 @@
       source, pinYin, name, 
       spec, hisMedicineCode, briefName, 
       dosageUnit, roughType, packageDosageAmount, 
-      enable, beid, whitePrescription, redPrescription,comMedicine, jingyi)
+      enable, beid, whitePrescription, redPrescription,comMedicine, jingyi, showMedWay)
     values (#{medicineId,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{source,jdbcType=VARCHAR}, #{pinYin,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{spec,jdbcType=VARCHAR}, #{hisMedicineCode,jdbcType=VARCHAR}, #{briefName,jdbcType=VARCHAR}, 
       #{dosageUnit,jdbcType=VARCHAR}, #{roughType,jdbcType=VARCHAR}, #{packageDosageAmount,jdbcType=REAL}, 
       #{enable,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR}, #{whitePrescription,jdbcType=VARCHAR}, 
-      #{redPrescription,jdbcType=VARCHAR}, #{comMedicine,jdbcType=VARCHAR}, #{jingyi,jdbcType=VARCHAR})
+      #{redPrescription,jdbcType=VARCHAR}, #{comMedicine,jdbcType=VARCHAR}, 
+      #{jingyi,jdbcType=VARCHAR}, #{showMedWay,jdbcType=INTEGER})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasMedicine" >
@@ -114,6 +116,9 @@
       <if test="jingyi != null" >
         jingyi,
       </if>
+      <if test="showMedWay != null" >
+        showMedWay,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="medicineId != null" >
@@ -169,6 +174,9 @@
       </if>
       <if test="jingyi != null" >
          #{jingyi,jdbcType=VARCHAR},
+      </if>
+      <if test="showMedWay != null" >
+        #{showMedWay,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -232,6 +240,9 @@
       <if test="jingyi != null" >
         jingyi = #{jingyi,jdbcType=VARCHAR},
       </if>
+      <if test="showMedWay != null" >
+        showMedWay = #{showMedWay,jdbcType=INTEGER},
+      </if>
     </set>
     where medicineId = #{medicineId,jdbcType=VARCHAR}
   </update>
@@ -254,7 +265,8 @@
       whitePrescription = #{whitePrescription,jdbcType=VARCHAR},
       redPrescription = #{redPrescription,jdbcType=VARCHAR},
       comMedicine = #{comMedicine,jdbcType=VARCHAR},
-      jingyi = #{jingyi,jdbcType=VARCHAR}
+      jingyi = #{jingyi,jdbcType=VARCHAR},
+      showMedWay = #{showMedWay,jdbcType=INTEGER}
     where medicineId = #{medicineId,jdbcType=VARCHAR}
   </update>
   

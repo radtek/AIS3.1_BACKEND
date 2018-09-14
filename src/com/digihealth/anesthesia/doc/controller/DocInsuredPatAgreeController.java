@@ -16,6 +16,7 @@ import com.digihealth.anesthesia.doc.formbean.SearchMedAndInstruFormBean;
 import com.digihealth.anesthesia.doc.po.DocInsuredItem;
 import com.digihealth.anesthesia.doc.po.DocInsuredPatAgree;
 import com.digihealth.anesthesia.evt.formbean.SearchRegOptByIdFormBean;
+import com.digihealth.anesthesia.evt.po.EvtMedicalEvent;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -128,5 +129,33 @@ public class DocInsuredPatAgreeController extends BaseController
         docInsuredPatAgreeService.deleteInsuredItem(insuredItem);
         logger.debug("-----------------end deleteInsuredItem--------------------");
         return resp.getJsonStr(); 
+    }
+
+    @RequestMapping(value = "/batchDeleteInsuredItem")
+    @ResponseBody
+    @ApiOperation(value="清空参保患者特殊用药、卫材知情单条目",httpMethod="POST",notes="清空参保患者特殊用药、卫材知情单条目")
+    public String batchDeleteInsuredItem(@ApiParam(name="docInsuredPatAgree", value ="删除参数") @RequestBody DocInsuredPatAgree docInsuredPatAgree) {
+        logger.debug("-----------------begin batchDeleteInsuredItem--------------------");
+        ResponseValue resp = new ResponseValue();
+        if (null == docInsuredPatAgree) {
+            resp.setResultCode("40000002");
+            resp.setResultMessage("参保患者特殊用药、卫材知情单不存在");
+            logger.debug("-----------------end batchDeleteInsuredItem--------------------");
+            return resp.getJsonStr();
+        }
+        docInsuredPatAgreeService.batchDeleteInsuredItem(docInsuredPatAgree);
+        logger.debug("-----------------end batchDeleteInsuredItem--------------------");
+        return resp.getJsonStr(); 
+    }
+
+	@RequestMapping(value = "/batchSaveInsuredPatAgreeItem")
+    @ResponseBody
+    @ApiOperation(value = "批量保存参保患者特殊用药、卫材知情单", httpMethod = "POST", notes = "批量保存参保患者特殊用药、卫材知情单")
+    public String batchSaveInsuredPatAgreeItem(@ApiParam(name = "insuredPatAgreeFormBean", value = "参数")@RequestBody InsuredPatAgreeFormBean insuredPatAgreeFormBean) {
+        logger.info("-----------begin batchSaveInsuredPatAgreeItem-----------");
+        ResponseValue value = new ResponseValue();
+        value = docInsuredPatAgreeService.batchSaveInsuredPatAgreeItem(insuredPatAgreeFormBean, value);
+        logger.info("-----------end batchSaveInsuredPatAgreeItem-----------");
+        return value.getJsonStr();
     }
 }

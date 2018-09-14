@@ -111,6 +111,22 @@ public class BasMedicine {
     @ApiModelProperty(value="精一")
     private String jingyi; 
     
+    /**
+     * 是否显示用药方式
+     */
+    @ApiModelProperty(value="是否显示用药方式")
+    private Integer showMedWay;
+    
+    public Integer getShowMedWay()
+    {
+        return showMedWay;
+    }
+
+    public void setShowMedWay(Integer showMedWay)
+    {
+        this.showMedWay = showMedWay;
+    }
+
     public String getJingyi()
     {
         return jingyi;

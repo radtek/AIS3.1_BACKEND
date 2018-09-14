@@ -822,6 +822,11 @@ public class BasRegOptController extends BaseController {
 		if(null != pacuRec){
 			regOpt.setPacuId(pacuRec.getId());	
 		}
+		DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+		if (null != anaesRecord)
+		{
+		    regOpt.setAnalgesicMethod(anaesRecord.getAnalgesicMethod());
+		}
 		resp.put("resultRegOpt", regOpt);
 		resp.put("resultDispatch", dispatch);
 		logger.info("-----------------end getRegOptApplicationById-----------------");
