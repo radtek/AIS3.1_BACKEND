@@ -672,4 +672,7 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_pre_post_visit where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

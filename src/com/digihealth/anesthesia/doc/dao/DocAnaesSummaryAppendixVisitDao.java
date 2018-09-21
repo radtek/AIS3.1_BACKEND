@@ -8,6 +8,8 @@
  */
 package com.digihealth.anesthesia.doc.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.digihealth.anesthesia.common.persistence.CrudDao;
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
 import com.digihealth.anesthesia.doc.po.DocAnaesSummaryAppendixVisit;
@@ -27,4 +29,6 @@ public interface DocAnaesSummaryAppendixVisitDao extends CrudDao<DocAnaesSummary
     int updateByPrimaryKey(DocAnaesSummaryAppendixVisit record);
 
     DocAnaesSummaryAppendixVisit getPoByAnaSumId(String anaSumId);
+
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
 }

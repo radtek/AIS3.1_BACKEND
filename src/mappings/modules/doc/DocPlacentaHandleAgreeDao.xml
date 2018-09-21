@@ -118,4 +118,8 @@
     where regOptId = #{regOptId,jdbcType=VARCHAR}
   </select>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_placenta_handle_agree where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
 </mapper>

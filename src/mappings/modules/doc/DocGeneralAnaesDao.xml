@@ -330,5 +330,8 @@
       laryngealMaskFlag = #{laryngealMaskFlag,jdbcType=INTEGER}
     where generalAnaesId = #{generalAnaesId,jdbcType=VARCHAR}
   </update>
-
+  
+  <delete id="deleteByAnaSumId" parameterType="java.lang.String" >
+    delete from doc_general_anaes where anaSumId = #{anaSumId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

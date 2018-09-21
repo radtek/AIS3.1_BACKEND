@@ -296,4 +296,7 @@
     where anesSumVisId = #{anesSumVisId,jdbcType=VARCHAR}
   </update>
 
+  <delete id="deleteByAnaSumId" parameterType="java.lang.String" >
+    delete from doc_anaes_summary_appendix_visit where anaSumId = #{anaSumId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

@@ -673,8 +673,8 @@ o.designedAnaesMethodName,(select name from bas_user where bas_user.userName = a
 			AND ( (ISNULL(o.operaDate) OR LENGTH(TRIM(o.operaDate)) &lt; 1 )  OR  a.`startTime` IS  NULL 
 					OR a.`circunurseId1` IS NULL  OR a.`circunurseId1`='' or a.operRoomId IS NULL OR a.pcs IS NULL )
 			</if>
-			<if test="baseQuery.type ==2 ">
-			AND (ISNULL(a.anesthetistId) or a.anesthetistId ='') and o.isLocalAnaes = 0
+			<if test="baseQuery.type ==2 "><!-- 局麻也要排麻醉医生 -->
+			AND (ISNULL(a.anesthetistId) or a.anesthetistId ='') <!-- and o.isLocalAnaes = 0 -->
 			</if>
 			<if test="baseQuery.operDate != null and baseQuery.operDate != ''">
 			    AND o.operaDate = #{baseQuery.operDate}
@@ -784,6 +784,42 @@ o.designedAnaesMethodName,(select name from bas_user where bas_user.userName = a
 		 order by CONVERT(a.operRoomId,SIGNED),a.pcs asc
 	</select>
 	
+	<select id="printSchudleSYBX" resultType="com.digihealth.anesthesia.basedata.formbean.SearchDispatchFormBean">
+	select (SELECT m.name FROM bas_operroom m WHERE a.operRoomId = m.operRoomId AND m.beid = #{baseQuery.beid}) AS operRoomName,a.operRoomId,a.pcs,a.startTime,o.deptName,o.bed,o.sex,o.age,o.ageMon,o.ageDay,o.hid,o.operaDate,
+	o.name as regOptName,o.designedOptName,o.operatorName,o.assistantName,o.designedAnaesMethodName,o.diagnosisName,o.state,o.regOptId,
+	concat_ws(',',IF(o.frontOperSpecialCase = '',NULL,o.frontOperSpecialCase),IF(o.remark='',NULL,o.remark)) remark,
+	(select name from bas_user where bas_user.username = a.instrnurseId1 and bas_user.beid = #{baseQuery.beid})instrnurseName1,instrnurseId1 ,
+		(select name from bas_user where bas_user.username = a.circunurseId1 and bas_user.beid = #{baseQuery.beid})circunurseName1,circunurseId1,
+		(select name from bas_user where bas_user.username = a.anesthetistId and bas_user.beid = #{baseQuery.beid})anesthetistName,anesthetistId,
+		(select name from bas_user where bas_user.username = a.circuanesthetistId and bas_user.beid = #{baseQuery.beid})circuanesthetistName,circuanesthetistId,
+		(select name from bas_user where bas_user.username = a.perfusiondoctorId and bas_user.beid = #{baseQuery.beid})perfusiondoctorName,perfusiondoctorId,
+		(select name from bas_user where bas_user.username = a.instrnurseId2 and bas_user.beid = #{baseQuery.beid})instrnurseName2,instrnurseId2,
+		(select name from bas_user where bas_user.username = a.circunurseId2 and bas_user.beid = #{baseQuery.beid})circunurseName2,circunurseId2,
+		o.optLevel,CASE o.cutLevel 
+		WHEN 1 THEN 'I'
+		WHEN 2 THEN 'II'
+		WHEN 3 THEN 'III'
+		WHEN 4 THEN 'IV'
+		END  AS cutLevelName,
+		(select codeName from bas_sys_dict_item where groupId = 'pac_type' and codeValue = a.pcs and beid = #{baseQuery.beid}) as pcsName
+		FROM bas_dispatch a left join bas_reg_opt o on a.regOptId = o.regOptId
+		where 1 = 1 AND o.beid = #{baseQuery.beid}
+			<!-- and  o.state !='02'
+			AND a.isHold is not null -->
+			<!-- 只要排了麻醉医生就可以打印排班 -->
+			and (o.state not in('01','08') AND (a.anesthetistId IS NOT NULL OR a.circunurseId1 IS NOT NULL))
+		<if test="baseQuery.operDate != null and baseQuery.operDate != ''">
+			AND DATE_FORMAT(o.operaDate,'%Y-%m-%d') = #{baseQuery.operDate}
+		</if>
+		<if test="baseQuery.name != null and baseQuery.name != ''">
+			AND o.name LIKE CONCAT(CONCAT('%',#{baseQuery.name}),'%')
+		</if>
+		<if test="baseQuery.hid != null and baseQuery.hid != ''">
+			AND o.hid = #{baseQuery.hid}
+		</if>
+		 order by CONVERT(a.operRoomId,SIGNED),a.pcs asc
+	</select>
+
 	<update id="cancelDispatch">
 		update bas_dispatch set operRoomId = null ,operRoomName = NULL,pcs = NULL,
 		instrnurseId1 = NULL,circunurseId1 = NULL,instrnurseId2 = NULL,circunurseId2 = NULL,

@@ -27,6 +27,7 @@ public interface DocAccedeDao {
 
     int updateByPrimaryKey(DocAccede record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 	/**
 	 * 
 	 * @discription 根据手术ID获取麻醉同意书

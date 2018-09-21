@@ -1217,7 +1217,27 @@ public class HisInterfaceServiceSYZXYY
     	regOpt.setOperaDate(row.getOperDate());
     	regOpt.setStartTime(row.getOperStartTime());
     	regOpt.setCreateTime(DateUtils.getDateTime());
-        regOpt.setOptLevel(row.getOperLevel());
+        //regOpt.setOptLevel(row.getOperLevel());
+        
+        
+        //手术等级
+        if("Ⅰ级".equals(row.getOperLevel()) || "1".equals(row.getOperLevel()) || "一级".equals(row.getOperLevel()) || "一".equals(row.getOperLevel()))
+        {
+            regOpt.setOptLevel("一级");
+        }
+        else if("Ⅱ级".equals(row.getOperLevel()) || "2".equals(row.getOperLevel()) || "二级".equals(row.getOperLevel()) || "二".equals(row.getOperLevel()))
+        {
+            regOpt.setOptLevel("二级");
+        }
+        else if("Ⅲ级".equals(row.getOperLevel()) || "3".equals(row.getOperLevel()) || "三级".equals(row.getOperLevel()) || "三".equals(row.getOperLevel()))
+        {
+            regOpt.setOptLevel("三级");
+        }
+        else if("Ⅳ级".equals(row.getOperLevel()) || "4".equals(row.getOperLevel()) || "四级".equals(row.getOperLevel()) || "四".equals(row.getOperLevel()))
+        {
+            regOpt.setOptLevel("四级");
+        }
+        
 
         //regOpt.setRegionId(row.getRegionId().trim());
         

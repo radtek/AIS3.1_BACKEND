@@ -28,6 +28,8 @@ public interface DocSafeCheckDao extends CrudDao<DocSafeCheck>{
 
     int updateByPrimaryKey(DocSafeCheck record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
 	/**
 	 * 
 	 * @discription 根据手术ID获取手术核查

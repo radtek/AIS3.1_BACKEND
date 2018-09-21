@@ -19,6 +19,19 @@
     id, insuredId, regOptId, type, time, code, name, spec, price, reason, kind
   </sql>
 
+  <select id="selectEntityList" resultMap="BaseResultMap" parameterType="com.digihealth.anesthesia.doc.po.DocInsuredItem" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_insured_item
+    where 1=1 
+    <if test="id != '' and id != null">AND id = #{id} </if>
+    <if test="name != '' and name !=null">AND name LIKE CONCAT('%',#{name},'%') </if>
+    <if test="insuredId != '' and insuredId != null">AND insuredId = #{insuredId} </if>
+    <if test="type != null">AND type = #{type} </if>
+    <if test="code != '' and code != null">AND code = #{code} </if>
+    <if test="kind != null">AND kind = #{kind} </if>
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />

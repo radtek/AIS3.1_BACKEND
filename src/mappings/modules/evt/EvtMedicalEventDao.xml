@@ -102,7 +102,7 @@
   <select id="getMedicalGroupByNameList" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperMedicaleventFormBean">
 		SELECT
       	b.medicineId code,b.`name`,a.thickness,a.thicknessUnit,a.`durable`,b.dosageUnit, 
-      	b.packageDosageAmount, p.minPackageUnit unit, p.priceMinPackage, b.spec,a.proportion
+      	b.packageDosageAmount, p.minPackageUnit unit, p.priceMinPackage, b.spec,a.proportion, b.showMedWay
 		FROM evt_medicalevent a 
 		 join bas_medicine b on a.medicineId=b.medicineId 
 		 left join bas_price p on ( p.code = b.code and p.beid = b.beid )

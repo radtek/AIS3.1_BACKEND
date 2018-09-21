@@ -28,4 +28,6 @@ public interface DocPrePostVisitDao extends CrudDao<DocPrePostVisit>{
     int updateByPrimaryKey(DocPrePostVisit record);
 
     DocPrePostVisit selectByRegOptId(@Param("regOptId") String regOptId);
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

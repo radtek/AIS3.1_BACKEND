@@ -63,6 +63,10 @@
     where accedeId = #{accedeId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_accede where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAccede" >
     insert into doc_accede (accedeId, regOptId, other, 
       anaestheitistId, anaestheitistSignTime, 

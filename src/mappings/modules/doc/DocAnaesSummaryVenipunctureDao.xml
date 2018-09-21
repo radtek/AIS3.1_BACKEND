@@ -38,6 +38,11 @@
     where anesSumVenId = #{anesSumVenId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByAnaSumId" parameterType="java.lang.String" >
+    delete from doc_anaes_summary_venipuncture
+    where anaSumId = #{anaSumId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesSummaryVenipuncture" >
     insert into doc_anaes_summary_venipuncture (anesSumVenId, anaSumId, pneumothorax, 
       hemothorax, localHematoma, ductalAnomaly, 

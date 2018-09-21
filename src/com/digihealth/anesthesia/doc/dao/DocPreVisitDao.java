@@ -32,6 +32,7 @@ public interface DocPreVisitDao extends CrudDao<DocPreVisit>{
 
     int updateByPrimaryKey(DocPreVisit record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 	/**
 	 * 
 	 * @discription 根据手术ID获取术前访视单信息

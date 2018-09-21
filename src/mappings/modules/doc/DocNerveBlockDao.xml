@@ -169,4 +169,7 @@
     where nerveBlockId = #{nerveBlockId,jdbcType=VARCHAR}
   </update>
 
+  <delete id="deleteByAnaSumId" parameterType="java.lang.String" >
+    delete from doc_nerve_block where anaSumId = #{anaSumId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

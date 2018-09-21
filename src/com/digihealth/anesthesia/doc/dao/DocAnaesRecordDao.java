@@ -37,7 +37,8 @@ public interface DocAnaesRecordDao extends CrudDao<DocAnaesRecord> {
 	 * @return
 	 */
 	public DocAnaesRecord searchAnaesRecordByRegOptId(@Param("regOptId") String regOptId);
-	
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 	/**
 	 * 
 	     * @discription 根据ID获取麻醉记录

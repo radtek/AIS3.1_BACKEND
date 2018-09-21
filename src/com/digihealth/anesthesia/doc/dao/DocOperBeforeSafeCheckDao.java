@@ -28,6 +28,8 @@ public interface DocOperBeforeSafeCheckDao extends CrudDao<DocOperBeforeSafeChec
 
     int updateByPrimaryKey(DocOperBeforeSafeCheck record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
 	/**
 	 * 
 	 * @discription 根据手术ID获取手术前核查

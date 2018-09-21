@@ -31,4 +31,6 @@ public interface DocSpinalCanalPunctureDao extends CrudDao<DocSpinalCanalPunctur
     int updateByPrimaryKey(DocSpinalCanalPuncture record);
 
 	public List<DocSpinalCanalPuncture> searchSpinalCanalPunctureList(@Param("searchBean")SearchFormBean searchBean);
+
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
 }

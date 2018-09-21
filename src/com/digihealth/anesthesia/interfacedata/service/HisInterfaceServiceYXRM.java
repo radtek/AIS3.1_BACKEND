@@ -157,9 +157,12 @@ public class HisInterfaceServiceYXRM
     	BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
     	if(null != regOpt)
     	{
-    		String reservenumber = "";
-    		reservenumber = regOpt.getPreengagementnumber();
     		StateObj stateObj = new StateObj();
+    		String reservenumber = "";
+    		if(StringUtils.isNotBlank(regOpt.getPreengagementnumber()))
+    		{
+    			reservenumber = regOpt.getPreengagementnumber();
+    		}
     		stateObj.setReservenumber(reservenumber);
     		stateObj.setState(state);
     		String incisionLevel = "";
@@ -197,26 +200,56 @@ public class HisInterfaceServiceYXRM
     		}
     		stateObj.setAssistantName(name1);
 			stateObj.setAssistantName2(name2);
-			
-    		stateObj.setOperatorName(regOpt.getOperatorName());
-    		stateObj.setAnesthetistName(dispatch.getAnesthetistName());
+			String operatorName = "";
+			if(StringUtils.isNotBlank(regOpt.getOperatorName()))
+			{
+				operatorName = regOpt.getOperatorName();
+			}
+    		stateObj.setOperatorName(operatorName);
+    		
+    		String anesthetistName = "";
+    		if(StringUtils.isNotBlank(dispatch.getAnesthetistName()))
+    		{
+    			anesthetistName = dispatch.getAnesthetistName();
+    		}
+    		stateObj.setAnesthetistName(anesthetistName);
+    		
     		Integer emergency = regOpt.getEmergency();
-    		stateObj.setEmergency(emergency);
+    		if(null != emergency)
+    		{
+    			stateObj.setEmergency(emergency);
+    		}else
+    		{
+    			stateObj.setEmergency(0);
+    		}
+    		
     		
     		String anaesMethodName = "";
     		String operStartTime = "";
     		String operEndTime = "";
     		String realOperationCode = "";
     		String realOperationName = "";
+    		
+    		Integer isLocalAnaes = regOpt.getIsLocalAnaes();
     		//局麻 
-    		if(null != emergency && emergency.intValue() == 1)
+    		if(null != isLocalAnaes && isLocalAnaes.intValue() == 1)
     		{
     			DocOptCareRecord optCareRecord = docOptCareRecordDao.selectByRegOptId(regOptId);
     			if(null != optCareRecord)
     			{
-    				anaesMethodName = optCareRecord.getAnaesMethodName();
-    				operStartTime = optCareRecord.getInOperRoomTime();
-    				operEndTime = optCareRecord.getOutOperRoomTime();
+    				if(StringUtils.isNotBlank(optCareRecord.getAnaesMethodName()))
+    				{
+    					anaesMethodName = optCareRecord.getAnaesMethodName();
+    				}
+    				if(StringUtils.isNotBlank(optCareRecord.getInOperRoomTime()))
+    				{
+    					operStartTime = optCareRecord.getInOperRoomTime();
+    				}
+    				if(StringUtils.isNotBlank(optCareRecord.getOutOperRoomTime()))
+    				{
+    					operEndTime = optCareRecord.getOutOperRoomTime();
+    				}
+    				
             		//转换成HIS的code
             		List<String> operationCode = new ArrayList<String>();
             		String codes = optCareRecord.getOperationCode();
@@ -232,8 +265,14 @@ public class HisInterfaceServiceYXRM
             				}
             			}
             		}
-            		realOperationCode = StringUtils.getStringByList(operationCode);
-            		realOperationName = optCareRecord.getOperationName();
+            		if(null != operationCode && operationCode.size()>0)
+            		{
+            			realOperationCode = StringUtils.getStringByList(operationCode);
+            		}
+            		if(StringUtils.isNotBlank(optCareRecord.getOperationName()))
+            		{
+            			realOperationName = optCareRecord.getOperationName();
+            		}
     			}	
     		}else{
     			//全麻
@@ -253,9 +292,18 @@ public class HisInterfaceServiceYXRM
         				anaesMethodNames.add(evtAnaesMethodFormBean.getName());
         			}
         		}
-        		anaesMethodName = StringUtils.getStringByList(anaesMethodNames);
-        		operStartTime = anaesRecord.getOperStartTime();
-        		operEndTime = anaesRecord.getOperEndTime();
+        		if(null != anaesMethodNames && anaesMethodNames.size()>0)
+				{
+        			anaesMethodName = StringUtils.getStringByList(anaesMethodNames);
+				}
+        		if(StringUtils.isNotBlank(anaesRecord.getOperStartTime()))
+				{
+        			operStartTime = anaesRecord.getOperStartTime();
+				}
+        		if(StringUtils.isNotBlank(anaesRecord.getOperEndTime()))
+				{
+        			operEndTime = anaesRecord.getOperEndTime();
+				}
         		
         		List<String> operDefNames = new ArrayList<String>();
         		List<String> operDefCodes = new ArrayList<String>();
@@ -268,8 +316,15 @@ public class HisInterfaceServiceYXRM
                         operDefCodes.add(operDefFormBean.getCode());
                     }
                 }
-                realOperationCode = StringUtils.getStringByList(operDefCodes);
-                realOperationName = StringUtils.getStringByList(operDefNames);
+                if(null != operDefCodes && operDefCodes.size()>0)
+                {
+                	realOperationCode = StringUtils.getStringByList(operDefCodes);
+                }
+                if(null != operDefNames && operDefNames.size()>0)
+                {
+                	realOperationName = StringUtils.getStringByList(operDefNames);
+                }
+                
     		}
     		stateObj.setAnaesMethodName(anaesMethodName);
     		stateObj.setOperStartTime(operStartTime);

@@ -12,10 +12,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.digihealth.anesthesia.common.persistence.CrudDao;
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
 import com.digihealth.anesthesia.doc.po.DocInsuredItem;
 @MyBatisDao
-public interface DocInsuredItemDao {
+public interface DocInsuredItemDao extends CrudDao<DocInsuredItem> {
     int deleteByPrimaryKey(String id);
 
     int insert(DocInsuredItem record);

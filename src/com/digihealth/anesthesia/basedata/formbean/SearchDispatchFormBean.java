@@ -73,10 +73,10 @@ public class SearchDispatchFormBean implements Serializable {
 	 * 灌注医生id
 	 */
 	@ApiModelProperty(value = "灌注医生id")
-	private String perfusiondoctorId;
+	private String perfusionDoctorId;
 
 	@ApiModelProperty(value = "灌注医生")
-	private String perfusiondoctorName;
+	private String perfusionDoctorName;
 	/**
 	 * 排班时间
 	 */
@@ -149,7 +149,7 @@ public class SearchDispatchFormBean implements Serializable {
 
 	@ApiModelProperty(value = "手术医生名称")
 	private String operaDate;
-	
+
 	@ApiModelProperty(value = "手术医生名称")
 	private String operatorName;
 
@@ -182,63 +182,55 @@ public class SearchDispatchFormBean implements Serializable {
 
 	@ApiModelProperty(value = "台次")
 	private String pcs;
-	
+
 	@ApiModelProperty(value = "台次名称")
-    private String pcsName;
+	private String pcsName;
 
 	@ApiModelProperty(value = "备注")
 	private String remark;
-	
+
 	@ApiModelProperty(value = "手术等级")
 	private String optLevel;
-	
+
 	@ApiModelProperty(value = "切口等级")
 	private Integer cutLevel;
-	
+
 	@ApiModelProperty(value = "切口等级名称")
-    private String cutLevelName;
-	
-	public String getPcsName()
-    {
-        return pcsName;
-    }
+	private String cutLevelName;
 
-    public void setPcsName(String pcsName)
-    {
-        this.pcsName = pcsName;
-    }
+	public String getPcsName() {
+		return pcsName;
+	}
 
-    public String getCutLevelName()
-    {
-        return cutLevelName;
-    }
+	public void setPcsName(String pcsName) {
+		this.pcsName = pcsName;
+	}
 
-    public void setCutLevelName(String cutLevelName)
-    {
-        this.cutLevelName = cutLevelName;
-    }
+	public String getCutLevelName() {
+		return cutLevelName;
+	}
 
-    public String getOptLevel()
-    {
-        return optLevel;
-    }
+	public void setCutLevelName(String cutLevelName) {
+		this.cutLevelName = cutLevelName;
+	}
 
-    public void setOptLevel(String optLevel)
-    {
-        this.optLevel = optLevel;
-    }
+	public String getOptLevel() {
+		return optLevel;
+	}
 
-    public Integer getCutLevel()
-    {
-        return cutLevel;
-    }
+	public void setOptLevel(String optLevel) {
+		this.optLevel = optLevel;
+	}
 
-    public void setCutLevel(Integer cutLevel)
-    {
-        this.cutLevel = cutLevel;
-    }
+	public Integer getCutLevel() {
+		return cutLevel;
+	}
 
-    public String getRemark() {
+	public void setCutLevel(Integer cutLevel) {
+		this.cutLevel = cutLevel;
+	}
+
+	public String getRemark() {
 		return remark;
 	}
 
@@ -359,7 +351,9 @@ public class SearchDispatchFormBean implements Serializable {
 	}
 
 	public String getOperatorName() {
-		return operatorName + (StringUtils.isEmpty(assistantName) ? "" : "," + assistantName);
+		return operatorName
+				+ (StringUtils.isEmpty(assistantName) ? "" : ","
+						+ assistantName);
 	}
 
 	public void setOperatorName(String operatorName) {
@@ -495,7 +489,8 @@ public class SearchDispatchFormBean implements Serializable {
 	}
 
 	public String getAnesthetistName() {
-		//return anesthetistName + (StringUtils.isNotBlank(perfusiondoctorName) ? "," + perfusiondoctorName : "");
+		// return anesthetistName + (StringUtils.isNotBlank(perfusiondoctorName)
+		// ? "," + perfusiondoctorName : "");
 		return anesthetistName;
 	}
 
@@ -503,40 +498,36 @@ public class SearchDispatchFormBean implements Serializable {
 		this.anesthetistName = anesthetistName;
 	}
 
-	public String getCircuAnesthetistId()
-    {
-        return circuAnesthetistId;
-    }
-
-    public void setCircuAnesthetistId(String circuAnesthetistId)
-    {
-        this.circuAnesthetistId = circuAnesthetistId;
-    }
-
-    public String getCircuAnesthetistName()
-    {
-        return circuAnesthetistName;
-    }
-
-    public void setCircuAnesthetistName(String circuAnesthetistName)
-    {
-        this.circuAnesthetistName = circuAnesthetistName;
-    }
-
-    public String getPerfusiondoctorId() {
-		return perfusiondoctorId;
+	public String getCircuAnesthetistId() {
+		return circuAnesthetistId;
 	}
 
-	public void setPerfusiondoctorId(String perfusiondoctorId) {
-		this.perfusiondoctorId = perfusiondoctorId;
+	public void setCircuAnesthetistId(String circuAnesthetistId) {
+		this.circuAnesthetistId = circuAnesthetistId;
 	}
 
-	public String getPerfusiondoctorName() {
-		return perfusiondoctorName;
+	public String getCircuAnesthetistName() {
+		return circuAnesthetistName;
 	}
 
-	public void setPerfusiondoctorName(String perfusiondoctorName) {
-		this.perfusiondoctorName = perfusiondoctorName;
+	public void setCircuAnesthetistName(String circuAnesthetistName) {
+		this.circuAnesthetistName = circuAnesthetistName;
+	}
+
+	public String getPerfusionDoctorId() {
+		return perfusionDoctorId;
+	}
+
+	public void setPerfusionDoctorId(String perfusionDoctorId) {
+		this.perfusionDoctorId = perfusionDoctorId;
+	}
+
+	public String getPerfusionDoctorName() {
+		return perfusionDoctorName;
+	}
+
+	public void setPerfusionDoctorName(String perfusionDoctorName) {
+		this.perfusionDoctorName = perfusionDoctorName;
 	}
 
 	public String getInstrnurseId2() {

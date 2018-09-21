@@ -27,6 +27,8 @@ public interface DocAnaesBeforeSafeCheckDao {
 
     int updateByPrimaryKey(DocAnaesBeforeSafeCheck record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
 	/**
 	 * 
 	 * @discription 根据手术ID获取麻醉前核查

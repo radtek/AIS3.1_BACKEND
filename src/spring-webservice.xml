@@ -17,5 +17,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	<!-- WebService的实现Bean定义 -->
 
 	<!-- 永兴人民医院webservice接口  -->
-	<jaxws:endpoint id="RxrmService" implementor="#rxmServiceImpl" address="/soap/rxrmService" /> 
+	<jaxws:endpoint id="RxrmService" implementor="#rxmServiceImpl" address="/soap/rxrmService" />
+	<!-- 本溪市中心医院webservice接口  -->
+	<jaxws:endpoint id="SybxService" implementor="#sybxServiceImpl" address="/soap/sybxService" /> 
 </beans>

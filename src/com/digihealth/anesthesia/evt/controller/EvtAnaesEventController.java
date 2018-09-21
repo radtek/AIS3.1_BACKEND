@@ -115,24 +115,33 @@ public class EvtAnaesEventController extends BaseController {
         logger.info("begin saveAnaeseventSYBX");
         ResponseValue resp = new ResponseValue();
         if (anaesevent != null) {
+        	boolean flag = false;
+        	SearchFormBean searchBean = new SearchFormBean();
+        	searchBean.setDocId(anaesevent.getDocId());
+        	searchBean.setCode(String.valueOf(EvtAnaesEventService.OPER_START));
+        	List<EvtAnaesEvent> lst = evtAnaesEventService.searchAnaeseventList(searchBean);
+        	if (!lst.isEmpty() && lst.size() > 0) {
+        		flag = true;
+        	}
             evtAnaesEventService.saveAnaesevent(anaesevent, resp);
             resp.put("anaEventId", anaesevent.getAnaEventId());
-            SearchFormBean searchBean = new SearchFormBean();
-            searchBean.setDocId(anaesevent.getDocId());
+            searchBean.setCode(null);
             List<EvtAnaesEvent> resultList = evtAnaesEventService.searchAnaeseventList(searchBean);
             resp.put("resultList", resultList);
             
             //如果是手术开始，则将排程信息回传到his
             if (EvtAnaesEventService.OPER_START.equals(anaesevent.getCode())) {
-                String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
-                if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)) {
-	                DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordById(anaesevent.getDocId());
-	                logger.info("===============================发送排程信息到his===========================================");
-	                OperBaseDataServiceSYBX operBaseDataServiceSYBX = SpringContextHolder.getBean(OperBaseDataServiceSYBX.class);
-	                if(null != operBaseDataServiceSYBX) {
-	                	operBaseDataServiceSYBX.sendScheduleToHis(anaesRecord.getRegOptId());
-	                }
-                }
+            	if (!flag) {
+                    String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
+                    if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)) {
+    	                DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordById(anaesevent.getDocId());
+    	                logger.info("===============================发送排程信息到his===========================================");
+    	                OperBaseDataServiceSYBX operBaseDataServiceSYBX = SpringContextHolder.getBean(OperBaseDataServiceSYBX.class);
+    	                if(null != operBaseDataServiceSYBX) {
+    	                	operBaseDataServiceSYBX.sendScheduleToHis(anaesRecord.getRegOptId());
+    	                }
+                    }
+				}
             }
         } else {
             resp.setResultCode("70000000");

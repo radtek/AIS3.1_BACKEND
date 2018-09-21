@@ -149,25 +149,26 @@ public class BasDispatchService extends BaseService {
         if (StringUtils.isBlank(baseQuery.getBeid())) {
             baseQuery.setBeid(getBeid());
         }
-        List<SearchDispatchFormBean> list = basDispatchDao.printSchudle(baseQuery);
+        List<SearchDispatchFormBean> list = basDispatchDao.printSchudleSYBX(baseQuery);
         if (null != list && list.size() > 0)
         {
             for (SearchDispatchFormBean sd : list)
             {
                 String anesthetistName = sd.getAnesthetistName();
-                String perfusiondoctorName = sd.getPerfusiondoctorName();
-                if (StringUtils.isNotBlank(anesthetistName) && StringUtils.isNotBlank(perfusiondoctorName))
-                {
-                    sd.setAnesthetistName(anesthetistName + "," + perfusiondoctorName);
-                }
-                else if (StringUtils.isNotBlank(anesthetistName) && StringUtils.isBlank(perfusiondoctorName))
-                {
-                    sd.setAnesthetistName(anesthetistName);
-                }
-                else if (StringUtils.isBlank(anesthetistName) && StringUtils.isNotBlank(perfusiondoctorName))
-                {
-                    sd.setAnesthetistName(perfusiondoctorName);
-                }
+                String perfusiondoctorName = "";
+                String perfusiondoctorId = sd.getPerfusionDoctorId();
+                if (StringUtils.isNotBlank(perfusiondoctorId)) {
+                	String[] perfusiondoctorIds = perfusiondoctorId.split(",");
+                	for (String id : perfusiondoctorIds) {
+                		if (StringUtils.isBlank(perfusiondoctorName)) {
+                			perfusiondoctorName = basUserDao.selectNameByUserName(id, getBeid());
+                		}else {
+                			perfusiondoctorName += "," + basUserDao.selectNameByUserName(id, getBeid());
+                		}
+                	}
+				}
+        		sd.setAnesthetistName(anesthetistName);
+        		sd.setPerfusionDoctorName(perfusiondoctorName);
                    
                 String instrnurseName1 = sd.getInstrnurseName1();
                 String instrnurseName2 = sd.getInstrnurseName2();
@@ -750,8 +751,11 @@ public class BasDispatchService extends BaseService {
     	List<BasDispatch> dispatchList = new ArrayList<BasDispatch>();
     	for(BasDispatch dispatch : dispatchFormBean.getDispatchList()) {
     		BasDispatch entity = new BasDispatch();
-    		dispatch.getPerfusionDoctorIdList();
-    		dispatch.setPerfusionDoctorId(StringUtils.getStringByList(dispatch.getPerfusionDoctorIdList()));
+    		if (StringUtils.isNoneBlank(dispatch.getPerfusionDoctorId()) && (dispatch.getPerfusionDoctorIdList() == null || dispatch.getPerfusionDoctorIdList().size() == 0)) {
+    			dispatch.setPerfusionDoctorId(dispatch.getPerfusionDoctorId());
+			}else {
+				dispatch.setPerfusionDoctorId(StringUtils.getStringByList(dispatch.getPerfusionDoctorIdList()));
+			}
     		BeanUtils.copyProperties(dispatch, entity);
     		dispatchList.add(entity);
     	}
@@ -951,7 +955,20 @@ public class BasDispatchService extends BaseService {
                 participantList.add(participant);
                 saveParticipant(participantList);
             }
-            
+
+            if (StringUtils.isNotBlank(dispatch.getPerfusionDoctorId())) {
+                List<EvtParticipant> participantList = new ArrayList<EvtParticipant>();
+                String[] perfusionDoctorId = dispatch.getPerfusionDoctorId().split(",");
+                for (String id : perfusionDoctorId) {
+                	EvtParticipant participant = new EvtParticipant();
+                	participant.setDocId(anaesRecord.getAnaRecordId());
+                	participant.setRole(EvtParticipantService.ROLE_ANESTH);
+                	participant.setUserLoginName(id);
+                	participant.setOperatorType("03"); // 巡台医生(本溪)
+                	participantList.add(participant);
+				}
+                saveParticipant(participantList);
+            }
 
             List<EvtParticipant> nurseList = new ArrayList<EvtParticipant>();
             // 第一巡回护士

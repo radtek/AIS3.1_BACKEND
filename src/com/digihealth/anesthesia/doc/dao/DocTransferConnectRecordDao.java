@@ -29,4 +29,6 @@ public interface DocTransferConnectRecordDao {
     int updateByPrimaryKey(DocTransferConnectRecord record);
     
     public DocTransferConnectRecord selectByRegOptId(@Param("regOptId") String regOptId);
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

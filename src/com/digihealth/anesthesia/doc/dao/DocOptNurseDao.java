@@ -28,6 +28,8 @@ public interface DocOptNurseDao extends CrudDao<DocOptNurse>{
 
     int updateByPrimaryKey(DocOptNurse record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
 	/**
 	 * 
 	 * @discription 根据手术ID获取手术护理

@@ -435,8 +435,20 @@ public class BasRegOpt {
 	
 	private String pacuId;
 	
+	private String analgesicMethod; //镇痛方式
 	
 	
+	
+    public String getAnalgesicMethod()
+    {
+        return analgesicMethod;
+    }
+
+    public void setAnalgesicMethod(String analgesicMethod)
+    {
+        this.analgesicMethod = analgesicMethod;
+    }
+
     public String getPacuId() {
 		return pacuId;
 	}

@@ -192,6 +192,8 @@ public interface BasRegOptDao extends CrudDao<BasRegOpt>{
 	public BasRegOpt selectByState(@Param("roomId")String roomId,@Param("state")String state,@Param("beid")String beid);
 
 	public int selectHisToRegOpt(@Param("preengagementnumber")String preengagementnumber,@Param("operaDate")String operaDate,@Param("beid")String beid);
+
+	public BasRegOpt selectHisToRegOptSYBX(@Param("preengagementnumber")String preengagementnumber,@Param("hid")String hid,@Param("beid")String beid);
 	
 	public int saveRegOptWH(BasRegOpt regOpt);
 

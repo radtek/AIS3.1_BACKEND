@@ -28,6 +28,8 @@ public interface DocOptRiskEvaluationDao extends CrudDao<DocOptRiskEvaluation>{
 
     int updateByPrimaryKey(DocOptRiskEvaluation record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
 	/**
 	 * 
 	 * @discription 根据手术ID获取手术风险评估

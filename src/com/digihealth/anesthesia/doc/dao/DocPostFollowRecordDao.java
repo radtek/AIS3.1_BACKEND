@@ -30,4 +30,5 @@ public interface DocPostFollowRecordDao extends CrudDao<DocPostFollowRecord>{
 
     DocPostFollowRecord searchFollowRecordByRegOptId(@Param("regOptId") String regOptId, @Param("beid") String beid);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

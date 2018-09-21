@@ -32,4 +32,6 @@ public interface DocNerveBlockDao extends CrudDao<DocNerveBlock>{
     int updateByPrimaryKey(DocNerveBlock record);
 
 	public List<DocNerveBlock> searchNerveBlockList(@Param("searchBean")SearchFormBean searchBean);
+	
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
 }

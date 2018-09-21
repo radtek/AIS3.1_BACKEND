@@ -34,4 +34,6 @@ public interface DocAnaesSummaryDao extends CrudDao<DocAnaesSummary>{
 	public List<DocAnaesSummary> searchAnaesSummaryList(@Param("searchBean")SearchFormBean searchBean);
 	
 	public DocAnaesSummary getAnaesSummaryByRegOptId(@Param("regOptId")String regOptId);
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

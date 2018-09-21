@@ -380,7 +380,7 @@ public class DocAccede {
 
 	public List<String> getAnaesMethodList()
     {
-        return anaesMethodList;
+        return null == anaesMethodList ? new ArrayList<String>() : anaesMethodList;
     }
 
     public void setAnaesMethodList(List<String> anaesMethodList)
@@ -421,7 +421,7 @@ public class DocAccede {
 	}
 
 	public List<String> getAnaesAssistMeasureList() {
-		return anaesAssistMeasureList;
+		return null == anaesAssistMeasureList ? new ArrayList<String>() : anaesAssistMeasureList;
 	}
 
 	public void setAnaesAssistMeasureList(List<String> anaesAssistMeasureList) {

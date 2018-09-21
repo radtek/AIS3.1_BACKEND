@@ -32,4 +32,6 @@ public interface DocGeneralAnaesDao extends CrudDao<DocGeneralAnaes>{
     int updateByPrimaryKey(DocGeneralAnaes record);
 
 	public List<DocGeneralAnaes> searchGeneralAnaesList(@Param("searchBean")SearchFormBean searchBean);
+    
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
 }

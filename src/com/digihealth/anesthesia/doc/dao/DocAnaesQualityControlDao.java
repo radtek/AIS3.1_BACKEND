@@ -28,4 +28,6 @@ public interface DocAnaesQualityControlDao {
     int updateByPrimaryKey(DocAnaesQualityControl record);
     
     DocAnaesQualityControl selectAnaesQualityControlByRegOptId(@Param("regOptId")String regOptId);
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

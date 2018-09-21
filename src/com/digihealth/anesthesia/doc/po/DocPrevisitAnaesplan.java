@@ -8,6 +8,8 @@
  */
 package com.digihealth.anesthesia.doc.po;
 
+import java.util.Map;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -132,8 +134,36 @@ public class DocPrevisitAnaesplan {
 	 */
 	@ApiModelProperty(value = "综合ASA E分级")
 	private String asaE;
+	
+	/**
+     * 风险防范措施
+     */
+    @ApiModelProperty(value = "风险防范措施")
+	private String riskPreventMeasure;
+    
+    private Map<String, Object> riskPreventMeasureMap;
 
-	public String getId() {
+	public Map<String, Object> getRiskPreventMeasureMap()
+    {
+        return riskPreventMeasureMap;
+    }
+
+    public void setRiskPreventMeasureMap(Map<String, Object> riskPreventMeasureMap)
+    {
+        this.riskPreventMeasureMap = riskPreventMeasureMap;
+    }
+
+    public String getRiskPreventMeasure()
+    {
+        return riskPreventMeasure;
+    }
+
+    public void setRiskPreventMeasure(String riskPreventMeasure)
+    {
+        this.riskPreventMeasure = riskPreventMeasure;
+    }
+
+    public String getId() {
 		return id;
 	}
 

@@ -21,6 +21,17 @@ public class RegOptOperMedicaleventFormBean {
     private String medWay; //用药方式，红白处方用该字段
     private String spec; //规格
     private String proportion; //比重
+    private Integer showMedWay;  //是否显示用药方式
+
+    public Integer getShowMedWay()
+    {
+        return showMedWay;
+    }
+
+    public void setShowMedWay(Integer showMedWay)
+    {
+        this.showMedWay = showMedWay;
+    }
 
     public String getProportion()
     {

@@ -127,8 +127,19 @@ public class SearchRegOptByLoginNameAndStateFormBean implements Serializable {
 	
 	private String operSource;//是否门诊;0-住院,1-门诊
 	
+	private String analgesicMethod; //镇痛方式
 	
 	
+    public String getAnalgesicMethod()
+    {
+        return analgesicMethod;
+    }
+
+    public void setAnalgesicMethod(String analgesicMethod)
+    {
+        this.analgesicMethod = analgesicMethod;
+    }
+
     public String getOperSource() {
 		return operSource;
 	}

@@ -214,6 +214,8 @@ public class DocPreVisitService extends BaseService {
 			previsitAccessexam.setId(GenerateSequenceUtil.generateSequenceNo());
 			docPrevisitAccessexamDao.insertSelective(previsitAccessexam);
 		}
+		
+		previsitAnaesplan.setRiskPreventMeasure(String.valueOf(previsitAnaesplan.getRiskPreventMeasureMap()));
 		if(docPrevisitAnaesplanDao.selectByPreVisitId(preVisitId)!=null){
 			docPrevisitAnaesplanDao.updateByPrimaryKeySelective(previsitAnaesplan);
 		}else{

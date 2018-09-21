@@ -21,6 +21,7 @@ import com.digihealth.anesthesia.basedata.formbean.DiagnosedefFormBean;
 import com.digihealth.anesthesia.basedata.formbean.OperDefFormBean;
 import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
 import com.digihealth.anesthesia.basedata.formbean.SystemSearchFormBean;
+import com.digihealth.anesthesia.basedata.po.BasAnaesMethod;
 import com.digihealth.anesthesia.basedata.po.BasDeviceConfig;
 import com.digihealth.anesthesia.basedata.po.BasDispatch;
 import com.digihealth.anesthesia.basedata.po.BasMonitorConfigFreq;
@@ -1907,6 +1908,75 @@ public class MyObserveDataController extends BaseController {
 		return res.getJsonStr();
 	}
 
+	@RequestMapping("/searchDocIsFinishedSYBX")
+	@ResponseBody
+	@ApiOperation(value = "查看非急诊的手术，是否相关文书已经完成", httpMethod = "POST", notes = "查看非急诊的手术，是否相关文书已经完成")
+	public String searchDocIsFinishedSYBX(@ApiParam(name = "params", value = "参数") @RequestBody JSONObject json) {
+		logger.info("-----------------start  searchDocIsFinishedSYBX------------------------");
+		ResponseValue res = new ResponseValue();
+		String regOptId = json.get("regOptId").toString();
+		if (StringUtils.isBlank(regOptId)) {
+			res.setResultCode("70000000");
+			res.setResultMessage(Global.getRetMsg(res.getResultCode()));
+			logger.info("-----------------end  searchDocIsFinishedSYBX------------------------");
+			return res.getJsonStr();
+		}
+		if (null != regOptId) {
+			BasRegOpt regOpt = basRegOptService.searchRegOptById(regOptId);
+			String anaMedId = regOpt.getDesignedAnaesMethodCode();
+			DocPreVisit preVisit = docPreVisitService.searchPreVisitByRegOptId(regOptId).getPreVisit();
+			DocPreOperVisit preOperVisit = docPreOperVisitService.searchPreOperVisit(regOptId);
+			DocAccede accede = docAccedeService.searchAccedeByRegOptId(regOptId);
+			BasAnaesMethod basAnaesMethod = basAnaesMethodService.searchAnaesMethodById(anaMedId);
+
+			if (null == regOpt) {
+				res.setResultCode("10000000");
+				res.setResultMessage("未查询到regOptId=" + regOptId + "的记录！");
+			} else {
+				Integer emergency = regOpt.getEmergency();
+				if (1 == emergency) {
+					res.setResultCode("10000000");
+					res.setResultMessage("手术regOptId=" + regOptId + "是急诊手术,无需检查！");
+				} else {
+					if ((null != preVisit || null != preOperVisit) && null != accede) {
+					    String pv_processState = "";
+					    if (null != preVisit)
+					    {
+					        pv_processState = preVisit.getProcessState();
+					    }
+					    if (null != preOperVisit)
+					    {
+					        pv_processState = preOperVisit.getProcessState();
+					    }
+						String accede_processState = accede.getProcessState();
+						if (basAnaesMethod != null && "0".equals(basAnaesMethod.getCate2())) {
+							if ("END".equals(pv_processState) && "END".equals(accede_processState)) {
+								res.setResultCode("1");
+								res.setResultMessage("术前访视单和麻醉同意书都已经完成！");
+							} else if (!"END".equals(pv_processState)) {
+								res.setResultCode("10000000");
+								res.setResultMessage("术前访视单未完成！");
+							} else if (!"END".equals(accede_processState)) {
+								res.setResultCode("10000000");
+								res.setResultMessage("麻醉同意书未完成！");
+							}
+						}
+
+					} else {
+						res.setResultCode("10000000");
+						res.setResultMessage("系统错误，请联系管理员！");
+					}
+				}
+			}
+		} else {
+			res.setResultCode("70000000");
+			res.setResultMessage(Global.getRetMsg(res.getResultCode()));
+		}
+
+		logger.info("-----------------end  searchDocIsFinishedSYBX------------------------");
+		return res.getJsonStr();
+	}
+
 	/**
 	 * 手术初始化
 	 * 
@@ -2467,7 +2537,7 @@ public class MyObserveDataController extends BaseController {
 	            searchBean.setAccessSource("");
 	        }
 			// 不为空则为术中访问、否则为术后访视
-			if (StringUtils.isNotBlank(accessSource)) {
+			if (StringUtils.isNotBlank(searchBean.getAccessSource())) {
 	            //如果已经是术后or中止状态，则直接返回给前端
 	            if(("06").equals(opt.getState())){ //术后状态
 	                result.put("resultCode", "40000004");

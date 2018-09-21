@@ -23,12 +23,13 @@
     <result column="anaesPrepSpecRes" property="anaesPrepSpecRes" jdbcType="VARCHAR" />
     <result column="leaveTo" property="leaveTo" jdbcType="VARCHAR" />
     <result column="asaE" property="asaE" jdbcType="VARCHAR" />
+    <result column="riskPreventMeasure" property="riskPreventMeasure" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, preVisitId, regOptId, asa, anesthIndica, scheduled, anaesType, othAnaesType, 
     genAnesPos, puncPoint, anaesPrep, anaesPrepSpec, monitorItem, monitorOther, deviceMed, 
-    otherDevMed, anaesMethChg, anaesMethChgRea, anaesPrepSpecRes, leaveTo, asaE
+    otherDevMed, anaesMethChg, anaesMethChgRea, anaesPrepSpecRes, leaveTo, asaE, riskPreventMeasure
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -57,7 +58,7 @@
       puncPoint, anaesPrep, anaesPrepSpec, 
       monitorItem, monitorOther, deviceMed, 
       otherDevMed, anaesMethChg, anaesMethChgRea, 
-      anaesPrepSpecRes, leaveTo, asaE
+      anaesPrepSpecRes, leaveTo, asaE, riskPreventMeasure
       )
     values (#{id,jdbcType=VARCHAR}, #{preVisitId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, 
       #{asa,jdbcType=VARCHAR}, #{anesthIndica,jdbcType=INTEGER}, #{scheduled,jdbcType=INTEGER}, 
@@ -65,7 +66,8 @@
       #{puncPoint,jdbcType=VARCHAR}, #{anaesPrep,jdbcType=INTEGER}, #{anaesPrepSpec,jdbcType=INTEGER}, 
       #{monitorItem,jdbcType=VARCHAR}, #{monitorOther,jdbcType=VARCHAR}, #{deviceMed,jdbcType=VARCHAR}, 
       #{otherDevMed,jdbcType=VARCHAR}, #{anaesMethChg,jdbcType=INTEGER}, #{anaesMethChgRea,jdbcType=VARCHAR}, 
-      #{anaesPrepSpecRes,jdbcType=VARCHAR}, #{leaveTo,jdbcType=VARCHAR}, #{asaE,jdbcType=VARCHAR}
+      #{anaesPrepSpecRes,jdbcType=VARCHAR}, #{leaveTo,jdbcType=VARCHAR}, #{asaE,jdbcType=VARCHAR}, 
+      #{riskPreventMeasure,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -135,6 +137,9 @@
       <if test="asaE != null" >
         asaE,
       </if>
+      <if test="riskPreventMeasure != null" >
+        riskPreventMeasure,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -199,6 +204,9 @@
       </if>
       <if test="asaE != null" >
         #{asaE,jdbcType=VARCHAR},
+      </if>
+      <if test="riskPreventMeasure != null" >
+        #{riskPreventMeasure,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -266,6 +274,9 @@
       <if test="asaE != null" >
         asaE = #{asaE,jdbcType=VARCHAR},
       </if>
+      <if test="riskPreventMeasure != null" >
+        riskPreventMeasure = #{riskPreventMeasure,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -291,7 +302,8 @@
       anaesMethChgRea = #{anaesMethChgRea,jdbcType=VARCHAR},
       anaesPrepSpecRes = #{anaesPrepSpecRes,jdbcType=VARCHAR},
       leaveTo = #{leaveTo,jdbcType=VARCHAR},
-      asaE = #{asaE,jdbcType=VARCHAR}
+      asaE = #{asaE,jdbcType=VARCHAR},
+      riskPreventMeasure = #{riskPreventMeasure,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 

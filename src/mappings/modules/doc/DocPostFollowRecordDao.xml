@@ -596,6 +596,10 @@
     where postFollowId = #{postFollowId,jdbcType=VARCHAR}
   </update>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_post_follow_record where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
   <select id="searchFollowRecordByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocPostFollowRecord" parameterType="map" >
     select a.*,b.name as anesName
     from doc_post_follow_record a left join (select * from bas_user where beid = #{beid}) b on a.anesthetistId = b.userName

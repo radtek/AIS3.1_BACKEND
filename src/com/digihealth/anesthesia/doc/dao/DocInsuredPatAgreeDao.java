@@ -31,6 +31,8 @@ public interface DocInsuredPatAgreeDao {
     int updateByPrimaryKey(DocInsuredPatAgree record);
     
     public DocInsuredPatAgree searchByRegOptId(@Param("regOptId") String regOptId);
-    
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
+
     List<SearchMedAndInstruFormBean> searchMedAndInstru(@Param("filter")String filter, @Param("systemSearchFormBean")SystemSearchFormBean systemSearchFormBean); 
 }

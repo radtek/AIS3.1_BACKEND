@@ -32,4 +32,6 @@ public interface DocAnaesSummaryAllergicReactionDao {
     public List<DocAnaesSummaryAllergicReaction> searchAllergicReactionList(@Param("searchBean")SearchFormBean searchBean);
     
     DocAnaesSummaryAllergicReaction getPoByAnaSumId(String anaSumId);
+    
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
 }

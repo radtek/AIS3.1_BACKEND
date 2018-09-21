@@ -20,4 +20,6 @@ public interface DocPlacentaHandleAgreeDao {
     int updateByPrimaryKey(DocPlacentaHandleAgree record);
     
     DocPlacentaHandleAgree selectByRegOptId(@Param("regOptId") String regOptId);
+
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 }

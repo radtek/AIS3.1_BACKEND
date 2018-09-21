@@ -28,6 +28,7 @@ public interface DocExitOperSafeCheckDao extends CrudDao<DocExitOperSafeCheck>{
 
     int updateByPrimaryKey(DocExitOperSafeCheck record);
 
+    public void deleteByRegOptId(@Param("regOptId") String regOptId);
 	/**
 	 * 
 	 * @discription 根据手术ID获取出手术室核查

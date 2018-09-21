@@ -32,5 +32,7 @@ public interface DocAnaesSummaryVenipunctureDao {
 
     DocAnaesSummaryVenipuncture getPoByAnaSumId(String anaSumId);
     
+    public void deleteByAnaSumId(@Param("anaSumId") String anaSumId);
+    
     public List<DocAnaesSummaryVenipuncture> searchVenipunctureList(@Param("searchBean")SearchFormBean searchBean);
 }
