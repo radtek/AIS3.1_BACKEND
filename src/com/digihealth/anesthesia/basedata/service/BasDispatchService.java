@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +150,21 @@ public class BasDispatchService extends BaseService {
         if (StringUtils.isBlank(baseQuery.getBeid())) {
             baseQuery.setBeid(getBeid());
         }
-        List<SearchDispatchFormBean> list = basDispatchDao.printSchudleSYBX(baseQuery);
+        String filter = "";
+        List<Filter> filters = baseQuery.getFilters();
+        if (filters != null && filters.size() > 0) {
+            for (int i = 0; i < filters.size(); i++) {
+                if (StringUtils.isNotBlank(filters.get(i).getValue())) {
+                    if (filters.get(i).getField().equals("startTime")) {
+                        filter += " AND DATE_FORMAT(o.operaDate, '%Y-%m-%d') >= '" + filters.get(i).getValue() + "'";
+                    } else if (filters.get(i).getField().equals("endTime")) {
+                    	filter += " AND DATE_FORMAT(o.operaDate, '%Y-%m-%d') <= '" + filters.get(i).getValue() + "'";
+                    }
+                }
+
+            }
+        }
+        List<SearchDispatchFormBean> list = basDispatchDao.printSchudleSYBX(filter, baseQuery);
         if (null != list && list.size() > 0)
         {
             for (SearchDispatchFormBean sd : list)
@@ -166,6 +181,7 @@ public class BasDispatchService extends BaseService {
                 			perfusiondoctorName += "," + basUserDao.selectNameByUserName(id, getBeid());
                 		}
                 	}
+                	sd.setPerfusionDoctorIdList(StringUtils.getListByString(perfusiondoctorId));
 				}
         		sd.setAnesthetistName(anesthetistName);
         		sd.setPerfusionDoctorName(perfusiondoctorName);
@@ -635,7 +651,7 @@ public class BasDispatchService extends BaseService {
                 if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
                     logger.info("===============================发送手术排班信息到his===========================================");
                     HisInterfaceServiceHNHTYY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceHNHTYY.class);
-                    hisInterfaceService.sendDispatchToHis(disObj, regOpt);
+                    //hisInterfaceService.sendDispatchToHis(disObj, regOpt);
                 }
             }
         }

@@ -2735,13 +2735,13 @@ public class MyObserveDataController extends BaseController {
 			//  药物维持    
 	        searchBean.setType("03");
 	        List<RegOptOperMedicaleventFormBean> analgesicMedEvtList = evtMedicaleventService.searchMedicaleventGroupByCodeList(searchBean);
+	        
+	        searchBean.setSubType("2");// 输血
+	        List<RegOptOperIoeventFormBean> bloodinIoeventList = evtInEventService.searchIoeventGroupByDefIdList(searchBean);
 	
 			// 入药量事件 输液
 			searchBean.setSubType("1"); // 输液
-			List<RegOptOperIoeventFormBean> transfusioninIoeventList = evtInEventService.searchIoeventGroupByDefIdList(searchBean);
-	
-			searchBean.setSubType("2");// 输血
-			List<RegOptOperIoeventFormBean> bloodinIoeventList = evtInEventService.searchIoeventGroupByDefIdList(searchBean);
+			List<RegOptOperIoeventFormBean> transfusioninIoeventList = evtInEventService.searchIoeventGroupByDefIdListSYBX(searchBean);
 	
 			// 出药量事件
 			List<RegOptOperEgressFormBean> egressList = evtEgressService.searchEgressGroupByDefIdList(searchBean);

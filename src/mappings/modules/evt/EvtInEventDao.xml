@@ -95,6 +95,27 @@
 		
   </select>
   
+  <select id="searchIoeventGroupByDefIdListSYBX" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperIoeventFormBean">
+		SELECT 
+			a.inEventId,a.ioDefId,b.name,b.unit,b.dosageUnit
+		FROM evt_inevent a left join bas_io_defination b on a.ioDefId=b.ioDefId where 1 = 1 
+		<if test="searchBean.docId != null and searchBean.docId != ''">
+			AND a.docId = #{searchBean.docId}
+		</if>
+		<if test="searchBean.id != null and searchBean.id != ''">
+			AND a.inEventId = #{searchBean.id}
+		</if>
+		<if test="searchBean.subType != null and searchBean.subType != ''">
+			AND b.`subType` = #{searchBean.subType}
+		</if>		
+		<if test="searchBean.order != null and searchBean.order != ''">
+			order by ${searchBean.order}
+		</if>
+		<if test="searchBean.order == null or searchBean.order == ''">
+			order by a.startTime,a.inEventId
+		</if>
+  </select>
+
   <select id="queryIoeventTotalByDefId" resultType="com.digihealth.anesthesia.evt.formbean.SearchOptOperIoevent">
 		SELECT a.blood,a.ioDefId,a.docId,SUM(a.dosageAmount) totalAmout,b.unit,b.dosageUnit,b.name ,a.passage
 		FROM evt_inevent a,bas_io_defination b 

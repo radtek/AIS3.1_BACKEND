@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digihealth.anesthesia.basedata.config.OperationState;
 import com.digihealth.anesthesia.basedata.dao.BasAnaesMethodDao;
 import com.digihealth.anesthesia.basedata.dao.BasBusEntityDao;
+import com.digihealth.anesthesia.basedata.dao.BasChargeItemDao;
 import com.digihealth.anesthesia.basedata.dao.BasDeptDao;
 import com.digihealth.anesthesia.basedata.dao.BasDiagnosedefDao;
 import com.digihealth.anesthesia.basedata.dao.BasDispatchDao;
@@ -170,6 +171,7 @@ public class OperBaseDataServiceSYBX extends BaseService{
     private ControllerDao controllerDao = SpringContextHolder.getBean(ControllerDao.class);
     private BasDocumentDao basDocumentDao = SpringContextHolder.getBean(BasDocumentDao.class);
     private BasOperroomDao basOperroomDao = SpringContextHolder.getBean(BasOperroomDao.class);
+    private BasChargeItemDao basChargeItemDao = SpringContextHolder.getBean(BasChargeItemDao.class);
     
 	/**
 	 * 获取外部系统视图VIEW_OPERATION_NAME，并插入当前数据库

@@ -78,7 +78,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		char[] str = (s.toString()).toCharArray();
 		if (str.length == 0)
 			return "";
-		int count = 0;
+		//int count = 0;
 		List<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < str.length; i++) {
 			if (str[i] >= 'A' && str[i] <= 'Z') {
@@ -467,6 +467,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         {
             for (String str : list)
             {
+            	if(StringUtils.isBlank(str))
+            	{
+            		continue;
+            	}
                 if (StringUtils.isBlank(s))
                 {
                     s = str;
@@ -500,4 +504,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return list;
     }
+    
+	public static boolean checkData(String changeValue,String sourceValue){
+		if(changeValue == null){
+			changeValue = "";
+		}
+		if(sourceValue == null){
+			sourceValue = "";
+		}
+		if(!changeValue.equals(sourceValue)){
+			return true;
+		}
+		return false;
+		
+	}
 }

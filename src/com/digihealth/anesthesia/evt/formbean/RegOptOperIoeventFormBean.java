@@ -4,6 +4,7 @@ import java.util.List;
 
 public class RegOptOperIoeventFormBean {
 
+	private String inEventId;
 	private String ioDefId;
 	private String name;
 	private String unit;
@@ -17,6 +18,14 @@ public class RegOptOperIoeventFormBean {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public String getInEventId() {
+		return inEventId;
+	}
+
+	public void setInEventId(String inEventId) {
+		this.inEventId = inEventId;
 	}
 
 	public String getDosageUnit() {

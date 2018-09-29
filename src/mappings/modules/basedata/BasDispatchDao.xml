@@ -803,7 +803,7 @@ o.designedAnaesMethodName,(select name from bas_user where bas_user.userName = a
 		END  AS cutLevelName,
 		(select codeName from bas_sys_dict_item where groupId = 'pac_type' and codeValue = a.pcs and beid = #{baseQuery.beid}) as pcsName
 		FROM bas_dispatch a left join bas_reg_opt o on a.regOptId = o.regOptId
-		where 1 = 1 AND o.beid = #{baseQuery.beid}
+		where 1 = 1 AND o.beid = #{baseQuery.beid} ${filter}
 			<!-- and  o.state !='02'
 			AND a.isHold is not null -->
 			<!-- 只要排了麻醉医生就可以打印排班 -->

@@ -119,7 +119,7 @@ public interface BasDispatchDao extends CrudDao<BasDispatch>{
     public List<SearchListScheduleFormBean> searchNoEndDispatch(@Param("filter")String filter, @Param("baseQuery")BaseInfoQuery baseQuery);
     
     public List<SearchDispatchFormBean> printSchudle(@Param("baseQuery")BaseInfoQuery baseQuery);
-    public List<SearchDispatchFormBean> printSchudleSYBX(@Param("baseQuery")BaseInfoQuery baseQuery);
+    public List<SearchDispatchFormBean> printSchudleSYBX(@Param("filter")String filter, @Param("baseQuery")BaseInfoQuery baseQuery);
     
     /**
      * 取消手术安排数据

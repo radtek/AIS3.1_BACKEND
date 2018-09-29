@@ -45,6 +45,18 @@ public class EvtInEventController extends BaseController {
 		return resp.getJsonStr();
 	}
 
+	@RequestMapping(value = "/searchIoeventGroupByDefIdListSYBX")
+	@ResponseBody
+	@ApiOperation(value = "分组查询入量时间list", httpMethod = "POST", notes = "分组查询入量时间list")
+	public String searchIoeventGroupByDefIdListSYBX(@ApiParam(name = "formbean", value = "参数") @RequestBody SearchFormBean searchBean) {
+		logger.info("begin searchIoeventGroupByDefIdListSYBX");
+		ResponseValue resp = new ResponseValue();
+		List<RegOptOperIoeventFormBean> resultList = evtInEventService.searchIoeventGroupByDefIdListSYBX(searchBean);
+		resp.put("resultList", resultList);
+		logger.info("end searchIoeventGroupByDefIdListSYBX");
+		return resp.getJsonStr();
+	}
+
 	@RequestMapping(value = "/saveIoevent")
 	@ResponseBody
 	@ApiOperation(value = "保存入量事件", httpMethod = "POST", notes = "保存入量事件")

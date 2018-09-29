@@ -42,16 +42,20 @@
 	    <include refid="Base_Column_List" />
 	    ,
 	    <include refid="Blob_Column_List" />
-	    from tmp_anaes_doctemp where 1 = 1 and beid = #{searchFormBean.beid}
+	    from tmp_anaes_doctemp where 1 = 1 
 	    <if test="searchFormBean.createUser != null and searchFormBean.createUser != ''" >
 		       AND createUser = #{searchFormBean.createUser}
 		</if>
 		<if test="searchFormBean.type != null and searchFormBean.type != ''" >
 		       AND type = #{searchFormBean.type}
 		</if>
+		<if test="searchFormBean.type != 1 and searchFormBean.docType != 6" >
+		       OR type = 2
+		</if>
 		<if test="searchFormBean.docType != null" >
 		       AND docType = #{searchFormBean.docType}
 		</if>
+		and beid = #{searchFormBean.beid}
 	) a where 1 = 1
 	<if test="filters != null">
 		<foreach collection="filters" item="filter" open=" " close=" " >
@@ -69,16 +73,20 @@
 	<select id="selectAnaesDoctempTotalByForbean" resultType="java.lang.Integer">
 	  	select count(*) from
 	  	(
-		  	select * from tmp_anaes_doctemp where 1 = 1  and beid = #{searchFormBean.beid}
+		  	select * from tmp_anaes_doctemp where 1 = 1 
 			<if test="searchFormBean.createUser != null and searchFormBean.createUser != ''" >
 		       AND createUser = #{searchFormBean.createUser}
 			</if>
 			<if test="searchFormBean.type != null and searchFormBean.type != ''" >
 			       AND type = #{searchFormBean.type}
 			</if>
+			<if test="searchFormBean.type != 1 and searchFormBean.docType != 6" >
+			       OR type = 2
+			</if>
 			<if test="searchFormBean.docType != null" >
 		           AND docType = #{searchFormBean.docType}
 			</if>
+			and beid = #{searchFormBean.beid}
 		) a where 1 = 1
 		<if test="filters != null">
 			<foreach collection="filters" item="filter" open=" " close=" " >

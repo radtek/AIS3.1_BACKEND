@@ -648,7 +648,7 @@ public class EvtAnaesEventController extends BaseController {
         
         // 输液事件
         searchBean.setSubType("1");
-        List<RegOptOperIoeventFormBean> infusionAllList = evtInEventService.searchIoeventGroupByDefIdList(searchBean);
+        List<RegOptOperIoeventFormBean> infusionAllList = evtInEventService.searchIoeventGroupByDefIdListSYBX(searchBean);
         List<RegOptOperIoeventFormBean> infusionList = new ArrayList<RegOptOperIoeventFormBean>();
         if (null != infusionAllList && infusionAllList.size() > 0 && null != searchBean.getInfusionNum())
         {

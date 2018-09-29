@@ -59,6 +59,26 @@ public class EvtInEventService extends BaseService {
 		return resultList;
 	}
 
+	public List<RegOptOperIoeventFormBean> searchIoeventGroupByDefIdListSYBX(SearchFormBean searchBean) {
+	    if (StringUtils.isBlank(searchBean.getBeid()))
+        {
+            searchBean.setBeid(getBeid());
+        }
+	    
+		// 本溪用一种液体同规格可以在一个时间段内重复添加，页面做两行显示
+		List<RegOptOperIoeventFormBean> resultList = evtInEventDao.searchIoeventGroupByDefIdListSYBX(searchBean);
+		for (RegOptOperIoeventFormBean regOptOperIoeventFormBean : resultList) {
+			// 入量事件
+			searchBean.setId(regOptOperIoeventFormBean.getInEventId());
+			searchBean.setCode(regOptOperIoeventFormBean.getIoDefId().toString());
+			SearchOptOperIoevent soi = evtInEventDao.queryIoeventTotalByDefId(searchBean);
+			regOptOperIoeventFormBean.setTotalAmout(soi.getTotalAmout());
+			regOptOperIoeventFormBean.setIoeventList(evtInEventDao.searchIoeventList(searchBean));
+		}
+		searchBean.setId(null);
+		return resultList;
+	}
+
 	public Integer getIoeventCountValueByIoDef(String docId, String ioDefId, String subType) {
 		return evtInEventDao.getIoeventCountValueByIoDef(docId, ioDefId, subType);
 	}
@@ -78,14 +98,16 @@ public class EvtInEventService extends BaseService {
     				Date ioStartTime = ioevent.getStartTime();
     				Date startTime = event.getStartTime();
                     Date endTime = event.getEndTime();
-                    
-                    if ((ioStartTime.getTime() < startTime.getTime() && ioEndTime.getTime() < startTime.getTime()) || ioStartTime.getTime() > endTime.getTime()) {
-                        continue;
-                    }else {
-                        value.setResultCode("10000001");
-                        value.setResultMessage("该输液在开始时间：" + DateUtils.formatDateTime(ioevent.getStartTime()) + "至结束时间：" + DateUtils.formatDateTime(ioevent.getEndTime()) + ", 已经存在持续输液情况,请勿重复添加!");
-                        return;
-                    }
+                    BasIoDefination basIoDefination = basIoDefinationDao.selectByPrimaryKey(event.getIoDefId());
+                    if (basIoDefination != null && "2".equals(basIoDefination.getSubType())) {
+                    	if ((ioStartTime.getTime() < startTime.getTime() && ioEndTime.getTime() < startTime.getTime()) || ioStartTime.getTime() > endTime.getTime()) {
+                    		continue;
+                    	}else {
+                    		value.setResultCode("10000001");
+                    		value.setResultMessage("该输液在开始时间：" + DateUtils.formatDateTime(ioevent.getStartTime()) + "至结束时间：" + DateUtils.formatDateTime(ioevent.getEndTime()) + ", 已经存在持续输液情况,请勿重复添加!");
+                    		return;
+                    	}
+					}
     			}
     		}
 		}

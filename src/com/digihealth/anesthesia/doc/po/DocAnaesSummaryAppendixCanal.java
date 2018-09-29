@@ -345,6 +345,12 @@ public class DocAnaesSummaryAppendixCanal {
     private Integer sgCatheter;
 
     /**
+     * 输血输液加温
+     */
+	@ApiModelProperty(value = "输血输液加温")
+    private Integer bloodWarming;
+
+    /**
      * 其他2
      */
 	@ApiModelProperty(value = "其他2")
@@ -782,7 +788,15 @@ public class DocAnaesSummaryAppendixCanal {
         this.sgCatheter = sgCatheter;
     }
 
-    public String getOther2() {
+    public Integer getBloodWarming() {
+		return bloodWarming;
+	}
+
+	public void setBloodWarming(Integer bloodWarming) {
+		this.bloodWarming = bloodWarming;
+	}
+
+	public String getOther2() {
         return other2;
     }
 

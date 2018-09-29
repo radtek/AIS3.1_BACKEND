@@ -41,6 +41,7 @@ public class SybxServiceImpl extends BaseService implements SybxService {
 			JAXBContext context = JAXBContext.newInstance(HisCancleOptFormBean.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			HisCancleOptFormBean hisCancleOptFormBean = (HisCancleOptFormBean) unmarshaller.unmarshal(new StringReader(request));
+			String state = hisCancleOptFormBean.getState();
 
 			if (StringUtils.isBlank(hisCancleOptFormBean.getHid())) {
 				resp.setResultCode("0");
@@ -61,7 +62,6 @@ public class SybxServiceImpl extends BaseService implements SybxService {
 				Controller controller = new Controller();
 				controller.setRegOptId(regOpt.getRegOptId());
 				controller.setCostsettlementState("0");
-				String state = hisCancleOptFormBean.getState();
 				if ("CANCEL".equals(state)) { //取消手术通知单
 					if (OperationState.SURGERY.equals(regOpt.getState())) {
 						resp.setResultCode("0");
@@ -118,8 +118,12 @@ public class SybxServiceImpl extends BaseService implements SybxService {
 					}
 				}
 			} else {
-				resp.setResultCode("0");
-				resp.setResultMessage("没有找到申请单号为" + hisCancleOptFormBean.getPreengagementnumber() + "的手术");
+				String message = "取消手术通知单成功!";
+				if ("DELETE".equals(state)) {
+					message = "删除手术通知单成功!";
+				}
+				resp.setResultCode("1");
+				resp.setResultMessage(message);
 			}
 			response = getObjectToXml(resp);
 			logger.info("-------------------------cancleRegOpt Response----------------------------:"

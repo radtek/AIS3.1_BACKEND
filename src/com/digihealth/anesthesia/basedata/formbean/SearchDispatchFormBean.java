@@ -1,6 +1,8 @@
 package com.digihealth.anesthesia.basedata.formbean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,6 +79,11 @@ public class SearchDispatchFormBean implements Serializable {
 
 	@ApiModelProperty(value = "灌注医生")
 	private String perfusionDoctorName;
+	/**
+	 * 灌注医生集合
+	 */
+	@ApiModelProperty(value = "灌注医生集合")
+	private List<String> perfusionDoctorIdList;
 	/**
 	 * 排班时间
 	 */
@@ -528,6 +535,14 @@ public class SearchDispatchFormBean implements Serializable {
 
 	public void setPerfusionDoctorName(String perfusionDoctorName) {
 		this.perfusionDoctorName = perfusionDoctorName;
+	}
+
+	public List<String> getPerfusionDoctorIdList() {
+		return perfusionDoctorIdList == null ? new ArrayList<String>() : perfusionDoctorIdList;
+	}
+
+	public void setPerfusionDoctorIdList(List<String> perfusionDoctorIdList) {
+		this.perfusionDoctorIdList = perfusionDoctorIdList;
 	}
 
 	public String getInstrnurseId2() {

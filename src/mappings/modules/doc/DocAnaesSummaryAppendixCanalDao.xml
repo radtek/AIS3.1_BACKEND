@@ -58,6 +58,7 @@
     <result column="dualChamber" property="dualChamber" jdbcType="INTEGER" />
     <result column="threeChamber" property="threeChamber" jdbcType="INTEGER" />
     <result column="sgCatheter" property="sgCatheter" jdbcType="INTEGER" />
+    <result column="bloodWarming" property="bloodWarming" jdbcType="INTEGER" />
     <result column="other2" property="other2" jdbcType="VARCHAR" />
   </resultMap>
 
@@ -71,7 +72,7 @@
     femoralNerveBlock, femoralNerveValue, cutaneousNerveBlock, cutaneousNerveValue, other1, 
     other1Value, medicine1, invasiveProcedure, arteryCathete, radialArtery, femoralArtery, 
     footArtery, footArteryValue, deepVeinCathete, jugularVein, subclavianVein, femoralVein, 
-    femoralVeinValue, ultrasound1, singleChamber, dualChamber, threeChamber, sgCatheter, 
+    femoralVeinValue, ultrasound1, singleChamber, dualChamber, threeChamber, sgCatheter, bloodWarming, 
     other2
   </sql>
 
@@ -113,7 +114,7 @@
       deepVeinCathete, jugularVein, subclavianVein, 
       femoralVein, femoralVeinValue, ultrasound1, 
       singleChamber, dualChamber, threeChamber, 
-      sgCatheter, other2)
+      sgCatheter, bloodWarming, other2)
     values (#{anaSumAppCanId,jdbcType=VARCHAR}, #{anaSumId,jdbcType=VARCHAR}, #{spinalAnes,jdbcType=INTEGER}, 
       #{waistAnes,jdbcType=INTEGER}, #{epiduralAnes,jdbcType=INTEGER}, #{cseUnionAnes,jdbcType=INTEGER}, 
       #{sacralAnes,jdbcType=INTEGER}, #{puncPoint1,jdbcType=VARCHAR}, #{catheterPoint1,jdbcType=REAL}, 
@@ -132,7 +133,7 @@
       #{deepVeinCathete,jdbcType=INTEGER}, #{jugularVein,jdbcType=INTEGER}, #{subclavianVein,jdbcType=INTEGER}, 
       #{femoralVein,jdbcType=INTEGER}, #{femoralVeinValue,jdbcType=INTEGER}, #{ultrasound1,jdbcType=INTEGER}, 
       #{singleChamber,jdbcType=INTEGER}, #{dualChamber,jdbcType=INTEGER}, #{threeChamber,jdbcType=INTEGER}, 
-      #{sgCatheter,jdbcType=INTEGER}, #{other2,jdbcType=VARCHAR})
+      #{sgCatheter,jdbcType=INTEGER}, #{bloodWarming,jdbcType=INTEGER}, #{other2,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocAnaesSummaryAppendixCanal" >
@@ -306,6 +307,9 @@
       <if test="sgCatheter != null" >
         sgCatheter,
       </if>
+      <if test="bloodWarming != null" >
+        bloodWarming,
+      </if>
       <if test="other2 != null" >
         other2,
       </if>
@@ -478,6 +482,9 @@
       </if>
       <if test="sgCatheter != null" >
         #{sgCatheter,jdbcType=INTEGER},
+      </if>
+      <if test="bloodWarming != null" >
+        #{bloodWarming,jdbcType=INTEGER},
       </if>
       <if test="other2 != null" >
         #{other2,jdbcType=VARCHAR},
@@ -653,6 +660,9 @@
       <if test="sgCatheter != null" >
         sgCatheter = #{sgCatheter,jdbcType=INTEGER},
       </if>
+      <if test="bloodWarming != null" >
+        bloodWarming = #{bloodWarming,jdbcType=INTEGER},
+      </if>
       <if test="other2 != null" >
         other2 = #{other2,jdbcType=VARCHAR},
       </if>
@@ -717,6 +727,7 @@
       dualChamber = #{dualChamber,jdbcType=INTEGER},
       threeChamber = #{threeChamber,jdbcType=INTEGER},
       sgCatheter = #{sgCatheter,jdbcType=INTEGER},
+      bloodWarming = #{bloodWarming,jdbcType=INTEGER},
       other2 = #{other2,jdbcType=VARCHAR}
     where anaSumAppCanId = #{anaSumAppCanId,jdbcType=VARCHAR}
   </update>

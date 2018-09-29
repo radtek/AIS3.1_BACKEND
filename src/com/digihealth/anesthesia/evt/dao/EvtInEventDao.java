@@ -40,6 +40,8 @@ public interface EvtInEventDao {
 	
 	
 	public List<RegOptOperIoeventFormBean> searchIoeventGroupByDefIdList(@Param("searchBean")SearchFormBean searchBean);
+
+	public List<RegOptOperIoeventFormBean> searchIoeventGroupByDefIdListSYBX(@Param("searchBean")SearchFormBean searchBean);
 	
 	public List<EvtInEvent> checkIoeventCanInsert(@Param("searchBean")SearchFormBean searchBean,@Param("ioDefId")String ioDefId);
 	
