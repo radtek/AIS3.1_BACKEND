@@ -49,14 +49,13 @@
 		<if test="searchFormBean.type != null and searchFormBean.type != ''" >
 		       AND type = #{searchFormBean.type}
 		</if>
-		<if test="searchFormBean.type != 1 and searchFormBean.docType != 6" >
+		<if test="searchFormBean.type != 1" >
 		       OR type = 2
 		</if>
-		<if test="searchFormBean.docType != null" >
-		       AND docType = #{searchFormBean.docType}
-		</if>
-		and beid = #{searchFormBean.beid}
-	) a where 1 = 1
+	) a where 1 = 1 and beid = #{searchFormBean.beid}
+	<if test="searchFormBean.docType != null" >
+	       AND docType = #{searchFormBean.docType}
+	</if>
 	<if test="filters != null">
 		<foreach collection="filters" item="filter" open=" " close=" " >
 		  <if test="filter.field != null and filter.field != '' ">
@@ -80,14 +79,13 @@
 			<if test="searchFormBean.type != null and searchFormBean.type != ''" >
 			       AND type = #{searchFormBean.type}
 			</if>
-			<if test="searchFormBean.type != 1 and searchFormBean.docType != 6" >
+			<if test="searchFormBean.type != 1" >
 			       OR type = 2
 			</if>
-			<if test="searchFormBean.docType != null" >
-		           AND docType = #{searchFormBean.docType}
-			</if>
-			and beid = #{searchFormBean.beid}
-		) a where 1 = 1
+		) a where 1 = 1 and beid = #{searchFormBean.beid}
+		<if test="searchFormBean.docType != null" >
+	           AND docType = #{searchFormBean.docType}
+		</if>
 		<if test="filters != null">
 			<foreach collection="filters" item="filter" open=" " close=" " >
 			  <if test="filter.field != null and filter.field != '' ">
