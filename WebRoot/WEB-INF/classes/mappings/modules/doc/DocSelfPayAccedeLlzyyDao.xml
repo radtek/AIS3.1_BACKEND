@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocSelfPayAccedeLlzyyDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="anaesConsumables" property="anaesConsumables" jdbcType="VARCHAR" />
+    <result column="anesthetistId" property="anesthetistId" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, processState, regOptId, anaesConsumables, anesthetistId, date, remark
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_self_pay_accede_llzyy
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+	<select id="searchSelfPayAccedeByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy">
+		SELECT DISTINCT *
+		FROM doc_self_pay_accede_llzyy d
+		WHERE d.regOptId = #{regOptId}
+	</select>
+	
+	<select id="searchSelfPayAccedeById" resultType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy">
+		SELECT DISTINCT *
+		FROM doc_self_pay_accede_llzyy d
+		WHERE d.id = #{id}
+	</select>
+	
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_self_pay_accede_llzyy
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy" >
+    insert into doc_self_pay_accede_llzyy (id, processState, regOptId, anaesConsumables, anesthetistId, date, remark)
+    values (#{id,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, 
+      #{anaesConsumables,jdbcType=VARCHAR}, #{anesthetistId,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy" >
+    insert into doc_self_pay_accede_llzyy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="anaesConsumables != null" >
+        anaesConsumables,
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesConsumables != null" >
+        #{anaesConsumables,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy" >
+    update doc_self_pay_accede_llzyy
+    <set >
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="anaesConsumables != null" >
+        anaesConsumables = #{anaesConsumables,jdbcType=VARCHAR},
+      </if>
+      <if test="anesthetistId != null" >
+        anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocSelfPayAccedeLlzyy" >
+    update doc_self_pay_accede_llzyy
+    set processState = #{processState,jdbcType=VARCHAR},
+      regOptId = #{regOptId,jdbcType=VARCHAR},
+      anaesConsumables = #{anaesConsumables,jdbcType=VARCHAR},
+      anesthetistId = #{anesthetistId,jdbcType=VARCHAR},
+      date = #{date,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

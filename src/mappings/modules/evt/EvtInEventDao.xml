@@ -129,6 +129,9 @@
 		<if test="searchBean.code != null and searchBean.code != ''">
 			AND a.ioDefId = #{searchBean.code}
 		</if>
+		<if test="searchBean.id != null and searchBean.id != ''">
+			AND a.inEventId = #{searchBean.id}
+		</if>
 		GROUP BY a.ioDefId
 	</select>
 	

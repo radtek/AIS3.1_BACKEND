@@ -347,4 +347,7 @@
     where exitOperId = #{exitOperId,jdbcType=VARCHAR}
   </update>
 
+	<delete id="deleteByRegOptId" parameterType="java.lang.String">
+		delete from doc_exit_oper_safe_check where regOptId = #{regOptId,jdbcType=VARCHAR}
+	</delete>
 </mapper>

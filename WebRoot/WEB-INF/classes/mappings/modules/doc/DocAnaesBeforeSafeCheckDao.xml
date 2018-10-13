@@ -397,4 +397,7 @@
     where anesBeforeId = #{anesBeforeId,jdbcType=VARCHAR}
   </update>
 
+	<delete id="deleteByRegOptId" parameterType="java.lang.String">
+		delete from doc_anaes_before_safe_check where regOptId = #{regOptId,jdbcType=VARCHAR}
+	</delete>
 </mapper>

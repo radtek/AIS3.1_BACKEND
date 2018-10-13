@@ -78,8 +78,8 @@ public class BasRegOptController extends BaseController {
 	public String searchRegOptByUserTypeAndStateSYBX(@ApiParam(name="searchConditionFormBean", value ="查询参数") @RequestBody SearchConditionFormBean searchConditionFormBean) {
 		logger.info("-----------------begin getRegOptByStateSYBX-----------------");
 		ResponseValue resp = new ResponseValue();
-		List<SearchRegOptByLoginNameAndStateFormBean> result = basRegOptService.searchRegOptByAnaesDoctorAndStateSYBX(searchConditionFormBean);
 		int total = basRegOptService.searchRegOptTotalByAnaesDoctorAndStateSYBX(searchConditionFormBean);
+		List<SearchRegOptByLoginNameAndStateFormBean> result = basRegOptService.searchRegOptByAnaesDoctorAndStateSYBX(searchConditionFormBean);
 		resp.put("resultList", result);
 		resp.put("total", total);
 		logger.info("-----------------end getRegOptByStateSYBX-----------------");

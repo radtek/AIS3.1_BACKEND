@@ -52,9 +52,6 @@
 		<if test="searchFormBean.docType != null" >
 		       AND docType = #{searchFormBean.docType}
 		</if>
-		<if test="searchFormBean.type != 1" >
-		       OR type = 2
-		</if>
 	) a where 1 = 1
 	<if test="filters != null">
 		<foreach collection="filters" item="filter" open=" " close=" " >
@@ -81,9 +78,6 @@
 			</if>
 			<if test="searchFormBean.docType != null" >
 		           AND docType = #{searchFormBean.docType}
-			</if>
-			<if test="searchFormBean.type != 1" >
-			       OR type = 2
 			</if>
 		) a where 1 = 1
 		<if test="filters != null">

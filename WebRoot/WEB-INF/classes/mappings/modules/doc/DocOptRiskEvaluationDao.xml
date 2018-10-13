@@ -315,4 +315,8 @@
     where optRiskEvaluationId = #{optRiskEvaluationId,jdbcType=VARCHAR}
   </update>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_opt_risk_evaluation where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
 </mapper>

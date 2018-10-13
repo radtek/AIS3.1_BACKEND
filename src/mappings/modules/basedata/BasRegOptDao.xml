@@ -182,7 +182,7 @@
 		<if test="searchConditionFormBean.endTime !=null and searchConditionFormBean.endTime !=''">
 			AND a.operaDate &lt;= #{searchConditionFormBean.endTime}
 		</if>
-		<if test="searchConditionFormBean.queryMethod !=null and searchConditionFormBean.queryMethod !=''">
+		<if test="searchConditionFormBean.queryMethod !=null and searchConditionFormBean.queryMethod !='' and searchConditionFormBean.queryMethod == '1'">
 			AND a.operaDate &gt;=  DATE_FORMAT(NOW(),'%Y-%m-%d')
 		</if>
 		<if test="searchConditionFormBean.state != null and searchConditionFormBean.state != ''">
@@ -502,7 +502,7 @@
 			test="searchConditionFormBean.endTime !=null and searchConditionFormBean.endTime !=''">
 			AND a.operaDate &lt;= #{searchConditionFormBean.endTime}
 		</if>
-		<if test="searchConditionFormBean.queryMethod !=null and searchConditionFormBean.queryMethod !=''">
+		<if test="searchConditionFormBean.queryMethod !=null and searchConditionFormBean.queryMethod !='' and searchConditionFormBean.queryMethod == '1'">
 			AND a.operaDate &gt;=  DATE_FORMAT(NOW(),'%Y-%m-%d')
 		</if>
 		

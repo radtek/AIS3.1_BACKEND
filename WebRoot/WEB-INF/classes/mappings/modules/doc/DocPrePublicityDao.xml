@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.doc.dao.DocPrePublicityDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.doc.po.DocPrePublicity" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="processState" property="processState" jdbcType="VARCHAR" />
+    <result column="regOptId" property="regOptId" jdbcType="VARCHAR" />
+    <result column="nurseId" property="nurseId" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, processState, regOptId, nurseId, date, remark
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from doc_pre_publicity
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+	<select id="searchPrePublicityByRegOptId" resultType="com.digihealth.anesthesia.doc.po.DocPrePublicity">
+		SELECT DISTINCT *
+		FROM doc_pre_publicity d
+		WHERE d.regOptId = #{regOptId}
+	</select>
+	
+	<select id="searchPrePublicityById" resultType="com.digihealth.anesthesia.doc.po.DocPrePublicity">
+		SELECT DISTINCT *
+		FROM doc_pre_publicity d
+		WHERE d.id = #{id}
+	</select>
+	
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from doc_pre_publicity
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPrePublicity" >
+    insert into doc_pre_publicity (id, processState, regOptId, nurseId, date, remark)
+    values (#{id,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{nurseId,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocPrePublicity" >
+    insert into doc_pre_publicity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="processState != null" >
+        processState,
+      </if>
+      <if test="regOptId != null" >
+        regOptId,
+      </if>
+      <if test="nurseId != null" >
+        nurseId,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="processState != null" >
+        #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="nurseId != null" >
+        #{nurseId,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.doc.po.DocPrePublicity" >
+    update doc_pre_publicity
+    <set >
+      <if test="processState != null" >
+        processState = #{processState,jdbcType=VARCHAR},
+      </if>
+      <if test="regOptId != null" >
+        regOptId = #{regOptId,jdbcType=VARCHAR},
+      </if>
+      <if test="nurseId != null" >
+        nurseId = #{nurseId,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.doc.po.DocPrePublicity" >
+    update doc_pre_publicity
+    set processState = #{processState,jdbcType=VARCHAR},
+      regOptId = #{regOptId,jdbcType=VARCHAR},
+      nurseId = #{nurseId,jdbcType=VARCHAR},
+      date = #{date,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

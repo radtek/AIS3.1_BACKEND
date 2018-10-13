@@ -169,6 +169,10 @@
     where preVisitId = #{preVisitId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_pre_visit where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocPreVisit" >
     insert into doc_pre_visit (preVisitId, regOptId, briefHis, 
       comorbidity, drugAddiction, drugAddictionCond, 

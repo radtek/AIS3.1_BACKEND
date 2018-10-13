@@ -342,4 +342,8 @@
     where regOptId = #{regOptId,jdbcType=VARCHAR}
   </select>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_transfer_connect_record where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
 </mapper>

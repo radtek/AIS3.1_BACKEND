@@ -913,4 +913,8 @@
 		SELECT DISTINCT * FROM doc_opt_nurse d WHERE d.optNurseId = #{id}
 	</select>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from doc_opt_nurse where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
 </mapper>
