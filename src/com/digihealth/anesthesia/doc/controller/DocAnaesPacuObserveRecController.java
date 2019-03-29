@@ -129,6 +129,7 @@ public class DocAnaesPacuObserveRecController extends BaseController{
 				    dict.setCodeValue(s);
 				    basDictItemService.upBasDictItem(dict);
 				}
+				docAnaesPacuRecService.savePacuNumber(anaesPacuRec);
 			}
 
 			CmdMsg msg = new CmdMsg();

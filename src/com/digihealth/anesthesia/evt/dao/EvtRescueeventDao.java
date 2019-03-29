@@ -20,6 +20,8 @@ import com.digihealth.anesthesia.evt.po.EvtRescueevent;
 public interface EvtRescueeventDao {
     int deleteByPrimaryKey(String rescueEventId);
 
+    int deleteByDocId(@Param("docId")String docId);
+    
     int insert(EvtRescueevent record);
 
     int insertSelective(EvtRescueevent record);

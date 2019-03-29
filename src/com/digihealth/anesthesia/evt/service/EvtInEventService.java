@@ -90,7 +90,7 @@ public class EvtInEventService extends BaseService {
 		searchFormBean.setDocId(ioevent.getDocId());
 		searchFormBean.setId(ioevent.getInEventId());
 		Date ioEndTime = ioevent.getEndTime();
-		if (null != ioEndTime)
+		/*if (null != ioEndTime)
 		{
     		List<EvtInEvent> List = evtInEventDao.checkIoeventCanInsert(searchFormBean, ioevent.getIoDefId() + "");
     		if (null != List && List.size() > 0) {
@@ -99,7 +99,8 @@ public class EvtInEventService extends BaseService {
     				Date startTime = event.getStartTime();
                     Date endTime = event.getEndTime();
                     BasIoDefination basIoDefination = basIoDefinationDao.selectByPrimaryKey(event.getIoDefId());
-                    if (basIoDefination != null && "2".equals(basIoDefination.getSubType())) {
+                    //if (basIoDefination != null && "2".equals(basIoDefination.getSubType())) {
+                    if (basIoDefination != null ) {
                     	if ((ioStartTime.getTime() < startTime.getTime() && ioEndTime.getTime() < startTime.getTime()) || ioStartTime.getTime() > endTime.getTime()) {
                     		continue;
                     	}else {
@@ -110,7 +111,7 @@ public class EvtInEventService extends BaseService {
 					}
     			}
     		}
-		}
+		}*/
 		
         String inEventId = GenerateSequenceUtil.generateSequenceNo();
         /**

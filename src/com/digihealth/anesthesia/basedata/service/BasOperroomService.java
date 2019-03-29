@@ -11,6 +11,7 @@ import com.digihealth.anesthesia.basedata.formbean.BaseInfoQuery;
 import com.digihealth.anesthesia.basedata.formbean.OperRoomFormBean;
 import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
 import com.digihealth.anesthesia.basedata.formbean.SystemSearchFormBean;
+import com.digihealth.anesthesia.basedata.po.BasCollectConfig;
 import com.digihealth.anesthesia.basedata.po.BasDeviceConfig;
 import com.digihealth.anesthesia.basedata.po.BasDeviceMonitorConfig;
 import com.digihealth.anesthesia.basedata.po.BasMonitorConfigFreq;
@@ -198,6 +199,114 @@ public class BasOperroomService extends BaseService {
 			basMonitorO2.setRoomId(operroom.getOperRoomId());
 			basMonitorConfigDao.insertSelective(basMonitorO2);
 		}
+        
+        
+        CacheUtils.remove(ROOM_CACHE+"_"+getBeid(), ROOM_CACHE_ID+"_"+getBeid());
+        
+    }
+	
+	@Transactional
+    public void saveOperroomQNZZY(BasOperroom operroom){
+        if (StringUtils.isEmpty(operroom.getBeid()))
+        {
+            operroom.setBeid(getBeid());
+        }
+        if(operroom.getOperRoomId()!=null){
+            basOperroomDao.updateByPrimaryKey(operroom);
+            
+            BasCollectConfig collectConfig = basCollectConfigDao.selectByPrimaryKey(operroom.getOperRoomId(), operroom.getBeid());
+            if (null == collectConfig)
+            {
+                collectConfig = new BasCollectConfig();
+                collectConfig.setRoomId(operroom.getOperRoomId());
+                collectConfig.setBeid(operroom.getBeid());
+                collectConfig.setIp(operroom.getRemotehost());
+                basCollectConfigDao.insert(collectConfig);
+            }
+            else if (!operroom.getRemotehost().equals(collectConfig.getIp()))
+            {
+                collectConfig.setIp(operroom.getRemotehost());
+                basCollectConfigDao.updateByPrimaryKey(collectConfig);
+            }
+        }else{
+            operroom.setOperRoomId(basOperroomDao.getMaxOperroomIdByBeid(operroom.getBeid()));
+            
+            if ("01".equals(operroom.getRoomType()))
+            {
+                /**
+                 * 如果是不做同步时，则需要在新增手术室的时候初始化设备配置信息
+                 */
+                if (CustomConfigureUtil.isSync())
+                {
+                    
+                    List<BasDeviceConfig> devList = basDeviceConfigDao.getDeviceConfigList(getBeid(), "0");
+                    for (BasDeviceConfig basDeviceConfig : devList)
+                    {
+                        basDeviceConfig.setRoomId(operroom.getOperRoomId());
+                        basDeviceConfigDao.insertSelective(basDeviceConfig);
+                    }
+                    
+                    List<BasDeviceMonitorConfig> devMonitorList =
+                        basDeviceMonitorConfigDao.getRoomDeviceMonitorConfigByBeid(getBeid(), null, "0");
+                    for (BasDeviceMonitorConfig basDeviceMonitorConfig : devMonitorList)
+                    {
+                        basDeviceMonitorConfig.setRoomId(operroom.getOperRoomId());
+                        basDeviceMonitorConfigDao.insertSelective(basDeviceMonitorConfig);
+                    }
+                    
+                    List<Filter> filters = new ArrayList<Filter>();
+                    Filter f = new Filter();
+                    f.setField("beid");
+                    f.setValue(getBeid());
+                    filters.add(f);
+                    
+                    f = new Filter();
+                    f.setField("roomId");
+                    f.setValue("0");
+                    filters.add(f);
+                    SystemSearchFormBean systemSearchFormBean = new SystemSearchFormBean();
+                    systemSearchFormBean.setOrderBy("asc");
+                    systemSearchFormBean.setSort("eventId");
+                    List<BasMonitorConfig> monitorList =
+                        basMonitorConfigDao.queryBasMonitorConfigList(filters, systemSearchFormBean);
+                    for (BasMonitorConfig basMonitorConfig : monitorList)
+                    {
+                        basMonitorConfig.setRoomId(operroom.getOperRoomId());
+                        basMonitorConfigDao.insertSelective(basMonitorConfig);
+                    }
+                    
+                    systemSearchFormBean.setBeid(getBeid());
+                    systemSearchFormBean.setRoomId("0");
+                    systemSearchFormBean.setSort("id");
+                    List<BasMonitorConfigFreq> monitorFreqList =
+                        basMonitorConfigFreqDao.queryMonitorConfigFreqList("", systemSearchFormBean);
+                    for (BasMonitorConfigFreq basMonitorConfigFreq : monitorFreqList)
+                    {
+                        basMonitorConfigFreq.setId(GenerateSequenceUtil.generateSequenceNo());
+                        basMonitorConfigFreq.setBeid(operroom.getBeid());
+                        basMonitorConfigFreq.setRoomId(operroom.getOperRoomId());
+                        basMonitorConfigFreqDao.insertSelective(basMonitorConfigFreq);
+                    }
+                }
+            }
+            basOperroomDao.insertSelective(operroom);
+            
+            //将手术室信息插入到采集配置表中
+            BasCollectConfig collectConfig = new BasCollectConfig();
+            collectConfig.setRoomId(operroom.getOperRoomId());
+            collectConfig.setBeid(operroom.getBeid());
+            collectConfig.setIp(operroom.getRemotehost());
+            basCollectConfigDao.insert(collectConfig);
+        }
+        
+        //判断该手术室是否初始化了氧流量的监测项，存在则跳过不存在则添加
+        BasMonitorConfig basMonitorO2 = basMonitorConfigDao.selectByPrimaryKey("91001", operroom.getBeid(), operroom.getOperRoomId());
+        if(null==basMonitorO2){
+            basMonitorO2 = basMonitorConfigDao.selectByPrimaryKey("91001", "0", "0");
+            basMonitorO2.setBeid(operroom.getBeid());
+            basMonitorO2.setRoomId(operroom.getOperRoomId());
+            basMonitorConfigDao.insertSelective(basMonitorO2);
+        }
         
         
         CacheUtils.remove(ROOM_CACHE+"_"+getBeid(), ROOM_CACHE_ID+"_"+getBeid());

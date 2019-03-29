@@ -117,6 +117,27 @@ public class BasMedicine {
     @ApiModelProperty(value="是否显示用药方式")
     private Integer showMedWay;
     
+    /**
+     * 麻醉科用药类型：01 治疗用药，02 麻醉用药
+     */
+    @ApiModelProperty(value="麻醉科用药类型：01 治疗用药，02 麻醉用药")
+    private String subType;
+    
+    /**
+     * 是否为抗菌药物。0：否；1：是
+     */
+    private String antibacterial;
+    
+    public String getAntibacterial()
+    {
+        return antibacterial;
+    }
+
+    public void setAntibacterial(String antibacterial)
+    {
+        this.antibacterial = antibacterial;
+    }
+
     public Integer getShowMedWay()
     {
         return showMedWay;
@@ -276,4 +297,15 @@ public class BasMedicine {
     public void setBeid(String beid) {
         this.beid = beid == null ? null : beid.trim();
     }
+
+	public String getSubType()
+	{
+		return subType;
+	}
+
+	public void setSubType(String subType)
+	{
+		this.subType = subType;
+	}
+    
 }

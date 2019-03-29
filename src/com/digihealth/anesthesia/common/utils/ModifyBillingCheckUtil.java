@@ -30,6 +30,12 @@ public class ModifyBillingCheckUtil {
 		if(StringUtils.isNotBlank(regOptId)){
 			BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
 			
+			if(null != regOpt && "08".equals(regOpt.getState())){
+				resp.setResultCode( "40000001");
+				resp.setResultMessage("已取消的手术，不允许同步计费数据到his系统!");
+				return false;
+			}
+			
 			if(isCheckBillState){
 				if(null!=regOpt){
 					Integer payState = 9; //结算中

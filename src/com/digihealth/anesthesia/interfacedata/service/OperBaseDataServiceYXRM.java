@@ -139,7 +139,7 @@ public class OperBaseDataServiceYXRM {
 	@Transactional
 	public void synHisOperNameList(){
 		logger.info("-------start synHisOperNameList-----------");
-		String sql = "select * from view_operation_name ";
+		String sql = "select * from zloper.view_operation_name ";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -157,6 +157,39 @@ public class OperBaseDataServiceYXRM {
                     String name = StringFilter(rs.getString("name")).trim(); //过滤特殊字符
                     Integer enable = rs.getInt("enable");
                     String pinyin = PingYinUtil.getFirstSpell(name);
+                    String optLevel =rs.getString("operLevel");
+                	if(StringUtils.isNotBlank(optLevel))
+                	{
+                		if("小".equals(optLevel))
+                		{
+                			optLevel="一级";
+                		}else if("中".equals(optLevel))
+                		{
+                			optLevel="二级";
+                		}else if("大".equals(optLevel))
+                		{
+                			optLevel="三级";
+                		}else if("特".equals(optLevel))
+                		{
+                			optLevel="四级";
+                		}
+                		else if("1".equals(optLevel))
+                		{
+                			optLevel="";
+                		}
+                	}
+                	Integer cutLevel = null;           	
+                	if(StringUtils.isNotBlank(rs.getString("incisionLevel"))){
+                		
+                		if("Ⅰ".equals(rs.getString("incisionLevel")))
+                			cutLevel = 1;
+                		if("Ⅱ".equals(rs.getString("incisionLevel")))
+                			cutLevel = 2;
+                		if("Ⅲ".equals(rs.getString("incisionLevel")))
+                			cutLevel = 3;
+                		if("Ⅳ".equals(rs.getString("incisionLevel")))
+                			cutLevel = 4;
+            		}
                     BaseInfoQuery baseQuery =new BaseInfoQuery();
                     baseQuery.setCode(code);
                     BasOperdef operDefFormBean= basOperdefDao.selectByCode(code, basBusEntityDao.getBeid());
@@ -164,11 +197,14 @@ public class OperBaseDataServiceYXRM {
                     {
                         
                             BasOperdef operdef = basOperdefDao.queryOperdefById(operDefFormBean.getOperdefId());
-                            if (checkData(operdef.getName(),name) || operdef.getEnable() != enable)
+                            if (checkData(operdef.getName(),name) || operdef.getEnable() != enable 
+                            		|| checkData(operdef.getOptLevel(),optLevel) || checkObjectData(operdef.getCutLevel(),cutLevel))
                             {
                                 operdef.setName(name);
                                 operdef.setEnable(enable);
                                 operdef.setPinYin(pinyin);
+                                operdef.setOptLevel(optLevel);
+                                operdef.setCutLevel(cutLevel);
                                 basOperdefDao.update(operdef);
                             }
                        
@@ -181,6 +217,8 @@ public class OperBaseDataServiceYXRM {
                         odef.setName(name);
                         odef.setPinYin(pinyin);
                         odef.setEnable(enable);
+                        odef.setOptLevel(optLevel);
+                        odef.setCutLevel(cutLevel);
                         odef.setBeid(basBusEntityDao.getBeid());
                         basOperdefDao.insert(odef);
                     }
@@ -205,6 +243,12 @@ public class OperBaseDataServiceYXRM {
 		logger.info("-------end synHisOperNameList-----------");
 	}
 	
+	private boolean checkObjectData(Integer cutLevel, Integer cutLevel2)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	/**
 	 * 获取手术医生
 	 * 视图名称：VIEW_OPERATION_DOCTOR
@@ -1179,7 +1223,7 @@ public class OperBaseDataServiceYXRM {
 	        	BasRegOpt regOpt = new BasRegOpt();
             	
             	regOpt.setPreengagementnumber(rs.getString("reservenumber"));
-            	regOpt.setName(rs.getString("name"));
+            	regOpt.setName(rs.getString("name").replaceAll("[^a-zA-Z_\u4e00-\u9fa5]", ""));
             	//HIS传过来的年龄，月，天  都在 age 字段
                 String hisAge = rs.getString("age");
                 if(StringUtils.isNotBlank(hisAge))

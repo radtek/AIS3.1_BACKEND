@@ -21,6 +21,7 @@ import org.apache.ibatis.annotations.Param;
 public interface BasMonitorDisplayDao {
     int deleteByPrimaryKey(@Param("id") String id, @Param("time") Date time);
 
+    int deleteByRegOptId(@Param("regOptId") String regOptId);
     int insert(BasMonitorDisplay record);
 
     int insertSelective(BasMonitorDisplay record);

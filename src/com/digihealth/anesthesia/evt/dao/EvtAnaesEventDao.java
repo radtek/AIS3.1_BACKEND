@@ -31,6 +31,7 @@ public interface EvtAnaesEventDao extends CrudDao<EvtAnaesEvent>{
 
     int updateByPrimaryKey(EvtAnaesEvent record);
     
+    int deleteByDocId(@Param("docId")String docId);
     public void deleteAnaeseventByDocId(@Param("anaesevent")EvtAnaesEvent anaesevent);
     
     public List<EvtAnaesEvent> selectCodeByDESC(@Param("docId")String docId,@Param("code")int code);

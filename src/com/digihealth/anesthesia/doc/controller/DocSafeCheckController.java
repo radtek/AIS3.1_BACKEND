@@ -268,6 +268,220 @@ public class DocSafeCheckController extends BaseController {
         logger.info("end searchSafeCheckByRegOptId");
         return resp.getJsonStr();
     }
+    
+    
+    /**
+     * 
+     * @discription 根据手术ID获取手术核查单
+     * @author chengwang
+     * @created 2015年10月28日 上午9:51:41
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/searchSafeCheckByRegOptIdSYZXYY")
+    @ResponseBody
+    @ApiOperation(value="根据手术ID获取手术核查单",httpMethod="POST",notes="根据手术ID获取手术核查单")
+    public String searchSafeCheckByRegOptIdSYZXYY(@ApiParam(name="map", value ="查询参数") @RequestBody Map<String, Object> map) {
+        logger.info("begin searchSafeCheckByRegOptId");
+        ResponseValue resp = new ResponseValue();
+        String regOptId = map.get("regOptId") != null ? map.get("regOptId").toString() : "";
+        DocSafeCheck safeCheck = docSafeCheckService.searchSafeCheckByRegOptId(regOptId);
+        if (safeCheck == null) {
+            resp.setResultCode("30000002");
+            resp.setResultMessage("手术核查单不存在");
+            return resp.getJsonStr();
+        }
+        
+        List<String> anesthetistIds = new ArrayList<String>();
+        List<String> circunurseIds = new ArrayList<String>();
+        List<String> operatorIds = new ArrayList<String>();
+        
+        DocAnaesRecord anaesRecord = docAnaesRecordService.searchAnaesRecordByRegOptId(regOptId);
+        SearchFormBean searchBean = new SearchFormBean();
+        searchBean.setDocId(anaesRecord.getAnaRecordId());
+        searchBean.setRole("A");
+        List<EvtParticipant> anaesDocList = evtParticipantService.searchParticipantList(searchBean);
+        searchBean.setRole("N");
+        searchBean.setType(EvtParticipantService.OPER_TYPE_TOUR);
+        List<EvtParticipant> nurseDocList = evtParticipantService.searchParticipantList(searchBean);
+        searchBean.setRole("O");
+        List<EvtParticipant> operList = evtParticipantService.searchParticipantList(searchBean);
+        
+        //麻醉医生签名
+        if (null == safeCheck.getAnesthetistId())
+        {
+            if (null != anaesDocList && anaesDocList.size() > 0)
+            {
+                for (EvtParticipant evtParticipant : anaesDocList)
+                {
+                    anesthetistIds.add(evtParticipant.getUserLoginName());
+                }
+            }
+        }
+        else
+        {
+            anesthetistIds = StringUtils.getListByString(safeCheck.getAnesthetistId());
+        }
+        safeCheck.setAnesthetistIdList(anesthetistIds);
+        
+        //护士签名
+        if (null == safeCheck.getCircunurseId())
+        {
+            if (null != nurseDocList && nurseDocList.size() > 0)
+            {
+                for (EvtParticipant evtParticipant : nurseDocList)
+                {
+                    circunurseIds.add(evtParticipant.getUserLoginName());
+                }
+            }
+        }
+        else
+        {
+            circunurseIds = StringUtils.getListByString(safeCheck.getCircunurseId());
+        }
+        safeCheck.setCircunurseIdList(circunurseIds);
+        
+        //手术医师签名
+        if (null == safeCheck.getOperatorId())
+        {
+            if (null != operList && operList.size() > 0)
+            {
+                for (EvtParticipant evtParticipant : operList)
+                {
+                    operatorIds.add(evtParticipant.getUserLoginName());
+                }
+            }
+        }
+        else
+        {
+            operatorIds = StringUtils.getListByString(safeCheck.getOperatorId());
+        }
+        safeCheck.setOperatorIdList(operatorIds);
+        
+        SearchSafeCheckRegOptFormBean searchRegOptByIdFormBean = basRegOptService
+                .searchSafeCheckRegOptById(regOptId);
+        SafeCheckFormBean bean = new SafeCheckFormBean();
+        bean.setAge(searchRegOptByIdFormBean.getAge());
+        bean.setBed(searchRegOptByIdFormBean.getBed());
+        bean.setDeptName(searchRegOptByIdFormBean.getDeptName());
+        bean.setDesignedAnaesMethodName(searchRegOptByIdFormBean
+                .getDesignedAnaesMethodName());
+        bean.setDesignedOptName(searchRegOptByIdFormBean.getDesignedOptName());
+        bean.setDiagnosisName(searchRegOptByIdFormBean.getDiagnosisName());
+        bean.setHid(searchRegOptByIdFormBean.getHid());
+        bean.setName(searchRegOptByIdFormBean.getName());
+        bean.setOperaDate(searchRegOptByIdFormBean.getOperaDate());
+        bean.setRegionName(searchRegOptByIdFormBean.getRegionName());
+        bean.setRegOptId(searchRegOptByIdFormBean.getRegOptId());
+        bean.setSex(searchRegOptByIdFormBean.getSex());
+        
+        List<EvtRealAnaesMethod> realAnaMdList = evtRealAnaesMethodService
+                .searchRealAnaesMethodList(searchBean);
+        
+        bean.setOperatorName("");
+        if(operList!=null&&operList.size()>0){
+            for(int i = 0 ; i <operList.size();i++){
+                //User user = basUserService.searchUserById(Integer.parseInt(operList.get(i).getUserLoginName()));
+                BasOperationPeople resultDept = basOperationPeopleService.queryOperationPeopleById(operList.get(i).getUserLoginName());
+                bean.setOperatorName(bean.getOperatorName()+resultDept.getName()+",");
+            }
+        }
+        if(!StringUtils.isEmpty(bean.getOperatorName())){
+            bean.setOperatorName(bean.getOperatorName().substring(0,bean.getOperatorName().length()-1));
+        }
+        
+        bean.setRealDesignedAnaesMethodName("");
+        if (realAnaMdList.size() > 0 && realAnaMdList != null) {
+            for (int i = 0; i < realAnaMdList.size(); i++) {
+                bean.setRealDesignedAnaesMethodName(bean
+                        .getRealDesignedAnaesMethodName()==null?realAnaMdList.get(i).getName() + ",":bean
+                        .getRealDesignedAnaesMethodName()
+                        + realAnaMdList.get(i).getName() + ",");
+            }
+        }
+        
+        if(!StringUtils.isEmpty(bean.getRealDesignedAnaesMethodName())){
+            bean.setRealDesignedAnaesMethodName(bean.getRealDesignedAnaesMethodName().substring(0,bean.getRealDesignedAnaesMethodName().length()-1));
+        }
+
+        List<EvtOptLatterDiag> optLDList = evtOptLatterDiagService.searchOptLatterDiagList(searchBean);
+        bean.setRealDiagnosisName("");
+        if (optLDList.size() > 0 && optLDList != null) {
+            for (int i = 0; i < optLDList.size(); i++) {
+                bean.setRealDiagnosisName(bean.getRealDiagnosisName()==null?optLDList.get(i).getName() + ",":bean.getRealDiagnosisName()
+                        + optLDList.get(i).getName() + ",");
+            }
+        }
+        
+        if(!StringUtils.isEmpty(bean.getRealDiagnosisName())){
+            bean.setRealDiagnosisName(bean.getRealDiagnosisName().substring(0,bean.getRealDiagnosisName().length()-1));
+        }
+
+        List<EvtOptRealOper> optROList = evtOptRealOperService.searchOptRealOperList(searchBean);
+        bean.setRealDesignedOptName("");
+        if (optROList.size() > 0 && optROList != null) {
+            for (int i = 0; i < optROList.size(); i++) {
+                bean.setRealDesignedOptName(bean.getRealDesignedOptName()==null?optROList.get(i).getName() + ",":bean.getRealDesignedOptName()
+                        + optROList.get(i).getName() + ",");
+            }
+        }
+        if(!StringUtils.isEmpty(bean.getRealDesignedOptName())){
+            bean.setRealDesignedOptName(bean.getRealDesignedOptName().substring(0,bean.getRealDesignedOptName().length()-1));
+        }
+        
+        DocAnaesBeforeSafeCheck anaesBeforeSafeCheck = docAnaesBeforeSafeCheckService.searchAnaBeCheckByRegOptId(regOptId);
+        DocOperBeforeSafeCheck operBeforeSafeCheck = docOperBeforeSafeCheckService.searchOperBeCheckByRegOptId(regOptId);
+        DocExitOperSafeCheck exitOperSafeCheck = docExitOperSafeCheckService.searchExitOperCheckByRegOptId(regOptId);
+        
+        SearchRegOptByIdFormBean regOptItem = basRegOptService.searchApplicationById(regOptId);
+        
+        // 实施手术
+        searchBean = new SearchFormBean();
+        searchBean.setRegOptId(regOptId);
+        searchBean.setDocId(anaesRecord.getAnaRecordId());
+
+        // 麻醉医生列表
+        searchBean.setRole(EvtParticipantService.ROLE_ANESTH);
+        //searchBean.setType("01");
+        String anaesDoc = statisticsService.getNameStrByDocId(searchBean);
+        // 手术医生列表
+        searchBean.setRole(EvtParticipantService.ROLE_OPERAT);
+        searchBean.setType("07");
+        String operatDoc = statisticsService.getNameStrByDocId(searchBean);
+        // 巡回护士列表
+        searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+        searchBean.setType("05");
+        String circunurse = statisticsService.getNameStrByDocId(searchBean);
+        
+        // 洗手护士列表
+        searchBean.setRole(EvtParticipantService.ROLE_NURSE);
+        searchBean.setType("04");
+        String instrnurse = statisticsService.getNameStrByDocId(searchBean);
+
+        //获取排程信息
+        BasDispatch dispatch = basDispatchService.getDispatchOper(regOptId);
+        
+        if ("1".equals(regOptItem.getIsLocalAnaes())) { // 局麻
+            BasUser circunurseInfo = basUserService.searchUserById(dispatch.getCircunurseId1(), getBeid());
+            circunurse = circunurseInfo.getName();
+            BasUser instrnurseInfo = basUserService.searchUserById(dispatch.getInstrnurseId1(), getBeid());
+            instrnurse = null == instrnurseInfo ? null : instrnurseInfo.getName();
+            operatDoc = regOptItem.getOperatorName(); 
+        }
+        
+        resp.put("anaesDoc", anaesDoc);
+        resp.put("operatDoc", StringUtils.isNotBlank(operatDoc)?operatDoc:regOptItem.getOperatorName());
+        resp.put("circunurse", circunurse);
+        resp.put("instrnurse", instrnurse);
+        resp.put("regOptItem",regOptItem);
+        resp.put("safeCheck", safeCheck); 
+        resp.put("safeCheckFormBean", bean);
+        resp.put("anaesBeforeSafeCheck", anaesBeforeSafeCheck);
+        resp.put("operBeforeSafeCheck", operBeforeSafeCheck);
+        resp.put("exitOperSafeCheck", exitOperSafeCheck);
+        logger.info("end searchSafeCheckByRegOptId");
+        return resp.getJsonStr();
+    }
 
 	@RequestMapping(value = "/updateSafeCheck")
 	@ResponseBody

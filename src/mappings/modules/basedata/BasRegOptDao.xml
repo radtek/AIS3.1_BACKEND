@@ -1871,7 +1871,7 @@
 		<if test="showFreeBed != null and showFreeBed ==0" >
        	 	and regOptId is not null
       	</if>
-		ORDER BY a1.operRoomId asc
+		ORDER BY CAST(a1.operRoomId AS SIGNED) asc
   </select>
   
   

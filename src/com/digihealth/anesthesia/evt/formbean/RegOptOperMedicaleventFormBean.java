@@ -12,6 +12,7 @@ public class RegOptOperMedicaleventFormBean {
 	private List<SearchOptOperMedicalevent> medicalEventList;
 	private String durable; // 是否是持续性 1持续,0不持续,2:TCI
 	private String medEventId;
+	private String briefName;
 	
 	private Float packageDosageAmount;
     private Float amout; //金额
@@ -23,7 +24,16 @@ public class RegOptOperMedicaleventFormBean {
     private String proportion; //比重
     private Integer showMedWay;  //是否显示用药方式
 
-    public Integer getShowMedWay()
+    
+    public String getBriefName() {
+		return briefName;
+	}
+
+	public void setBriefName(String briefName) {
+		this.briefName = briefName;
+	}
+
+	public Integer getShowMedWay()
     {
         return showMedWay;
     }

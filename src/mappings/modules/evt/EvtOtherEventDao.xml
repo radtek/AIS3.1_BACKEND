@@ -38,6 +38,10 @@
     where otherEventId = #{otherEventId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByDocId" parameterType="java.lang.String" >
+    delete from evt_otherevent where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtOtherEvent" >
     insert into evt_otherevent (otherEventId, docId, startTime, 
       endTime, title, eventDefId)

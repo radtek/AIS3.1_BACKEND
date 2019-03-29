@@ -982,26 +982,31 @@ public class StatisticsController extends BaseController {
         				HomeAnaesDoctorWorkingTimeFormBean anaesAllRecord = anaesAllRecordList.get(i);
         			    if(null != anaesAllRecord)
         			    {
-        			    	anaesRecordMap.put(anaesAllRecord.getRegOptId(), anaesAllRecord);
+        			    	try {
+        			    		anaesRecordMap.put(anaesAllRecord.getRegOptId(), anaesAllRecord);
+            			    	
+            			    	//麻醉医师的工作量
+                				long workingtime = 0;
+                				String outOperTime = anaesAllRecord.getOutOperRoomTime();
+                				String intOperTime = anaesAllRecord.getAnaesStartTime();
+                				String circuanesthetistId = anaesAllRecord.getCircuanesthetistId();
+                				if(StringUtils.isNotBlank(outOperTime) && StringUtils.isNotBlank(intOperTime))
+                				{
+                					workingtime = (DateUtils.getParseTime(outOperTime).getTime() - DateUtils.getParseTime(intOperTime).getTime())/1000/60 ;
+                				}
+                				
+                				if((user.getUserName()).equals(circuanesthetistId))
+                				{
+                					WorkingTimeFormBean old = (timeMap
+                							.get(anaesAllRecord.getYear() + "年"+ anaesAllRecord.getMonth() + "月"));
+                					long l = Long.parseLong(old.getTime()) + workingtime;
+                					old.setTime(l+"");
+                					timeMap.put(anaesAllRecord.getYear() + "年"+ anaesAllRecord.getMonth() + "月", old);
+                				}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
         			    	
-        			    	//麻醉医师的工作量
-            				long workingtime = 0;
-            				String outOperTime = anaesAllRecord.getOutOperRoomTime();
-            				String intOperTime = anaesAllRecord.getAnaesStartTime();
-            				String circuanesthetistId = anaesAllRecord.getCircuanesthetistId();
-            				if(StringUtils.isNotBlank(outOperTime) && StringUtils.isNotBlank(intOperTime))
-            				{
-            					workingtime = (DateUtils.getParseTime(outOperTime).getTime() - DateUtils.getParseTime(intOperTime).getTime())/1000/60 ;
-            				}
-            				
-            				if((user.getUserName()).equals(circuanesthetistId))
-            				{
-            					WorkingTimeFormBean old = (timeMap
-            							.get(anaesAllRecord.getYear() + "年"+ anaesAllRecord.getMonth() + "月"));
-            					long l = Long.parseLong(old.getTime()) + workingtime;
-            					old.setTime(l+"");
-            					timeMap.put(anaesAllRecord.getYear() + "年"+ anaesAllRecord.getMonth() + "月", old);
-            				}
         			    }
         			}
         		}

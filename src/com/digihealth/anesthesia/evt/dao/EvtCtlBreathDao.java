@@ -20,6 +20,8 @@ import com.digihealth.anesthesia.evt.po.EvtCtlBreath;
 public interface EvtCtlBreathDao {
     int deleteByPrimaryKey(String ctlBreId);
 
+    int deleteByDocId(@Param("docId")String docId);
+    
     int insert(EvtCtlBreath record);
 
     int insertSelective(EvtCtlBreath record);

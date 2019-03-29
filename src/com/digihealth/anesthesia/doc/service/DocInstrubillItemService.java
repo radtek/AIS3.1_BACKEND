@@ -76,6 +76,7 @@ public class DocInstrubillItemService extends BaseService {
 		instrubillItem.setCloAfBody(0);
 		instrubillItem.setCloBeBody(0);
 		instrubillItem.setHollowViscus(0);
+		instrubillItem.setSkinSuture(0);
 		instrubillItem.setCreateTime(new Date());
 		if(user !=null){
 			instrubillItem.setCreateUser(user.getUserName());

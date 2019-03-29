@@ -298,6 +298,13 @@ public class DocOptCareRecord {
     private String bloodType;
 
     /**
+     * 血液种类
+     */
+    @ApiModelProperty(value = "血液种类")
+    private String bloodKinds;
+    
+    
+    /**
      * 血液成分
      */
     @ApiModelProperty(value = "血液成分")
@@ -367,6 +374,19 @@ public class DocOptCareRecord {
      */
     @ApiModelProperty(value = "手术用物灭菌指示标记")
     private Integer sterilizationMark;
+    
+    /**
+     * 手术医生id
+     */
+    private String operatorId;
+
+    /**
+     * 手术医生名字
+     */
+    private String operatorName;
+    
+    //手术者list
+    List<String> operatorIdList = new ArrayList<String>();
     
     public String getPipelineOther()
     {
@@ -961,4 +981,35 @@ public class DocOptCareRecord {
 	{
 		this.sterilizationMark = sterilizationMark;
 	}
+
+	public String getOperatorId()
+	{
+		return operatorId;
+	}
+
+	public void setOperatorId(String operatorId)
+	{
+		this.operatorId = operatorId;
+	}
+
+	public String getOperatorName()
+	{
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName)
+	{
+		this.operatorName = operatorName;
+	}
+
+	public List<String> getOperatorIdList()
+	{
+		return null == operatorIdList ? new ArrayList<String>() : operatorIdList; 
+	}
+
+	public void setOperatorIdList(List<String> operatorIdList)
+	{
+		this.operatorIdList = operatorIdList;
+	}
+	
 }

@@ -74,6 +74,9 @@ public class Row
     private String chargeItemName;
     private String timestamp;//his回传时间戳值
     private String remark;
+    private String operatorId;
+    private String operatorName;
+    
     
     //his计费返回参数
     private String ret;//F为失败  T为成功
@@ -82,8 +85,72 @@ public class Row
     
     private String state;//手术状态
     
+    private String onlynumber;
+    private String visitid;
+    
+    private String feename;//费用类型 
     
     
+    private String resultCode;
+    private String resultMessage;
+    
+    private String pkItId;
+    
+    
+	public String getOperatorId()
+    {
+        return operatorId;
+    }
+    public void setOperatorId(String operatorId)
+    {
+        this.operatorId = operatorId;
+    }
+    public String getOperatorName()
+    {
+        return operatorName;
+    }
+    public void setOperatorName(String operatorName)
+    {
+        this.operatorName = operatorName;
+    }
+    public String getPkItId() {
+		return pkItId;
+	}
+	public void setPkItId(String pkItId) {
+		this.pkItId = pkItId;
+	}
+	public String getResultCode() {
+		return resultCode;
+	}
+	public void setResultCode(String resultCode) {
+		this.resultCode = resultCode;
+	}
+	public String getResultMessage() {
+		return resultMessage;
+	}
+	public void setResultMessage(String resultMessage) {
+		this.resultMessage = resultMessage;
+	}
+    
+    
+	public String getFeename() {
+		return feename;
+	}
+	public void setFeename(String feename) {
+		this.feename = feename;
+	}
+	public String getOnlynumber() {
+		return onlynumber;
+	}
+	public void setOnlynumber(String onlynumber) {
+		this.onlynumber = onlynumber;
+	}
+	public String getVisitid() {
+		return visitid;
+	}
+	public void setVisitid(String visitid) {
+		this.visitid = visitid;
+	}
 	public String getState() {
 		return state;
 	}

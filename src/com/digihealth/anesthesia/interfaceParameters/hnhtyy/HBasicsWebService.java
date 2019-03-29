@@ -15,8 +15,11 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "HBasicsWebService", 
-                  wsdlLocation = "http://192.168.0.14:8087/HBasicsWebService.asmx?wsdl",
+                  wsdlLocation = "http://192.168.0.124:8087/HBasicsWebService.asmx?wsdl",
                   targetNamespace = "http://tempuri.org/") 
+//@WebServiceClient(name = "HBasicsWebService", 
+//wsdlLocation = "http://10.65.146.230:8087/HBasicsWebService.asmx?wsdl",
+//targetNamespace = "http://tempuri.org/") 
 public class HBasicsWebService extends javax.xml.ws.Service {
 
     public final static URL WSDL_LOCATION;
@@ -27,11 +30,12 @@ public class HBasicsWebService extends javax.xml.ws.Service {
     static {
         URL url = null;
         try {
-            url = new URL("http://192.168.0.14:8087/HBasicsWebService.asmx?wsdl");
+            url = new URL("http://192.168.0.124:8087/HBasicsWebService.asmx?wsdl");
+            //url = new URL("http://10.65.146.230:8087/HBasicsWebService.asmx?wsdl");
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(HBasicsWebService.class.getName())
                 .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "http://192.168.0.14:8087/HBasicsWebService.asmx?wsdl");
+                     "Can not initialize the default wsdl from {0}", "http://192.168.0.124:8087/HBasicsWebService.asmx?wsdl");
         }
         WSDL_LOCATION = url;
     }

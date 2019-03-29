@@ -8,6 +8,8 @@
  */
 package com.digihealth.anesthesia.operProceed.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
 import com.digihealth.anesthesia.operProceed.po.BasMonitorDisplayChangeHis;
 
@@ -15,6 +17,8 @@ import com.digihealth.anesthesia.operProceed.po.BasMonitorDisplayChangeHis;
 public interface BasMonitorDisplayChangeHisDao {
     int deleteByPrimaryKey(String id);
 
+    int deleteByRegOptId(@Param("regOptId") String regOptId);
+    
     int insert(BasMonitorDisplayChangeHis record);
 
     int insertSelective(BasMonitorDisplayChangeHis record);

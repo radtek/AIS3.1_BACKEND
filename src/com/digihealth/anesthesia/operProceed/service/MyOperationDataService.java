@@ -26,6 +26,8 @@ import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
 import com.digihealth.anesthesia.evt.formbean.SearchOperaPatrolRecordFormBean;
 import com.digihealth.anesthesia.evt.po.EvtAnaesEvent;
+import com.digihealth.anesthesia.evt.po.EvtCheckEvent;
+import com.digihealth.anesthesia.evt.po.EvtMedicalEvent;
 import com.digihealth.anesthesia.evt.po.EvtParticipant;
 import com.digihealth.anesthesia.evt.po.EvtRealAnaesMethod;
 import com.digihealth.anesthesia.evt.service.EvtParticipantService;
@@ -442,4 +444,69 @@ public class MyOperationDataService extends BaseService {
         
 	}
 	
+	/**
+     * 在术中页面返回术前(本溪局点)
+     * @return
+     */
+	@Transactional
+	public ResponseValue backPreoperative(String regOptId, ResponseValue resp) {
+		basAnaesMonitorConfigDao.deleteByRegOptId(regOptId, getBeid());
+		basMonitorDisplayDao.deleteByRegOptId(regOptId);
+		basMonitorDisplayChangeHisDao.deleteByRegOptId(regOptId);
+		basMonitorFreqChangeDao.deleteByRegOptId(regOptId);
+		String docId = "";
+		DocAnaesRecord docAnaesRecord = docAnaesRecordDao.searchAnaesRecordByRegOptId(regOptId);
+		if (docAnaesRecord != null) {
+			SearchFormBean searchBean = new SearchFormBean();
+			searchBean.setDocId(docId);
+			docId = docAnaesRecord.getAnaRecordId();
+			evtAnaesEventDao.deleteByDocId(docId);
+			String evtCheckEventId = "";
+			List<EvtCheckEvent> evtCheckEventList = evtCheckEventDao.searchCheckeventList(searchBean);
+			if (evtCheckEventList.size() > 0) {
+				evtCheckEventId = evtCheckEventList.get(0).getCheEventId();
+				evtCheckEventItemRelationDao.deleteCheckeventItemRelation(evtCheckEventId);
+				evtCheckEventDao.deleteByDocId(docId);
+			}
+			evtCtlBreathDao.deleteByDocId(docId);
+			evtEgressDao.deleteByDocId(docId);
+			evtInEventDao.deleteByDocId(docId);
+			String medicaleventId = "";
+			List<EvtMedicalEvent> evtMedicalEventList = evtMedicaleventDao.queryMedicaleventListById(searchBean);
+			if (evtMedicalEventList.size() > 0) {
+				medicaleventId = evtMedicalEventList.get(0).getMedEventId();
+				evtMedicalEventDetailDao.deleteByMedEventId(medicaleventId);
+				evtMedicaleventDao.deleteByDocId(docId);
+			}
+			evtOptLatterDiagDao.deleteByDocId(docId);
+			evtOptRealOperDao.deleteByDocId(docId);
+			evtOtherEventDao.deleteByDocId(docId);
+			evtParticipantDao.deleteByDocId(docId);
+			evtRealAnaesMethodDao.deleteByDocId(docId);
+			evtRescueeventDao.deleteByDocId(docId);
+			
+			docAnaesRecord.setAnaesStartTime(null);
+			docAnaesRecord.setOperStartTime(null);
+			docAnaesRecord.setOperEndTime(null);
+			docAnaesRecord.setInOperRoomTime(null);
+			docAnaesRecord.setOutOperRoomTime(null);
+			docAnaesRecord.setLeaveTo(null);
+			docAnaesRecordDao.updateByPrimaryKey(docAnaesRecord);
+		} else {
+			resp.setResultCode("10000000");
+			resp.setResultMessage("麻醉记录单不存在!");
+			return resp;
+		}
+		BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
+		if (regOpt != null) {
+			regOpt.setOperTime(null);
+			regOpt.setState(OperationState.PREOPERATIVE);
+			regOpt.setPreviousState(OperationState.SURGERY);
+			basRegOptDao.updateByPrimaryKey(regOpt);
+		} else {
+			resp.setResultCode("10000000");
+			resp.setResultMessage("患者信息不存在!");
+		}
+		return resp;
+	}
 }

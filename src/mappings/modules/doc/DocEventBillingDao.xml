@@ -183,7 +183,7 @@
     where ebId = #{ebId,jdbcType=VARCHAR}
   </delete>
   
-  	<select id="queryUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow">
+  <select id="queryUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow">
 		SELECT a.regOptId,b.code price_id,a.packageTotalAmount amount,a.ebId operjzxh,t.hid blh,'24010121' act_dept,'0' his_priceid,'2' xmlb,a.createTime act_time,a.createUser recorder
 				,b.packageDosageAmount dwxs,p.minPackageUnit ypdw,p.priceMinPackage xmdj,t.hid oper_id
 			from doc_event_billing a,bas_reg_opt t,bas_medicine b ,bas_price p
@@ -199,6 +199,22 @@
 				and b.`enable` = 1
 				and a.packageTotalAmount &gt; 0
 	</select>
+	
+	<select id="queryHNHTYYUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow">
+		SELECT b.code chargeItemCode,a.packageTotalAmount number,a.ebId pkItId,b.`name`,a.firmId  firm,'1' type
+			from doc_event_billing a,bas_reg_opt t,bas_medicine b 
+				where a.regOptId = t.regOptId
+				and a.`code`=b.medicineId
+				and t.beid = b.beid
+				and  a.regOptId = #{regOptId} 
+				and a.state = 'NO_FINISH' 
+				and isCharged = 1
+				and costType = #{costType}
+				and b.`enable` = 1
+				and a.packageTotalAmount &gt; 0
+	</select>
+	
+	
 	
 	<select id="queryUnChargMedByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.po.ChargItem">
 	SELECT a.`packageTotalAmount` itemQty, b.`code` itemCode, b.`name` itemName, '1' itemType, a.ebId itemId

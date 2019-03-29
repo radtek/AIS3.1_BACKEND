@@ -21,11 +21,14 @@
     <result column="comMedicine" property="comMedicine" jdbcType="VARCHAR" />
     <result column="jingyi" property="jingyi" jdbcType="VARCHAR" />
     <result column="showMedWay" property="showMedWay" jdbcType="INTEGER" />
+    <result column="subType" property="subType" jdbcType="VARCHAR" />
+    <result column="antibacterial" property="antibacterial" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     medicineId, code, type, source, pinYin, name, spec, hisMedicineCode, briefName, dosageUnit, 
-    roughType, packageDosageAmount, enable, beid, whitePrescription, redPrescription,comMedicine, jingyi, showMedWay
+    roughType, packageDosageAmount, enable, beid, whitePrescription, redPrescription,comMedicine, 
+    jingyi, showMedWay, subType, antibacterial
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -49,14 +52,15 @@
       source, pinYin, name, 
       spec, hisMedicineCode, briefName, 
       dosageUnit, roughType, packageDosageAmount, 
-      enable, beid, whitePrescription, redPrescription,comMedicine, jingyi, showMedWay)
+      enable, beid, whitePrescription, redPrescription,
+      comMedicine, jingyi, showMedWay,subType, antibacterial)
     values (#{medicineId,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{source,jdbcType=VARCHAR}, #{pinYin,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{spec,jdbcType=VARCHAR}, #{hisMedicineCode,jdbcType=VARCHAR}, #{briefName,jdbcType=VARCHAR}, 
       #{dosageUnit,jdbcType=VARCHAR}, #{roughType,jdbcType=VARCHAR}, #{packageDosageAmount,jdbcType=REAL}, 
       #{enable,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR}, #{whitePrescription,jdbcType=VARCHAR}, 
       #{redPrescription,jdbcType=VARCHAR}, #{comMedicine,jdbcType=VARCHAR}, 
-      #{jingyi,jdbcType=VARCHAR}, #{showMedWay,jdbcType=INTEGER})
+      #{jingyi,jdbcType=VARCHAR}, #{showMedWay,jdbcType=INTEGER}, #{subType,jdbcType=VARCHAR}, #{antibacterial,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasMedicine" >
@@ -119,6 +123,12 @@
       <if test="showMedWay != null" >
         showMedWay,
       </if>
+      <if test="subType != null" >
+        subType,
+      </if>
+      <if test="antibacterial != null" >
+        antibacterial,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="medicineId != null" >
@@ -178,12 +188,18 @@
       <if test="showMedWay != null" >
         #{showMedWay,jdbcType=INTEGER},
       </if>
+      <if test="subType != null" >
+        #{subType,jdbcType=VARCHAR},
+      </if>
+      <if test="antibacterial != null" >
+        #{antibacterial,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
 
 	<insert id="initData" parameterType="com.digihealth.anesthesia.basedata.po.BasMedicine" >
-	    INSERT INTO `bas_medicine` (`medicineId`, `code`, `type`, `source`, `pinYin`, `name`, `spec`, `hisMedicineCode`, `briefName`, `dosageUnit`, `roughType`, `packageDosageAmount`, `enable`, `beid`) 
-	    SELECT CONCAT(#{basMedicine.beid,jdbcType=VARCHAR},#{random},`medicineId`) AS medicineId, `code`, `type`, `source`, `pinYin`, `name`, `spec`, `hisMedicineCode`, `briefName`, `dosageUnit`, `roughType`, `packageDosageAmount`, `enable`, #{basMedicine.beid,jdbcType=VARCHAR} FROM `bas_medicine` WHERE beid = '102';
+	    INSERT INTO `bas_medicine` (`medicineId`, `code`, `type`, `source`, `pinYin`, `name`, `spec`, `hisMedicineCode`, `briefName`, `dosageUnit`, `roughType`, `packageDosageAmount`, `enable`, subType,`beid`) 
+	    SELECT CONCAT(#{basMedicine.beid,jdbcType=VARCHAR},#{random},`medicineId`) AS medicineId, `code`, `type`, `source`, `pinYin`, `name`, `spec`, `hisMedicineCode`, `briefName`, `dosageUnit`, `roughType`, `packageDosageAmount`, `enable`, subType, #{basMedicine.beid,jdbcType=VARCHAR} FROM `bas_medicine` WHERE beid = '102';
 	</insert>
 	
   <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasMedicine" >
@@ -243,6 +259,12 @@
       <if test="showMedWay != null" >
         showMedWay = #{showMedWay,jdbcType=INTEGER},
       </if>
+      <if test="subType != null" >
+        subType = #{subType,jdbcType=VARCHAR},
+      </if>
+      <if test="antibacterial != null" >
+        antibacterial = #{antibacterial,jdbcType=VARCHAR},
+      </if>
     </set>
     where medicineId = #{medicineId,jdbcType=VARCHAR}
   </update>
@@ -266,7 +288,9 @@
       redPrescription = #{redPrescription,jdbcType=VARCHAR},
       comMedicine = #{comMedicine,jdbcType=VARCHAR},
       jingyi = #{jingyi,jdbcType=VARCHAR},
-      showMedWay = #{showMedWay,jdbcType=INTEGER}
+      showMedWay = #{showMedWay,jdbcType=INTEGER},
+      subType = #{subType,jdbcType=VARCHAR},
+      antibacterial = #{antibacterial,jdbcType=VARCHAR}
     where medicineId = #{medicineId,jdbcType=VARCHAR}
   </update>
   
@@ -286,6 +310,9 @@
 					</if>
 					<if test="baseQuery.type != null and baseQuery.type != ''">
 						AND a.type = #{baseQuery.type}
+					</if>
+					<if test="baseQuery.subType != null and baseQuery.subType != ''">
+						AND a.subType = #{baseQuery.subType}
 					</if>
 			) m left JOIN bas_price p on m.code=p.code and m.beid = p.beid
 		<if test="baseQuery.pageSize !=null and baseQuery.pageSize!=''">

@@ -53,6 +53,9 @@
     <result column="banDrinking" property="banDrinking" jdbcType="INTEGER" />
     <result column="fasting" property="fasting" jdbcType="INTEGER" />
     <result column="sterilizationMark" property="sterilizationMark" jdbcType="INTEGER" />
+    <result column="operatorId" property="operatorId" jdbcType="VARCHAR" />
+    <result column="operatorName" property="operatorName" jdbcType="VARCHAR" />
+    <result column="bloodKinds" property="bloodKinds" jdbcType="VARCHAR" />
   </resultMap>
 
   <resultMap id="ResultMapWithBLOBs" type="com.digihealth.anesthesia.doc.po.DocOptCareRecord" extends="BaseResultMap" >
@@ -75,7 +78,8 @@
     inspSpeedy, allergicContents, negativeFlag, supportMaterialFlag, drainageTubeFlag, pipelineOther, implantsOther, 
     wardShiftsNurse, wardSuccessionNurse, bloodType, bloodConstituent, 
     bloodTransfusion, bleedingAmount, infusionVolume, urineVolume, preoperativeMedication,medicationUsed,
-    wristband, bodySurface, banDrinking, fasting, sterilizationMark
+    wristband, bodySurface, banDrinking, fasting, sterilizationMark, 
+    operatorId, operatorName,bloodKinds
   </sql>
 
   <sql id="Blob_Column_List" >
@@ -120,10 +124,10 @@
       infusionVolume, urineVolume, preoperativeMedication, 
       medicationUsed, wristband, bodySurface, 
       banDrinking, fasting, sterilizationMark, 
-      skin1, negativePosition, tourniquet, 
-      supportMaterial, implants, leaveTo, 
-      venousInfusion2, drainageTube, 
-      skin2)
+      operatorId, operatorName, skin1, 
+      negativePosition, tourniquet, supportMaterial, 
+      implants, leaveTo, venousInfusion2, 
+      drainageTube, skin2,bloodKinds)
     values (#{id,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
       #{inOperRoomTime,jdbcType=VARCHAR}, #{outOperRoomTime,jdbcType=VARCHAR}, #{allergic,jdbcType=INTEGER}, 
       #{operationCode,jdbcType=VARCHAR}, #{operationName,jdbcType=VARCHAR}, #{senses,jdbcType=VARCHAR}, 
@@ -141,10 +145,10 @@
       #{infusionVolume,jdbcType=INTEGER}, #{urineVolume,jdbcType=INTEGER}, #{preoperativeMedication,jdbcType=INTEGER}, 
       #{medicationUsed,jdbcType=INTEGER}, #{wristband,jdbcType=INTEGER}, #{bodySurface,jdbcType=INTEGER}, 
       #{banDrinking,jdbcType=INTEGER}, #{fasting,jdbcType=INTEGER}, #{sterilizationMark,jdbcType=INTEGER}, 
-      #{skin1,jdbcType=LONGVARCHAR}, #{negativePosition,jdbcType=LONGVARCHAR}, #{tourniquet,jdbcType=LONGVARCHAR}, 
-      #{supportMaterial,jdbcType=LONGVARCHAR}, #{implants,jdbcType=LONGVARCHAR}, #{leaveTo,jdbcType=LONGVARCHAR}, 
-      #{venousInfusion2,jdbcType=LONGVARCHAR}, #{drainageTube,jdbcType=LONGVARCHAR}, 
-      #{skin2,jdbcType=LONGVARCHAR})
+      #{operatorId,jdbcType=VARCHAR}, #{operatorName,jdbcType=VARCHAR}, #{skin1,jdbcType=LONGVARCHAR}, 
+      #{negativePosition,jdbcType=LONGVARCHAR}, #{tourniquet,jdbcType=LONGVARCHAR}, #{supportMaterial,jdbcType=LONGVARCHAR}, 
+      #{implants,jdbcType=LONGVARCHAR}, #{leaveTo,jdbcType=LONGVARCHAR}, #{venousInfusion2,jdbcType=LONGVARCHAR}, 
+      #{drainageTube,jdbcType=LONGVARCHAR}, #{skin2,jdbcType=LONGVARCHAR}, #{bloodKinds,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.digihealth.anesthesia.doc.po.DocOptCareRecord" >
@@ -303,6 +307,12 @@
       <if test="sterilizationMark != null" >
         sterilizationMark,
       </if>
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="operatorName != null" >
+        operatorName,
+      </if>
       <if test="skin1 != null" >
         skin1,
       </if>
@@ -329,6 +339,9 @@
       </if>
       <if test="skin2 != null" >
         skin2,
+      </if>
+      <if test="bloodKinds != null" >
+        bloodKinds,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -485,6 +498,12 @@
       <if test="sterilizationMark != null" >
         #{sterilizationMark,jdbcType=INTEGER},
       </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorName != null" >
+        #{operatorName,jdbcType=VARCHAR},
+      </if>
       <if test="skin1 != null" >
         #{skin1,jdbcType=LONGVARCHAR},
       </if>
@@ -511,6 +530,9 @@
       </if>
       <if test="skin2 != null" >
         #{skin2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bloodKinds != null" >
+         #{bloodKinds,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -668,6 +690,12 @@
       <if test="sterilizationMark != null" >
         sterilizationMark = #{sterilizationMark,jdbcType=INTEGER},
       </if>
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorName != null" >
+        operatorName = #{operatorName,jdbcType=VARCHAR},
+      </if>
       <if test="skin1 != null" >
         skin1 = #{skin1,jdbcType=LONGVARCHAR},
       </if>
@@ -694,6 +722,9 @@
       </if>
       <if test="skin2 != null" >
         skin2 = #{skin2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bloodKinds != null" >
+        bloodKinds = #{bloodKinds,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -751,6 +782,8 @@
       banDrinking = #{banDrinking,jdbcType=INTEGER},
       fasting = #{fasting,jdbcType=INTEGER},
       sterilizationMark = #{sterilizationMark,jdbcType=INTEGER},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      operatorName = #{operatorName,jdbcType=VARCHAR},
       skin1 = #{skin1,jdbcType=LONGVARCHAR},
       negativePosition = #{negativePosition,jdbcType=LONGVARCHAR},
       tourniquet = #{tourniquet,jdbcType=LONGVARCHAR},
@@ -759,7 +792,8 @@
       leaveTo = #{leaveTo,jdbcType=LONGVARCHAR},
       venousInfusion2 = #{venousInfusion2,jdbcType=LONGVARCHAR},
       drainageTube = #{drainageTube,jdbcType=LONGVARCHAR},
-      skin2 = #{skin2,jdbcType=LONGVARCHAR}
+      skin2 = #{skin2,jdbcType=LONGVARCHAR},
+      bloodKinds = #{bloodKinds,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -814,7 +848,10 @@
       bodySurface = #{bodySurface,jdbcType=INTEGER},
       banDrinking = #{banDrinking,jdbcType=INTEGER},
       fasting = #{fasting,jdbcType=INTEGER},
-      sterilizationMark = #{sterilizationMark,jdbcType=INTEGER}
+      sterilizationMark = #{sterilizationMark,jdbcType=INTEGER},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      operatorName = #{operatorName,jdbcType=VARCHAR},
+      bloodKinds = #{bloodKinds,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 

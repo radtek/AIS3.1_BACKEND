@@ -32,6 +32,7 @@ import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocEventBilling;
 import com.digihealth.anesthesia.doc.po.DocPackagesItem;
 import com.digihealth.anesthesia.evt.formbean.Filter;
+import com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow;
 import com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow;
 
 /**
@@ -234,6 +235,7 @@ public class DocEventBillingService extends BaseService {
 		 * 修改收费标志
 		 */
 		BasRegOpt regOpt = basRegOptDao.searchRegOptById(regOptId);
+		
 		if(null!=regOpt){
 			Integer payState = basRegOptDao.queryPayStatusByRegOptId(costType, regOptId);
 			Boolean changeFlag = false; 
@@ -357,6 +359,17 @@ public class DocEventBillingService extends BaseService {
      */
     public List<CostRow> queryUnCostListByRegOptId(String regOptId,String costType){
         return docEventBillingDao.queryUnCostListByRegOptId(regOptId,costType);
+    }
+
+    
+	/**
+     * 
+     * @param regOptId
+     * @param costType 费用类型 1 麻醉科收费清单  2手术核算单
+     * @return
+     */
+    public List<CostHNHTYYRow> queryHNHTYYUnCostListByRegOptId(String regOptId,String costType){
+        return docEventBillingDao.queryHNHTYYUnCostListByRegOptId(regOptId,costType);
     }
 
     

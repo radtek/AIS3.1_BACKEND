@@ -101,7 +101,7 @@
   
   <select id="getMedicalGroupByNameList" resultType="com.digihealth.anesthesia.evt.formbean.RegOptOperMedicaleventFormBean">
 		SELECT
-      	b.medicineId code,b.`name`,a.thickness,a.thicknessUnit,a.`durable`,b.dosageUnit, 
+      	b.medicineId code,b.`name`,b.briefName,a.thickness,a.thicknessUnit,a.`durable`,b.dosageUnit, 
       	b.packageDosageAmount, p.minPackageUnit unit, p.priceMinPackage, b.spec,a.proportion, b.showMedWay
 		FROM evt_medicalevent a 
 		 join bas_medicine b on a.medicineId=b.medicineId 
@@ -209,6 +209,10 @@
     where medEventId = #{medEventId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByDocId" parameterType="java.lang.String" >
+    delete from evt_medicalevent where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
+  
   <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtMedicalEvent" >
     insert into evt_medicalevent (medEventId, docId, startTime, 
       endTime, dosage, thickness, 

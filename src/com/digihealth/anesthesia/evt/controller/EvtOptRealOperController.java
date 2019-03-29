@@ -48,6 +48,23 @@ public class EvtOptRealOperController extends BaseController {
 	}
 	
 	/**
+	 * 批量保存实施手术（永兴定制）
+	 * 
+	 * @param optRealOperList
+	 * @return
+	 */
+	@RequestMapping(value = "/saveOptRealOperYXRM")
+	@ResponseBody
+	@ApiOperation(value = "批量保存手术名称事件", httpMethod = "POST", notes = "批量保存手术名称事件")
+	public String saveOptRealOperYXRM(@ApiParam(name = "optRealOperList", value = "参数")@RequestBody List<EvtOptRealOper> optRealOperList) {
+		logger.info("begin saveOptRealOper");
+		ResponseValue resp = new ResponseValue();
+		evtOptRealOperService.saveOptRealOperYXRM(optRealOperList);
+		logger.info("end saveOptRealOper");
+		return resp.getJsonStr();
+	}
+	
+	/**
 	
 	@RequestMapping(value = "/insertOptRealOper")
 	@ResponseBody

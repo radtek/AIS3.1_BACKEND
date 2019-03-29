@@ -248,6 +248,11 @@
 									and DATE_FORMAT(chargeDate,'%Y-%m-%d %H:%i') &lt;= #{filter.value}
 								</if>
 							</when>
+							<when test="filter.field == 'medicineName' ">
+								<if test="filter.value != null and filter.value != ''">
+									and name LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
+								</if>
+							</when>
 					</choose>
 			   </if>
 			</foreach>
@@ -276,6 +281,11 @@
 								<when test="filter.field == 'endTime' ">
 									<if test="filter.value != null and filter.value != ''">
 										and DATE_FORMAT(chargeDate,'%Y-%m-%d %H:%i') &lt;= #{filter.value}
+									</if>
+								</when>
+								<when test="filter.field == 'medicineName' ">
+									<if test="filter.value != null and filter.value != ''">
+										and name LIKE CONCAT(CONCAT('%',#{filter.value}),'%')
 									</if>
 								</when>
 						</choose>

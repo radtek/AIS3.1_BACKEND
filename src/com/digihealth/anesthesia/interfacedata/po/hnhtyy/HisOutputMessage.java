@@ -4,11 +4,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-@XmlRootElement(name = "REQUEST")
+@XmlRootElement(name = "RESPONSE")
 public class HisOutputMessage
 {
     private String data;
     private Data recordList;
+    
     
     @XmlElement(name = "RECORDLIST")
     public Data getRecordList() {
@@ -27,4 +28,5 @@ public class HisOutputMessage
     {
         this.data = data;
     }
+    
 }

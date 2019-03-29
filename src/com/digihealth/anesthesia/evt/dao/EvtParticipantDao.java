@@ -22,6 +22,8 @@ import com.digihealth.anesthesia.sysMng.formbean.UserInfoFormBean;
 public interface EvtParticipantDao extends CrudDao<EvtParticipant>{
     int deleteByPrimaryKey(String partpId);
 
+    int deleteByDocId(@Param("docId")String docId);
+    
     int insert(EvtParticipant record);
 
     int insertSelective(EvtParticipant record);

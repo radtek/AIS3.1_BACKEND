@@ -41,6 +41,10 @@
     where rescueEventId = #{rescueEventId,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByDocId" parameterType="java.lang.String" >
+    delete from evt_rescueevent where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtRescueevent" >
     insert into evt_rescueevent (rescueEventId, startTime, endTime, 
       docId, model, currentState

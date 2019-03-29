@@ -126,17 +126,15 @@
     
   <!-- 解决limit 1 的效率问题，order by time desc 不走索引 -->
     <select id="searchObserveDataByPosition" resultType="com.digihealth.anesthesia.operProceed.formbean.RealTimeDataFormBean">
-		<!-- SELECT a.observe_id,a.observe_name,a.value,a.state,a.time
-		FROM b_observe_data a 
-		WHERE a.position = -1
-		AND a.doc_id = #{baseQuery.regOptId}
-		AND a.time = (
-		SELECT DISTINCT (a.time) FROM b_observe_data a 
-		WHERE a.doc_id = #{baseQuery.regOptId}
-		ORDER BY a.time DESC,a.observe_id 
-		LIMIT 1 ) -->
 		SELECT a.observeId,a.observeName ,a.value,a.state,a.time FROM bas_observe_data a 
 		WHERE a.position = -1 AND a.regOptId = #{baseQuery.regOptId} 
+		AND a.time = (SELECT MAX(TIME) FROM bas_observe_data a WHERE a.regOptId = #{baseQuery.regOptId} ) 
+		ORDER BY a.observeId 
+	</select>
+	
+	<select id="searchObserveDataByPositionQNZZY" resultType="com.digihealth.anesthesia.operProceed.formbean.RealTimeDataFormBean">
+		SELECT a.observeId,a.observeName ,a.value,a.state,a.time FROM bas_observe_data a 
+		WHERE a.regOptId = #{baseQuery.regOptId} 
 		AND a.time = (SELECT MAX(TIME) FROM bas_observe_data a WHERE a.regOptId = #{baseQuery.regOptId} ) 
 		ORDER BY a.observeId 
 	</select>

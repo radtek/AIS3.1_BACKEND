@@ -36,6 +36,10 @@
     delete from evt_checkevent
     where cheEventId = #{cheEventId,jdbcType=VARCHAR}
   </delete>
+	
+  <delete id="deleteByDocId" parameterType="java.lang.String" >
+    delete from evt_checkevent where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
 
   <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtCheckEvent" >
     insert into evt_checkevent (cheEventId, cheEventName, docId, occurTime, 

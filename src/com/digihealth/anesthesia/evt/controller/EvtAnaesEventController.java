@@ -676,6 +676,7 @@ public class EvtAnaesEventController extends BaseController {
             }
         }
         resp.put("infusionList", infusionList);
+        
 
         // 输血事件
         searchBean.setSubType("2");

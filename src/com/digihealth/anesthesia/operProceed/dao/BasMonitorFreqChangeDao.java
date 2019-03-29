@@ -19,6 +19,8 @@ import com.digihealth.anesthesia.operProceed.po.BasMonitorFreqChange;
 public interface BasMonitorFreqChangeDao {
     int deleteByPrimaryKey(String id);
 
+    int deleteByRegOptId(@Param("regOptId") String regOptId);
+
     int insert(BasMonitorFreqChange record);
 
     int insertSelective(BasMonitorFreqChange record);

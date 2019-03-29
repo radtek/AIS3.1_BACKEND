@@ -1267,6 +1267,9 @@ public class OperBaseDataServiceSYBX extends BaseService{
 		logger.info("-------end synHisSysUserList-----------");
 	}
 
+	/*
+	 * 手术通知单
+	 */
 	@Transactional
 	public void synHisOperList(){
         logger.info("---------------------begin synHisOperList------------------------");

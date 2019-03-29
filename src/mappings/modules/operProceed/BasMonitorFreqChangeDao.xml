@@ -27,6 +27,10 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
 
+  <delete id="deleteByRegOptId" parameterType="java.lang.String" >
+    delete from bas_monitor_freq_change where regOptId = #{regOptId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorFreqChange" >
     insert into bas_monitor_freq_change (id, regOptId, time, 
       freq, oldFreq, userId, 

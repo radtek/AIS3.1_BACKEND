@@ -107,7 +107,7 @@
 		</if>
 		<if test="searchBean.subType != null and searchBean.subType != ''">
 			AND b.`subType` = #{searchBean.subType}
-		</if>		
+		</if>
 		<if test="searchBean.order != null and searchBean.order != ''">
 			order by ${searchBean.order}
 		</if>

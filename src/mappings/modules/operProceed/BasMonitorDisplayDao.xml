@@ -286,6 +286,9 @@
   	and regOptId = #{regOptId}
   </delete>
 
+  <delete id="deleteByRegOptId">
+  	delete from bas_monitor_display where regOptId = #{regOptId}
+  </delete>
   <insert id="insert" parameterType="com.digihealth.anesthesia.operProceed.po.BasMonitorDisplay" >
     insert into bas_monitor_display (id, time, regOptId, 
       observeId, value, state, 

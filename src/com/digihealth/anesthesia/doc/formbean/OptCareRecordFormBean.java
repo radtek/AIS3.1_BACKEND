@@ -1,5 +1,6 @@
 package com.digihealth.anesthesia.doc.formbean;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -361,6 +362,21 @@ public class OptCareRecordFormBean {
     @ApiModelProperty(value = "手术用物灭菌指示标记")
     private Integer sterilizationMark;
     
+    /**
+	 * 手术医生ID
+	 */
+	@ApiModelProperty(value = "手术医生ID")
+	private String operatorId;
+
+	/**
+	 * 手术医生名称
+	 */
+	@ApiModelProperty(value = "手术医生名称")
+	private String operatorName;
+	
+	//手术者list
+    List<String> operatorIdList = new ArrayList<String>();
+	
     public String getPipelineOther()
     {
         return pipelineOther;
@@ -972,5 +988,35 @@ public class OptCareRecordFormBean {
 	public void setSterilizationMark(Integer sterilizationMark)
 	{
 		this.sterilizationMark = sterilizationMark;
+	}
+
+	public String getOperatorId()
+	{
+		return operatorId;
+	}
+
+	public void setOperatorId(String operatorId)
+	{
+		this.operatorId = operatorId;
+	}
+
+	public String getOperatorName()
+	{
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName)
+	{
+		this.operatorName = operatorName;
+	}
+
+	public List<String> getOperatorIdList()
+	{
+		return null == operatorIdList ? new ArrayList<String>() : operatorIdList;
+	}
+
+	public void setOperatorIdList(List<String> operatorIdList)
+	{
+		this.operatorIdList = operatorIdList;
 	}
 }

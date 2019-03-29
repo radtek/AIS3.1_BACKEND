@@ -68,6 +68,10 @@
     delete from evt_ctl_breath
     where ctlBreId = #{ctlBreId,jdbcType=VARCHAR}
   </delete>
+	
+  <delete id="deleteByDocId" parameterType="java.lang.String" >
+    delete from evt_ctl_breath where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
   
   <update id="updateCurrentState">
 		UPDATE evt_ctl_breath SET 

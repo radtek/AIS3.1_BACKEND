@@ -20,6 +20,7 @@ import com.digihealth.anesthesia.basedata.config.OperationState;
 import com.digihealth.anesthesia.basedata.formbean.BasDeviceMonitorConfigFormBean;
 import com.digihealth.anesthesia.basedata.formbean.BaseInfoQuery;
 import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
+import com.digihealth.anesthesia.basedata.po.BasCollectConfig;
 import com.digihealth.anesthesia.basedata.po.BasDeviceConfig;
 import com.digihealth.anesthesia.basedata.po.BasDeviceMonitorConfig;
 import com.digihealth.anesthesia.basedata.po.BasDispatch;
@@ -28,6 +29,7 @@ import com.digihealth.anesthesia.basedata.po.BasOperroom;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.po.BasRegionBed;
 import com.digihealth.anesthesia.basedata.po.Controller;
+import com.digihealth.anesthesia.basedata.po.Device;
 import com.digihealth.anesthesia.common.config.Global;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.exception.CustomException;
@@ -510,6 +512,31 @@ public class BasMonitorDisplayService extends BaseService{
 		}
 		return resultMap;
 	}
+	
+	/**
+     * 查询术中实时监测项 双阳改变
+     */
+    public Map<String,RealTimeDataFormBean> searchObserveMapByPositionQNZZY(BaseInfoQuery baseQuery) {
+        // 从数据库查询最新的实时监测数据 （即position为-1的最新数据）
+        List<RealTimeDataFormBean> observeList = basObserveDataDao.searchObserveDataByPositionQNZZY(baseQuery);
+        Map<String,RealTimeDataFormBean> resultMap = new HashMap<String,RealTimeDataFormBean>();
+        Date curTime = new Date();
+        // 业务：如果超过5秒，则不传递给前端
+        if (null != observeList && observeList.size() > 0) {
+            for (RealTimeDataFormBean rtData : observeList) {
+                Date time = rtData.getTime();
+                String obserName = rtData.getObserveName();
+                resultMap.put(obserName, rtData);
+                long t = Math.abs(curTime.getTime()-time.getTime());
+                if(t-TIMEOUT*1000>0){
+                    //observeList = null;
+                    resultMap.clear();
+                    break;
+                }
+            }
+        }
+        return resultMap;
+    }
 	
 	/**
 	 * 查询手术需要打印数据
@@ -1268,10 +1295,15 @@ public class BasMonitorDisplayService extends BaseService{
                 observeData.setTime(Timestamp.valueOf(startTime)); 
                 md = new BasMonitorDisplay();
                 BeanUtils.copyProperties(observeData, md);
+                BasMonitorConfig monitorConfig = basMonitorConfigDao.selectByPrimaryKey(md.getObserveId(), beid, roomId);
+                if (null == monitorConfig)
+                {
+                    continue;
+                }
                 
                 //将重复监测项的eventId设置为统一的eventId
                 BasMonitorConfigDefault mcd = basMonitorConfigDefaultDao.selectByEventName(md.getObserveName(), beid);
-                if (null != mcd && 0 == md.getPosition())
+                if (null != mcd && Objects.equals(monitorConfig.getPosition(), 0))
                 {
                     BaseInfoQuery baseQuery = new BaseInfoQuery();
                     baseQuery.setRegOptId(regOptId);
@@ -1459,20 +1491,13 @@ public class BasMonitorDisplayService extends BaseService{
 			//只有当传入的deviceConfig及子集不为空才保存当下数据
 			if(deviceConfigFormBean.getDeviceConfig()!=null && deviceConfigFormBean.getDeviceMonitorConfigList()!=null){
 			
-				String roomId = getCurRoomId(null);
 				
 				BasDeviceConfig deviceConfig = deviceConfigFormBean.getDeviceConfig();
-				//deviceConfig.setRoomId(roomId);
-				//deviceConfig.setRoomId(null);
-				
+				String roomId = StringUtils.isNotBlank(deviceConfig.getRoomId()) ?  deviceConfig.getRoomId() : getCurRoomId(null);
+	            String beid = getBeid();
 				//先删除床旁设备配置表的数据，再做新增处理
-				basDeviceConfigDao.deleteDeviceConfig(deviceConfig.getBeid(),deviceConfig.getDeviceId(),roomId);
-//				if(null == deviceConfig.getEnable()){
-//					deviceConfig.setEnable(EN_ABLE);
-//				}
+				basDeviceConfigDao.deleteDeviceConfig(beid,deviceConfig.getDeviceId(),roomId);
 				basDeviceConfigDao.insert(deviceConfig);
-				
-				String beid = getBeid();
 				
 				//获取之前设置的设备监测项勾选配置信息，设置监测项为空。注：必选项不做修改
 				List<BasDeviceMonitorConfigFormBean> isChecklist = basDeviceMonitorConfigDao.getDeviceMonitorConfigList(beid, deviceConfig.getDeviceId(), "O", roomId);
@@ -1497,6 +1522,74 @@ public class BasMonitorDisplayService extends BaseService{
 			
 		}
 	}
+	
+	/**
+     * 术中修改设备配置
+     * @param deviceConfigFormBean
+     */
+    @Transactional
+    public void updDeviceConfigQNZZY(DeviceConfigFormBean deviceConfigFormBean) {
+        if(deviceConfigFormBean !=null){
+            
+            //只有当传入的deviceConfig及子集不为空才保存当下数据
+            if(deviceConfigFormBean.getDeviceConfig()!=null && deviceConfigFormBean.getDeviceMonitorConfigList()!=null){
+            
+                
+                BasDeviceConfig deviceConfig = deviceConfigFormBean.getDeviceConfig();
+                String roomId = StringUtils.isNotBlank(deviceConfig.getRoomId()) ?  deviceConfig.getRoomId() : getCurRoomId(null);
+                String beid = getBeid();
+                //先删除床旁设备配置表的数据，再做新增处理
+                basDeviceConfigDao.deleteDeviceConfig(beid,deviceConfig.getDeviceId(),roomId);
+                basDeviceConfigDao.insert(deviceConfig);
+                
+                //将当前手术室正在使用的设备的协议写入到采集配置表中
+                List<Device> devices = basDeviceConfigDao.searchDeviceListByRoomId(roomId, beid);
+                BasCollectConfig collectConfig = basCollectConfigDao.selectByPrimaryKey(roomId, beid);
+                if (null == devices || devices.size() < 1)
+                {
+                    collectConfig.setDevicesUsed(null);
+                }
+                else
+                {
+                    String devicesUsed = "";
+                    for (Device device : devices)
+                    {
+                        if ("".equals(devicesUsed))
+                        {
+                            devicesUsed = device.getProtocol();
+                        }
+                        else
+                        {
+                            devicesUsed = devicesUsed + "," + device.getProtocol();
+                        }
+                    }
+                    collectConfig.setDevicesUsed(devicesUsed);
+                }
+                basCollectConfigDao.updateByPrimaryKey(collectConfig);
+                
+                //获取之前设置的设备监测项勾选配置信息，设置监测项为空。注：必选项不做修改
+                List<BasDeviceMonitorConfigFormBean> isChecklist = basDeviceMonitorConfigDao.getDeviceMonitorConfigList(beid, deviceConfig.getDeviceId(), "O", roomId);
+                for (BasDeviceMonitorConfigFormBean checkPo : isChecklist) {
+                    BasDeviceMonitorConfig deviceMonitorConfig = new BasDeviceMonitorConfig();
+                    deviceMonitorConfig.setOptional(null);
+                    deviceMonitorConfig.setRoomId(roomId);
+                    deviceMonitorConfig.setDeviceId(deviceConfig.getDeviceId());
+                    deviceMonitorConfig.setEventId(checkPo.getEventId());
+                    basDeviceMonitorConfigDao.update(deviceMonitorConfig);
+                }
+                //将页面传入的监测项设置为勾选
+                List<BasDeviceMonitorConfig> list = deviceConfigFormBean.getDeviceMonitorConfigList();
+                for (BasDeviceMonitorConfig deviceMonitorConfig : list) {
+                    deviceMonitorConfig.setBeid(beid);
+                    deviceMonitorConfig.setRoomId(roomId);
+                    deviceMonitorConfig.setDeviceId(deviceConfig.getDeviceId());
+                    deviceMonitorConfig.setOptional("O");
+                    basDeviceMonitorConfigDao.update(deviceMonitorConfig);
+                }
+            }
+            
+        }
+    }
 	
 	@Transactional
 	public void updateEnterRoomTimegt(EnterRoomFormBean formBean,ResponseValue res) {

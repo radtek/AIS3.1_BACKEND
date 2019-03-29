@@ -72,6 +72,11 @@ public interface BasObserveDataDao {
 	public List<RealTimeDataFormBean> searchObserveDataByPosition(@Param("baseQuery") BaseInfoQuery baseQuery);
 	
 	/**
+     * 查询术中实时监测项
+     */
+    public List<RealTimeDataFormBean> searchObserveDataByPositionQNZZY(@Param("baseQuery") BaseInfoQuery baseQuery);
+	
+	/**
 	 * 查询对应数据的点的数据
 	 */
 	public List<BasObserveData> findObserveDataListByTime(@Param("regOptId")String regOptId,@Param("time") String time, @Param("observeIds")List<String> observeIds);

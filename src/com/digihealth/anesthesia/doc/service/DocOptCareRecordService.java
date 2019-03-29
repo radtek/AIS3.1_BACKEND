@@ -2,6 +2,7 @@ package com.digihealth.anesthesia.doc.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import com.digihealth.anesthesia.basedata.config.OperationState;
 import com.digihealth.anesthesia.basedata.formbean.DesignedOptCodes;
 import com.digihealth.anesthesia.basedata.formbean.DispatchFormbean;
 import com.digihealth.anesthesia.basedata.formbean.SysCodeFormbean;
+import com.digihealth.anesthesia.basedata.po.BasOperationPeople;
 import com.digihealth.anesthesia.basedata.po.BasOperdef;
 import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.po.Controller;
@@ -27,6 +29,7 @@ import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.PingYinUtil;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
 import com.digihealth.anesthesia.common.utils.StringUtils;
+import com.digihealth.anesthesia.doc.formbean.DocOptCareOperNameFormbean;
 import com.digihealth.anesthesia.doc.formbean.OptCareRecordFormBean;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
@@ -115,8 +118,14 @@ public class DocOptCareRecordService extends BaseService {
 							for (int i = 0; i < optROList.size(); i++) {
 							    DesignedOptCodes designedOptCode = new DesignedOptCodes();
 							    designedOptCode.setOperDefId(optROList.get(i).getOperDefId());
-							    designedOptCode.setName(optROList.get(i).getName());
-							    designedOptCode.setPinYin(PingYinUtil.getFirstSpell(optROList.get(i).getName()));
+							    String optName = optROList.get(i).getName();
+							    designedOptCode.setName(optName);
+							    String pinyin = "";
+							    if(StringUtils.isNotBlank(optName))
+							    {
+							    	pinyin = PingYinUtil.getFirstSpell(optName);
+							    }
+							    designedOptCode.setPinYin(pinyin);
 							    operationNameList.add(designedOptCode);
 								optCareRecord.setOperationCode(optCareRecord.getOperationCode() + optROList.get(i).getOperDefId() + ",");
 								optCareRecord.setOperationName(optCareRecord.getOperationName() + optROList.get(i).getName() + ",");
@@ -138,7 +147,7 @@ public class DocOptCareRecordService extends BaseService {
 					
 					//麻醉方法
 					List<String> anaesMethodList = new ArrayList<String>();
-					if (null == optCareRecord.getAnaesMethodCode())
+					if (null == optCareRecord.getAnaesMethodCode() || "1".equals(map.get("type")))
 					{
                         List<EvtRealAnaesMethod> realAnaesMethodList = evtRealAnaesMethodDao.searchRealAnaesMethodList(searchBean);
                         if (realAnaesMethodList != null && realAnaesMethodList.size() > 0)
@@ -306,6 +315,19 @@ public class DocOptCareRecordService extends BaseService {
 			if ("1".equals(map.get("type"))) {
 				docOptCareRecordDao.updateByPrimaryKeySelective(optCareRecord);
 			}
+			
+			//手术者
+			List<String> operatorIdList = new ArrayList<String>(); 
+			String operatorId = optCareRecord.getOperatorId();
+			if(StringUtils.isNotEmpty(operatorId))
+			{
+				String [] operatorIdArray  =operatorId.split(",");
+				for(int i=0;i<operatorIdArray.length;i++)
+				{
+					operatorIdList.add(operatorIdArray[i]);
+				}
+			}
+			optCareRecord.setOperatorIdList(operatorIdList);
 
 			resp.put("sensesList", sensesList);
 			resp.put("pipelineList", pipelineList);
@@ -447,10 +469,30 @@ public class DocOptCareRecordService extends BaseService {
 			resp.setResultMessage("手术控制信息不存在!");
 			return resp;
 		}
-
+		
 		DocOptCareRecord optCareRecord = new DocOptCareRecord();
 		BeanUtils.copyProperties(optCareRecordFormBean, optCareRecord, new String[] { "skin1", "negativePosition", "tourniquet", "supportMaterial", "implants", "venousInfusion2", "drainageTube", "skin2" });// 除json串的不需要传递之外，其他都传递
 
+		List<String> operatorIds = new ArrayList<String>();
+		List<String> operatorNames = new ArrayList<String>();
+		//获取的手术者list
+		List<String> operatorIdList = optCareRecordFormBean.getOperatorIdList();
+        if(null != operatorIdList && operatorIdList.size()>0)
+        {
+        	for(String operatorId : operatorIdList)
+        	{
+        		operatorIds.add(operatorId);
+        		BasOperationPeople basOperationPeople = basOperationPeopleDao.queryOperationPeopleById(operatorId);
+        		if(null != basOperationPeople)
+        		{
+        			operatorNames.add(basOperationPeople.getName());
+        		}
+        	}
+        }
+        String operatorId = StringUtils.getStringByList(operatorIds);
+        String operatorName = StringUtils.getStringByList(operatorNames);
+        optCareRecord.setOperatorId(operatorId);
+        optCareRecord.setOperatorName(operatorName);
 		optCareRecord.setSkin1(JsonType.jsonType(optCareRecordFormBean.getSkin1()));
 		optCareRecord.setNegativePosition(JsonType.jsonType(optCareRecordFormBean.getNegativePosition()));
 		optCareRecord.setTourniquet(JsonType.jsonType(optCareRecordFormBean.getTourniquet()));
@@ -543,6 +585,112 @@ public class DocOptCareRecordService extends BaseService {
 		resp.setResultCode("1");
 		resp.setResultMessage("护理记录单修改成功!");
 		return resp;
+	}
+	
+	//手术护理记录单保存局麻修改手术名称,永兴局点定制
+	@Transactional
+	public void updateOptCareOperNameYXRM(DocOptCareOperNameFormbean docOptCareOperNameFormbean,ResponseValue resp)
+	{
+		BasRegOpt basRegOpt = basRegOptDao.searchRegOptById(docOptCareOperNameFormbean.getRegOptId() != null ? docOptCareOperNameFormbean.getRegOptId() : "");
+		if (basRegOpt == null) 
+		{
+			resp.setResultCode("70000001");
+			resp.setResultMessage("手术控制信息不存在!");
+			return ;
+		}
+		
+		if ("0".equals(basRegOpt.getIsLocalAnaes()))
+		{
+			resp.setResultCode("70000002");
+			resp.setResultMessage("局麻才能修改手术名称!");
+			return ;
+		}
+		
+		List<String> operatorIds = new ArrayList<String>();
+		List<String> operatorNames = new ArrayList<String>();
+       
+		int maxoptLevel = 1;
+        int maxCutLevel = 1;
+        Map<String,Integer> optLevelMap = new HashMap<String,Integer>();
+        optLevelMap.put("一级",1);
+        optLevelMap.put("二级",2);
+        optLevelMap.put("三级",3);
+        optLevelMap.put("四级",4);
+        
+        Map<Integer,String> optLevelMapTwo = new HashMap<Integer,String>();
+        optLevelMapTwo.put(1,"一级");
+        optLevelMapTwo.put(2,"二级");
+        optLevelMapTwo.put(3,"三级");
+        optLevelMapTwo.put(4,"四级");
+        
+		List<DesignedOptCodes> OptList = docOptCareOperNameFormbean.getOperationNameList();
+		if(null != OptList)
+		{
+			for(DesignedOptCodes designedOptCodes : OptList)
+			{
+				String operdefId = designedOptCodes.getOperDefId();
+				String operatorName = designedOptCodes.getName();
+				BasOperdef basOperdef = basOperdefDao.queryOperdefById(operdefId);
+				if(null != basOperdef)
+				{
+					String optLevel = basOperdef.getOptLevel();
+                	Integer cutLevel = basOperdef.getCutLevel();
+                	if(null != cutLevel && cutLevel.intValue() >maxCutLevel )
+                	{
+                		maxCutLevel = cutLevel.intValue();
+                	}
+                	if(StringUtils.isNotBlank(optLevel))
+                	{
+                		int level = optLevelMap.get(optLevel);
+                		if(level > maxoptLevel)
+                		{
+                			maxoptLevel = level;
+                		}
+                	}
+				}
+				
+			}
+		}
+		Boolean flag  = false;
+		if(null != basRegOpt)
+        {
+        	String optLevel = basRegOpt.getOptLevel();
+        	Integer cutLevel = basRegOpt.getCutLevel();
+        	if(null != cutLevel)
+        	{
+        		if(cutLevel.intValue() != maxCutLevel)
+        		{
+        			flag = true;
+        			basRegOpt.setCutLevel(maxCutLevel);
+        		}
+        	}else
+        	{
+        		flag = true;
+        		basRegOpt.setCutLevel(maxCutLevel);
+        	}
+        	
+        	if(StringUtils.isNotBlank(optLevel))
+        	{
+        		int level = optLevelMap.get(optLevel);
+        		if(level != maxoptLevel)
+        		{
+        			flag = true;
+        			basRegOpt.setOptLevel(optLevelMapTwo.get(maxoptLevel));
+        		}
+        	}else
+        	{
+        		flag = true;
+        		basRegOpt.setOptLevel(optLevelMapTwo.get(maxoptLevel));
+        	}
+        }
+		if(flag)
+		{
+			basRegOptDao.updateByPrimaryKeySelective(basRegOpt);
+		}
+		
+		resp.put("optLevel", basRegOpt.getOptLevel());
+		resp.put("cutLevel", basRegOpt.getCutLevel());
+		
 	}
 
 	private void getOperatiomName(DocOptCareRecord optCareRecord) {

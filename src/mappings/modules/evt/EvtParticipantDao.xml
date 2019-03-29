@@ -120,6 +120,10 @@
 		WHERE partpId = #{partpId} 
 	</delete>
 	
+	<delete id="deleteByDocId">
+		delete from evt_participant WHERE docId = #{docId} 
+	</delete>
+	
 	<delete id="deleteByUserId">
 		delete from  evt_participant 
 		WHERE docId = #{docId} and userLoginName = #{userId} 

@@ -111,7 +111,17 @@ public class DocEventBillingController extends BaseController {
 	public String saveEventBilling(@ApiParam(name="eventBillingList", value ="入账信息参数") @RequestBody List<DocEventBilling> eventBillingList){
 		logger.info("-----------------begin saveEventBilling-----------------");
 		ResponseValue resp = new ResponseValue();
-		docEventBillingService.saveEventBilling(eventBillingList,resp);
+		
+		if(null!=eventBillingList && eventBillingList.size()>0){
+			Boolean modFlag = ModifyBillingCheckUtil.checkModifyBill(eventBillingList.get(0).getRegOptId(),eventBillingList.get(0).getCostType(),resp);
+	    	if(!modFlag){
+	    		resp.put("resultCode", resp.getResultCode());
+	    		resp.put("resultMessage", resp.getResultMessage());
+				return resp.getJsonStr();
+			}
+			docEventBillingService.saveEventBilling(eventBillingList,resp);
+		}
+		
 		resp.setResultCode("1");
 		resp.setResultMessage("保存入账信息成功!");
 		logger.info("-----------------end saveEventBilling-----------------");
@@ -138,7 +148,7 @@ public class DocEventBillingController extends BaseController {
 				return resp.getJsonStr();
 			}
 		}
-		
+
 		docEventBillingService.deleteBilling(eventBilling.getEbId());
 		resp.setResultCode("1");
 		resp.setResultMessage("删除入账信息成功!");

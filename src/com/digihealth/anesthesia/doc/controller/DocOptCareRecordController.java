@@ -1,6 +1,7 @@
 package com.digihealth.anesthesia.doc.controller;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.digihealth.anesthesia.basedata.formbean.DesignedOptCodes;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.web.BaseController;
+import com.digihealth.anesthesia.doc.formbean.DocOptCareOperNameFormbean;
 import com.digihealth.anesthesia.doc.formbean.OptCareRecordFormBean;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -110,6 +113,37 @@ public class DocOptCareRecordController extends BaseController {
         }
         resp = docOptCareRecordService.updateOptCareRecordYXRM(optCareRecordFormBean);
         logger.info("----------end updateOptCareRecord---------------");
+        return resp.getJsonStr();
+    }
+    
+    /** 
+     * 局麻可以在护理记录单修改手术名字，根据手术重新生成手术等级和切口等级(永兴定制)
+     * <功能详细描述>
+     * @param optCareRecord
+     * @return
+     * @throws ParseException 
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/updateOptCareOperNameYXRM")
+    @ResponseBody
+	@ApiOperation(value="局麻可以在护理记录单修改手术名字",httpMethod="POST",notes="保局麻可以在护理记录单修改手术名字")
+    public String updateOptCareOperNameYXRM(@ApiParam(name="docOptCareOperNameFormbean", value ="手术护理参数") @RequestBody DocOptCareOperNameFormbean docOptCareOperNameFormbean) throws ParseException {
+        logger.info("----------start updateOptCareOperNameYXRM---------------");
+        ResponseValue resp = new ResponseValue();
+        ValidatorBean validatorBean = beanValidator(docOptCareOperNameFormbean);
+        if (!(validatorBean.isValidator())) {
+        	resp.setResultCode("10000001");
+        	resp.setResultMessage(validatorBean.getMessage());
+            return resp.getJsonStr();
+        }
+        if (null == docOptCareOperNameFormbean.getOperationNameList() || docOptCareOperNameFormbean.getOperationNameList().size() < 1) {
+        	resp.setResultCode("10000002");
+        	resp.setResultMessage("手术名字不能为空");
+            return resp.getJsonStr();
+        }
+        docOptCareRecordService.updateOptCareOperNameYXRM(docOptCareOperNameFormbean,resp);
+        
+        logger.info("----------end updateOptCareOperNameYXRM---------------");
         return resp.getJsonStr();
     }
 }

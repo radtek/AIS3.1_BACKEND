@@ -36,6 +36,7 @@ import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.service.BaseService;
 import com.digihealth.anesthesia.common.utils.BeanHelper;
 import com.digihealth.anesthesia.common.utils.DateUtils;
+import com.digihealth.anesthesia.common.utils.Exceptions;
 import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.JsonType;
 import com.digihealth.anesthesia.common.utils.SpringContextHolder;
@@ -415,8 +416,15 @@ public class BasDispatchService extends BaseService {
                 String isConnectionFlag = Global.getConfig("isConnectionHis").trim();
                 if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
                     logger.info("===============================发送手术排班信息到his===========================================");
-                    HisInterfaceServiceQNZZY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceQNZZY.class);
-                    hisInterfaceService.sendDispatchToHis(disObj, regOpt);
+                    try
+                    {
+                        HisInterfaceServiceQNZZY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceQNZZY.class);
+                        hisInterfaceService.sendDispatchToHis(disObj, regOpt);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.error("发送手术排班信息到his失败： " + Exceptions.getStackTraceAsString(e));
+                    }
                 }
             }
         }
@@ -651,7 +659,7 @@ public class BasDispatchService extends BaseService {
                 if(StringUtils.isEmpty(isConnectionFlag) || "true".equals(isConnectionFlag)){
                     logger.info("===============================发送手术排班信息到his===========================================");
                     HisInterfaceServiceHNHTYY hisInterfaceService = SpringContextHolder.getBean(HisInterfaceServiceHNHTYY.class);
-                    //hisInterfaceService.sendDispatchToHis(disObj, regOpt);
+                    hisInterfaceService.sendDispatchToHis(disObj, regOpt);
                 }
             }
         }
@@ -1535,6 +1543,15 @@ public class BasDispatchService extends BaseService {
 					}
 				}
 			} else {
+				
+				//先删除EvtParticipant表中的所有护士信息包括（05，04）
+				if(null != participantList && participantList.size()>0){
+					EvtParticipant participant = new EvtParticipant();
+					participant.setDocId(participantList.get(0).getDocId());
+					participant.setRole(participantList.get(0).getRole());
+					evtParticipantDao.deleteByOperatorType(participant);
+				}
+				
 				for (EvtParticipant participant : participantList) {
 					if (StringUtils.isNotBlank(participant.getUserLoginName())) {
 						participant.setPartpId(GenerateSequenceUtil.generateSequenceNo());

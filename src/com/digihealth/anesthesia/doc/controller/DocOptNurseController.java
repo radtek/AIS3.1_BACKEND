@@ -31,6 +31,7 @@ import com.digihealth.anesthesia.basedata.utils.BasRegOptUtils;
 import com.digihealth.anesthesia.common.beanvalidator.ValidatorBean;
 import com.digihealth.anesthesia.common.entity.ResponseValue;
 import com.digihealth.anesthesia.common.utils.DateUtils;
+import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.PingYinUtil;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.common.web.BaseController;
@@ -917,6 +918,18 @@ public class DocOptNurseController extends BaseController {
         {
             for (DesignedOptCodes designedOptCode : operationNameList)
             {
+                if (StringUtils.isBlank(designedOptCode.getOperDefId()))
+                {
+                    BasOperdef operdef = new BasOperdef();
+                    operdef.setOperdefId(GenerateSequenceUtil.generateSequenceNo());
+                    operdef.setName(designedOptCode.getName());
+                    operdef.setEnable(1);
+                    operdef.setBeid(getBeid());
+                    operdef.setPinYin(PingYinUtil.getFirstSpell(designedOptCode.getName()));
+                    basOperdefService.saveOperdef(operdef);
+                    designedOptCode.setOperDefId(operdef.getOperdefId());
+                }
+                
                 if (StringUtils.isBlank(operatorId))
                 {
                     operatorId = designedOptCode.getOperDefId(); 

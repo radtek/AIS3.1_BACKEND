@@ -29,6 +29,7 @@ import com.digihealth.anesthesia.common.utils.GenerateSequenceUtil;
 import com.digihealth.anesthesia.common.utils.StringUtils;
 import com.digihealth.anesthesia.doc.po.DocPackagesItem;
 import com.digihealth.anesthesia.evt.formbean.Filter;
+import com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow;
 import com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow;
 
 /**
@@ -254,6 +255,12 @@ public class DocPackagesItemService extends BaseService {
 	public List<CostRow> queryUnCostListByRegOptId(String regOptId,String costType){
 		return docPackagesItemDao.queryUnCostListByRegOptId(regOptId,costType);
 	}
+	
+	
+	public List<CostHNHTYYRow> queryHNHTYYUnCostListByRegOptId(String regOptId,String costType){
+		return docPackagesItemDao.queryHNHTYYUnCostListByRegOptId(regOptId,costType);
+	}
+	
 	
 	/**
 	 * 将收费明细表的state状态改成已同步

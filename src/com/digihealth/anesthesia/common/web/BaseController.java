@@ -44,6 +44,7 @@ import com.digihealth.anesthesia.basedata.service.BasBusEntityService;
 import com.digihealth.anesthesia.basedata.service.BasChargeItemService;
 import com.digihealth.anesthesia.basedata.service.BasChargePackagesService;
 import com.digihealth.anesthesia.basedata.service.BasCheckItemService;
+import com.digihealth.anesthesia.basedata.service.BasCollectConfigService;
 import com.digihealth.anesthesia.basedata.service.BasCollectPacuDataHisService;
 import com.digihealth.anesthesia.basedata.service.BasCollectPacuDataService;
 import com.digihealth.anesthesia.basedata.service.BasColumnStyleService;
@@ -211,6 +212,7 @@ import com.digihealth.anesthesia.tmp.service.TmpPacuLiquidTempService;
 import com.digihealth.anesthesia.tmp.service.TmpPriChargeMedTempService;
 import com.digihealth.anesthesia.tmp.service.TmpSciResearchFieldService;
 import com.digihealth.anesthesia.tmp.service.TmpSciTempService;
+import com.digihealth.anesthesia.tmp.service.TmpToxicOutstockTempService;
 
 /**
  * 
@@ -607,6 +609,10 @@ public abstract class BaseController {
 	protected DocPreAnaesTalkRecordService docPreAnaesTalkRecordService;
 	@Autowired
 	protected DocPatPrevisitRecordService docPatPrevisitRecordService;
+	@Autowired
+	protected TmpToxicOutstockTempService tmpToxicOutstockTempService;
+	@Autowired
+    protected BasCollectConfigService basCollectConfigService;
 	
 	/**
 	 * 日志对象

@@ -54,4 +54,6 @@ public interface BasAnaesMonitorConfigDao extends CrudDao<BasAnaesMonitorConfig>
 	public void updateByEventId(BasAnaesMonitorConfig BasAnaesMonitorConfig);
 	
 	public BasAnaesMonitorConfigFormBean getDefaultEventId(@Param("baseQuery") BaseInfoQuery baseQuery);
+	
+	public int deleteByRegOptId(@Param("regOptId") String regOptId,@Param("beid") String beid);
 }

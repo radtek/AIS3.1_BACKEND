@@ -1,6 +1,8 @@
 package com.digihealth.anesthesia.evt.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.digihealth.anesthesia.basedata.formbean.OperDefFormBean;
 import com.digihealth.anesthesia.basedata.po.BasOperdef;
+import com.digihealth.anesthesia.basedata.po.BasRegOpt;
 import com.digihealth.anesthesia.basedata.utils.LogUtils;
 import com.digihealth.anesthesia.basedata.utils.UserUtils;
 import com.digihealth.anesthesia.common.service.BaseService;
@@ -91,6 +94,136 @@ public class EvtOptRealOperService extends BaseService {
             UserUtils.getUserCache(),
             getBeid());
     }
+	
+	/**
+	 * 保存实施手术（永兴定制）
+	 * 
+	 * @param OptRealOper
+	 */
+	@Transactional
+    public void saveOptRealOperYXRM(List<EvtOptRealOper> optRealOperList)
+    {
+		int maxoptLevel = 1;
+        int maxCutLevel = 1;
+        Map<String,Integer> optLevelMap = new HashMap<String,Integer>();
+        optLevelMap.put("一级",1);
+        optLevelMap.put("二级",2);
+        optLevelMap.put("三级",3);
+        optLevelMap.put("四级",4);
+        
+        Map<Integer,String> optLevelMapTwo = new HashMap<Integer,String>();
+        optLevelMapTwo.put(1,"一级");
+        optLevelMapTwo.put(2,"二级");
+        optLevelMapTwo.put(3,"三级");
+        optLevelMapTwo.put(4,"四级");
+        
+        if (null != optRealOperList && optRealOperList.size() > 0)
+        {
+            String docId = optRealOperList.get(0).getDocId();
+            evtOptRealOperDao.deleteByDocId(docId);
+            
+            for (EvtOptRealOper optRealOper : optRealOperList)
+            {
+                if (StringUtils.isBlank(optRealOper.getOperDefId()) && StringUtils.isBlank(optRealOper.getName()))
+                {
+                    continue;
+                }
+                
+                if (StringUtils.isBlank(optRealOper.getOptRealOperId()))
+                {
+                    optRealOper.setOptRealOperId(GenerateSequenceUtil.generateSequenceNo()); 
+                }
+                
+                String operDefId = optRealOper.getOperDefId();
+                if (StringUtils.isNotBlank(operDefId))
+                {
+                	BasOperdef basOperdef = basOperdefDao.queryOperdefById(operDefId);
+                	String optLevel = basOperdef.getOptLevel();
+                	Integer cutLevel = basOperdef.getCutLevel();
+                	if(null != cutLevel && cutLevel.intValue() >maxCutLevel )
+                	{
+                		maxCutLevel = cutLevel.intValue();
+                	}
+                	if(StringUtils.isNotBlank(optLevel))
+                	{
+                		int level = optLevelMap.get(optLevel);
+                		if(level > maxoptLevel)
+                		{
+                			maxoptLevel = level;
+                		}
+                	}
+                }
+                evtOptRealOperDao.insert(optRealOper);
+            }
+        }
+        
+        String regOptId = "";
+        DocAnaesRecord anaesRecord = null;
+        if (optRealOperList.size() > 0)
+        {
+            anaesRecord = docAnaesRecordDao.searchAnaesRecordById(optRealOperList.get(0).getDocId());
+            if(null != anaesRecord)
+            {
+            	regOptId = anaesRecord.getRegOptId();
+            }
+            
+            
+        }
+        
+        Boolean flag = false;
+        BasRegOpt basRegOpt = basRegOptDao.searchRegOptById(regOptId);
+        if(null != basRegOpt)
+        {
+        	String optLevel = basRegOpt.getOptLevel();
+        	Integer cutLevel = basRegOpt.getCutLevel();
+        	if(null != cutLevel)
+        	{
+        		if(cutLevel.intValue() != maxCutLevel)
+        		{
+        			flag = true;
+        			basRegOpt.setCutLevel(maxCutLevel);
+        		}
+        	}else
+        	{
+        		flag = true;
+        		basRegOpt.setCutLevel(maxCutLevel);
+        	}
+        	
+        	if(StringUtils.isNotBlank(optLevel))
+        	{
+        		int level = optLevelMap.get(optLevel);
+        		if(level != maxoptLevel)
+        		{
+        			flag = true;
+        			basRegOpt.setOptLevel(optLevelMapTwo.get(maxoptLevel));
+        		}
+        	}else
+        	{
+        		flag = true;
+        		basRegOpt.setOptLevel(optLevelMapTwo.get(maxoptLevel));
+        	}
+        }
+        
+        //最高切口等级和手术等级改变时，修改手术基础信息对应字段
+        if(flag)
+        {
+        	basRegOptDao.updateByPrimaryKey(basRegOpt);
+        	if(null != anaesRecord)
+            {
+        		anaesRecord.setOptLevel(optLevelMapTwo.get(maxoptLevel));
+        		docAnaesRecordDao.updateByPrimaryKey(anaesRecord);
+            }
+        }
+        
+        LogUtils.saveOperateLog(regOptId,
+            LogUtils.OPT_TYPE_INFO_SAVE,
+            LogUtils.OPT_MODULE_OPER_RECORD,
+            "实施手术保存",
+            JsonType.jsonType(optRealOperList),
+            UserUtils.getUserCache(),
+            getBeid());
+    }
+	
 
 	/**
 	 * 检验事件

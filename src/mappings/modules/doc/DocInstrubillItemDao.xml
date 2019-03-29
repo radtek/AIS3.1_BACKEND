@@ -10,6 +10,7 @@
     <result column="hollowViscus" property="hollowViscus" jdbcType="INTEGER" />
     <result column="cloBeBody" property="cloBeBody" jdbcType="INTEGER" />
     <result column="cloAfBody" property="cloAfBody" jdbcType="INTEGER" />
+    <result column="skinSuture" property="skinSuture" jdbcType="INTEGER" />
     <result column="createUser" property="createUser" jdbcType="VARCHAR" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
     <result column="type" property="type" jdbcType="VARCHAR" />
@@ -18,7 +19,7 @@
 
   <sql id="Base_Column_List" >
     instruItemId, regOptId, instrumentId, origamount, inadd, hollowViscus, cloBeBody, 
-    cloAfBody, createUser, createTime, type, basicNumber
+    cloAfBody, skinSuture, createUser, createTime, type, basicNumber
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -65,6 +66,7 @@
 		hollowViscus = #{instrubillItem.hollowViscus},
 		cloBeBody = #{instrubillItem.cloBeBody},
 		cloAfBody = #{instrubillItem.cloAfBody},
+		skinSuture = #{instrubillItem.skinSuture},
 		createUser = #{instrubillItem.createUser},
 		createTime = #{instrubillItem.createTime},
 		type = #{instrubillItem.type},
@@ -80,11 +82,11 @@
   <insert id="insert" parameterType="com.digihealth.anesthesia.doc.po.DocInstrubillItem" >
     insert into doc_instrubill_item (instruItemId, regOptId, instrumentId, 
       origamount, inadd, hollowViscus, 
-      cloBeBody, cloAfBody, createUser, 
+      cloBeBody, cloAfBody, skinSuture, createUser, 
       createTime, type, basicNumber)
     values (#{instruItemId,jdbcType=VARCHAR}, #{regOptId,jdbcType=VARCHAR}, #{instrumentId,jdbcType=VARCHAR}, 
       #{origamount,jdbcType=INTEGER}, #{inadd,jdbcType=VARCHAR}, #{hollowViscus,jdbcType=INTEGER}, 
-      #{cloBeBody,jdbcType=INTEGER}, #{cloAfBody,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
+      #{cloBeBody,jdbcType=INTEGER}, #{cloAfBody,jdbcType=INTEGER}, #{skinSuture,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=VARCHAR}, #{basicNumber,jdbcType=INTEGER})
   </insert>
 
@@ -114,6 +116,9 @@
       </if>
       <if test="cloAfBody != null" >
         cloAfBody,
+      </if>
+      <if test="skinSuture != null" >
+        skinSuture,
       </if>
       <if test="createUser != null" >
         createUser,
@@ -152,6 +157,9 @@
       </if>
       <if test="cloAfBody != null" >
         #{cloAfBody,jdbcType=INTEGER},
+      </if>
+      <if test="skinSuture != null" >
+        #{skinSuture,jdbcType=INTEGER},
       </if>
       <if test="createUser != null" >
         #{createUser,jdbcType=VARCHAR},
@@ -192,6 +200,9 @@
       <if test="cloAfBody != null" >
         cloAfBody = #{cloAfBody,jdbcType=INTEGER},
       </if>
+      <if test="skinSuture != null" >
+        skinSuture = #{skinSuture,jdbcType=INTEGER},
+      </if>
       <if test="createUser != null" >
         createUser = #{createUser,jdbcType=VARCHAR},
       </if>
@@ -217,6 +228,7 @@
       hollowViscus = #{hollowViscus,jdbcType=INTEGER},
       cloBeBody = #{cloBeBody,jdbcType=INTEGER},
       cloAfBody = #{cloAfBody,jdbcType=INTEGER},
+      skinSuture = #{skinSuture,jdbcType=INTEGER},
       createUser = #{createUser,jdbcType=VARCHAR},
       createTime = #{createTime,jdbcType=TIMESTAMP},
       type = #{type,jdbcType=VARCHAR},

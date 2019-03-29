@@ -199,6 +199,9 @@
 		delete from bas_anaes_monitor_config where regOptId = #{regOptId} and position = #{position} and eventId != '91001'
 	</delete>
 	
+	<delete id="deleteByRegOptId">
+		delete from bas_anaes_monitor_config where regOptId = #{regOptId} and beid = #{beid}
+	</delete>
 	<select id="getDeviceMonitorListByEventName" resultType="com.digihealth.anesthesia.basedata.formbean.DeviceMonitorFormbean">
 			SELECT
 					c.*,b.eventId

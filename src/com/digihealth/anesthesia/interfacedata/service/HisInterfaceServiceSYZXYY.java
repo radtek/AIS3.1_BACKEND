@@ -952,6 +952,7 @@ public class HisInterfaceServiceSYZXYY
 	                        Integer enable = new Integer(row.getEnable());
 	                        Float packageDosageAmount = StringUtils.isNotBlank(row.getPackageDosageAmount()) ? Float.valueOf(row.getPackageDosageAmount()) : null;
 	                        String dosageUnit = row.getDosageUnit();
+	                        String iskjyw = row.getIskjyw();
 	                        BasMedicine medicine = basMedicineDao.selectByCode(code, basBusEntityDao.getBeid());
 	                        
 	                        if (medicine != null
@@ -960,7 +961,8 @@ public class HisInterfaceServiceSYZXYY
 	                                || !Objects.equal(medicine.getSpec(), spec)
 	                                || !Objects.equal(medicine.getDosageUnit(), dosageUnit)
 	                                || !Objects.equal(medicine.getPackageDosageAmount(), packageDosageAmount)
-	                                || !Objects.equal(medicine.getEnable(), enable)))
+	                                || !Objects.equal(medicine.getEnable(), enable)
+	                                || !Objects.equal(medicine.getAntibacterial(), iskjyw)))
 	                        {
 	                            medicine.setName(name);
 	                            medicine.setPinYin(pinyin);
@@ -969,6 +971,7 @@ public class HisInterfaceServiceSYZXYY
 	                            medicine.setDosageUnit(dosageUnit);
 	                            medicine.setPackageDosageAmount(packageDosageAmount);
 	                            medicine.setEnable(enable);
+	                            medicine.setAntibacterial(iskjyw);
 	                            basMedicineDao.update(medicine);
 	                        }
 	                        if (null == medicine)
@@ -984,6 +987,7 @@ public class HisInterfaceServiceSYZXYY
 	                            medicine.setPackageDosageAmount(packageDosageAmount);
 	                            medicine.setBeid(beid);
 	                            medicine.setEnable(1);
+	                            medicine.setAntibacterial(iskjyw);
 	                            basMedicineDao.insert(medicine);
 	                        }
 	                        basDict = basDictItemDao.getListByGroupIdandCodeName("drug_store_times", "时间戳序列", beid);
@@ -1320,6 +1324,7 @@ public class HisInterfaceServiceSYZXYY
         //麻醉方法
         String designedAnaesMethodName = row.getAnaesName();
         String designedAnaesMethodCode = "";
+        List<String> designedAnaesMethodCodes = new ArrayList<String>();
         if(null != designedAnaesMethodName && StringUtils.isNotBlank(designedAnaesMethodName)){
             String[] designedAnaesMethodNameList = designedAnaesMethodName.split(",");
             if(null != designedAnaesMethodNameList && designedAnaesMethodNameList.length>0){
@@ -1328,6 +1333,7 @@ public class HisInterfaceServiceSYZXYY
                     //这里his给到的麻醉方法是code，我们用到的是id所以在保存的时候需要做下转换
                     if(null!=anaesMethodList && anaesMethodList.size()>0){
                         designedAnaesMethodCode +=anaesMethodList.get(0).getAnaMedId()+",";
+                        designedAnaesMethodCodes.add(anaesMethodList.get(0).getAnaMedId());
                     }
                 }
             }
@@ -1338,7 +1344,7 @@ public class HisInterfaceServiceSYZXYY
             regOpt.setDesignedAnaesMethodCode(designedAnaesMethodCode);
         }
         regOpt.setDesignedAnaesMethodName(designedAnaesMethodName);
-        
+        regOpt.setDesignedAnaesMethodCodes(designedAnaesMethodCodes);
         //全麻局麻控制
 		BasRegOptUtils.IsLocalAnaesSet(regOpt);
         
@@ -1410,14 +1416,25 @@ public class HisInterfaceServiceSYZXYY
         asXml.append("<instrnurseName1>").append(basUserDao.selectNameByUserName(dispatch.getInstrnurseId1(), beid)).append("</instrnurseName1>");
         asXml.append("<instrnurseName2>").append(basUserDao.selectNameByUserName(dispatch.getInstrnurseId2(), beid)).append("</instrnurseName2>");
         asXml.append("<anesthetistName>").append(basUserDao.selectNameByUserName(dispatch.getAnesthetistId(), beid)).append("</anesthetistName>");
-        asXml.append("<startTime>").append(dispatch.getStartTime()).append("</startTime>");
+        String operdate = dispatch.getOperRegDate();
+        if (StringUtils.isNotBlank(dispatch.getStartTime()) && dispatch.getStartTime().length() >=5)
+        {
+            String str = dispatch.getOperRegDate() + " " + dispatch.getStartTime().substring(0, 5)+":00";
+            asXml.append("<startTime>").append(str).append("</startTime>");
+        }
+        else
+        {
+            asXml.append("<startTime>").append(operdate).append("</startTime>");
+        }
         asXml.append("<pcs>").append(dispatch.getPcs()).append("</pcs>");
         String inBody = "<HIS><Request>" + asXml + "</Request></HIS>";
+        logger.info("sendDispatchToHis 请求参数===============" + inBody);
         HisOutputMessage response = null;
         String respMsg = "";
-       /* try
+        try
         {
         	respMsg = getWebInterfaceSoap().sendEmr("OPERATION_DOCTORARRANGE", inBody);
+        	logger.info("sendDispatchToHis 响应参数===============" + respMsg);
 			if (StringUtils.isNotBlank(respMsg))
 	        {
 				// 调用his接口回传手术排班记录
@@ -1438,7 +1455,7 @@ public class HisInterfaceServiceSYZXYY
         {
         	logger.info("回传手术排班记录异常:" + Exceptions.getStackTraceAsString(e));
             throw new RuntimeException(Exceptions.getStackTraceAsString(e));
-        }*/
+        }
         
         logger.info("---------------------end sendDispatchToHis------------------------");
     }

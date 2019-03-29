@@ -7,11 +7,13 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="pinYin" property="pinYin" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="optLevel" property="optLevel" jdbcType="VARCHAR" />
+    <result column="cutLevel" property="cutLevel" jdbcType="INTEGER" />
     <result column="beid" property="beid" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    operdefId, code, name, pinYin, enable, beid
+    operdefId, code, name, pinYin, enable, optLevel,cutLevel,beid
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -32,6 +34,8 @@
     <if test="pinYin != '' and pinYin !=null">AND pinYin LIKE CONCAT('%',#{pinYin},'%') </if>
     <if test="enable != null">AND enable = #{enable} </if>
     <if test="beid != '' and beid != null">AND beid = #{beid} </if>
+    <if test="optLevel != '' and optLevel != null">AND optLevel = #{optLevel} </if>
+    <if test="cutLevel != '' and cutLevel != null">AND cutLevel = #{cutLevel} </if>
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
@@ -45,10 +49,11 @@
   
   <insert id="insert" parameterType="com.digihealth.anesthesia.basedata.po.BasOperdef" >
     insert into bas_operdef (operdefId, code, name, 
-      pinYin, enable, beid
+      pinYin, enable, optLevel,cutLevel,beid
       )
     values (#{operdefId,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{pinYin,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{beid,jdbcType=VARCHAR}
+      #{pinYin,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{optLevel,jdbcType=VARCHAR}, 
+      #{cutLevel,jdbcType=INTEGER},#{beid,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -70,6 +75,12 @@
       <if test="enable != null" >
         enable,
       </if>
+      <if test="optLevel != null" >
+        optLevel,
+      </if>
+      <if test="cutLevel != null" >
+        cutLevel,
+      </if>
       <if test="beid != null" >
         beid,
       </if>
@@ -90,6 +101,12 @@
       <if test="enable != null" >
         #{enable,jdbcType=INTEGER},
       </if>
+      <if test="optLevel != null" >
+        #{optLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="cutLevel != null" >
+        #{cutLevel,jdbcType=INTEGER},
+      </if>
       <if test="beid != null" >
         #{beid,jdbcType=VARCHAR},
       </if>
@@ -97,7 +114,8 @@
   </insert>
 
   <insert id="initData" parameterType="com.digihealth.anesthesia.basedata.po.BasOperdef" >
-    INSERT INTO `bas_operdef` (`operdefId`, `code`, `name`, `pinYin`, `enable`, `beid`) SELECT CONCAT(#{basOperdef.beid,jdbcType=VARCHAR},#{random}, `operdefId`), `code`, `name`, `pinYin`, `enable`, #{basOperdef.beid,jdbcType=VARCHAR} FROM bas_operdef WHERE beid = '102';
+    INSERT INTO `bas_operdef` (`operdefId`, `code`, `name`, `pinYin`, `enable`, `optLevel`,`cutLevel`,`beid`) 
+       SELECT CONCAT(#{basOperdef.beid,jdbcType=VARCHAR},#{random}, `operdefId`), `code`, `name`, `pinYin`, `enable`, `optLevel`,`cutLevel`, #{basOperdef.beid,jdbcType=VARCHAR} FROM bas_operdef WHERE beid = '102';
   </insert>
   
   <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasOperdef" >
@@ -115,6 +133,12 @@
       <if test="enable != null" >
         enable = #{enable,jdbcType=INTEGER},
       </if>
+      <if test="optLevel != null" >
+        optLevel = #{optLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="cutLevel != null" >
+        cutLevel = #{cutLevel,jdbcType=INTEGER},
+      </if>
       <if test="beid != null" >
         beid = #{beid,jdbcType=VARCHAR},
       </if>
@@ -128,6 +152,8 @@
       name = #{name,jdbcType=VARCHAR},
       pinYin = #{pinYin,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
+      optLevel = #{optLevel,jdbcType=VARCHAR},
+      cutLevel = #{cutLevel,jdbcType=INTEGER},
       beid = #{beid,jdbcType=VARCHAR}
     where operdefId = #{operdefId,jdbcType=VARCHAR}
   </update>

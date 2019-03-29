@@ -205,6 +205,20 @@ public class SearchDispatchFormBean implements Serializable {
 	@ApiModelProperty(value = "切口等级名称")
 	private String cutLevelName;
 
+	@ApiModelProperty(value = "his通知单推送时间")
+	private String createTime;
+	
+	
+	
+	
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
 	public String getPcsName() {
 		return pcsName;
 	}

@@ -18,6 +18,7 @@ import com.digihealth.anesthesia.common.persistence.CrudDao;
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
 import com.digihealth.anesthesia.doc.formbean.EventBillingFormBean;
 import com.digihealth.anesthesia.doc.po.DocEventBilling;
+import com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow;
 import com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow;
 import com.digihealth.anesthesia.interfacedata.po.ChargItem;
 
@@ -70,6 +71,8 @@ public interface DocEventBillingDao extends CrudDao<DocEventBilling>{
 	public int updateChargeState(@Param("ebId")String ebId);
 	
 	public List<CostRow> queryUnCostListByRegOptId(@Param("regOptId")String regOptId,@Param("costType")String costType);
+	
+	public List<CostHNHTYYRow> queryHNHTYYUnCostListByRegOptId(@Param("regOptId")String regOptId,@Param("costType")String costType);
 	
 	public List<ChargItem> queryUnChargMedByRegOptId(@Param("regOptId")String regOptId ,@Param("beid") String beid);
 	

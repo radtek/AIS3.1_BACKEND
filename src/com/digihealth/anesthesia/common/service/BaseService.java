@@ -31,6 +31,7 @@ import com.digihealth.anesthesia.basedata.dao.BasChargeItemDao;
 import com.digihealth.anesthesia.basedata.dao.BasChargeItemPackagesRelDao;
 import com.digihealth.anesthesia.basedata.dao.BasChargePackagesDao;
 import com.digihealth.anesthesia.basedata.dao.BasCheckItemDao;
+import com.digihealth.anesthesia.basedata.dao.BasCollectConfigDao;
 import com.digihealth.anesthesia.basedata.dao.BasCollectPacuDataDao;
 import com.digihealth.anesthesia.basedata.dao.BasCollectPacuDataHisDao;
 import com.digihealth.anesthesia.basedata.dao.BasColumnStyleDao;
@@ -275,6 +276,7 @@ import com.digihealth.anesthesia.tmp.dao.TmpPacuLiquidTempDao;
 import com.digihealth.anesthesia.tmp.dao.TmpPriChargeMedTempDao;
 import com.digihealth.anesthesia.tmp.dao.TmpSciResearchFieldDao;
 import com.digihealth.anesthesia.tmp.dao.TmpSciTempDao;
+import com.digihealth.anesthesia.tmp.dao.TmpToxicOutstockTempDao;
 
 /**
  * 
@@ -742,6 +744,10 @@ public abstract class BaseService {
     protected DocSelfPayAccedeLlzyyDao docSelfPayAccedeLlzyyDao;
     @Autowired
     protected DocPrePublicityDao docPrePublicityDao;
+    @Autowired
+    protected TmpToxicOutstockTempDao tmpToxicOutstockTempDao;
+    @Autowired
+    protected BasCollectConfigDao basCollectConfigDao;
     
     public String getIP(){  
         String ip=request.getHeader("x-forwarded-for");  

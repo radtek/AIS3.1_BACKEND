@@ -40,6 +40,18 @@ public class BasOperdef {
      */
     @ApiModelProperty(value="有效标志;1-有效，0-无效")
     private Integer enable;
+    
+    /**
+     * 手术等级
+     */
+    @ApiModelProperty(value="手术等级")
+    private String optLevel;
+    
+    /**
+     * 切口等级
+     */
+    @ApiModelProperty(value="切口等级")
+    private Integer cutLevel;
 
     /**
      * 基线id
@@ -94,4 +106,25 @@ public class BasOperdef {
     public void setBeid(String beid) {
         this.beid = beid == null ? null : beid.trim();
     }
+
+	public String getOptLevel()
+	{
+		return optLevel;
+	}
+
+	public void setOptLevel(String optLevel)
+	{
+		this.optLevel = optLevel == null ? null : optLevel.trim();
+	}
+
+	public Integer getCutLevel()
+	{
+		return cutLevel;
+	}
+
+	public void setCutLevel(Integer cutLevel)
+	{
+		this.cutLevel = cutLevel;
+	}
+    
 }

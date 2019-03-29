@@ -39,9 +39,11 @@ import com.digihealth.anesthesia.doc.dao.DocOptCareRecordDao;
 import com.digihealth.anesthesia.doc.po.DocAnaesRecord;
 import com.digihealth.anesthesia.doc.po.DocOptCareRecord;
 import com.digihealth.anesthesia.evt.dao.EvtOptRealOperDao;
+import com.digihealth.anesthesia.evt.dao.EvtParticipantDao;
 import com.digihealth.anesthesia.evt.dao.EvtRealAnaesMethodDao;
 import com.digihealth.anesthesia.evt.formbean.EvtAnaesMethodFormBean;
 import com.digihealth.anesthesia.evt.formbean.SearchFormBean;
+import com.digihealth.anesthesia.evt.po.EvtParticipant;
 import com.digihealth.anesthesia.interfaceParameters.yxrm.tempuri.Operation;
 import com.digihealth.anesthesia.interfaceParameters.yxrm.tempuri.OperationSoap;
 import com.digihealth.anesthesia.interfacedata.formbean.HisResponse;
@@ -76,6 +78,7 @@ public class HisInterfaceServiceYXRM
 	private EvtRealAnaesMethodDao evtRealAnaesMethodDao = SpringContextHolder.getBean(EvtRealAnaesMethodDao.class);
 	private EvtOptRealOperDao evtOptRealOperDao =  SpringContextHolder.getBean(EvtOptRealOperDao.class); 
 	private DocOptCareRecordDao docOptCareRecordDao = SpringContextHolder.getBean(DocOptCareRecordDao.class); 
+	private EvtParticipantDao evtParticipantDao = SpringContextHolder.getBean(EvtParticipantDao.class); 
 	
 	/**
      *手术排班信息回传HIS
@@ -200,12 +203,6 @@ public class HisInterfaceServiceYXRM
     		}
     		stateObj.setAssistantName(name1);
 			stateObj.setAssistantName2(name2);
-			String operatorName = "";
-			if(StringUtils.isNotBlank(regOpt.getOperatorName()))
-			{
-				operatorName = regOpt.getOperatorName();
-			}
-    		stateObj.setOperatorName(operatorName);
     		
     		String anesthetistName = "";
     		if(StringUtils.isNotBlank(dispatch.getAnesthetistName()))
@@ -223,12 +220,12 @@ public class HisInterfaceServiceYXRM
     			stateObj.setEmergency(0);
     		}
     		
-    		
     		String anaesMethodName = "";
     		String operStartTime = "";
     		String operEndTime = "";
     		String realOperationCode = "";
     		String realOperationName = "";
+    		String operatorName = "";
     		
     		Integer isLocalAnaes = regOpt.getIsLocalAnaes();
     		//局麻 
@@ -273,6 +270,11 @@ public class HisInterfaceServiceYXRM
             		{
             			realOperationName = optCareRecord.getOperationName();
             		}
+        			if(StringUtils.isNotBlank(optCareRecord.getOperatorName()))
+        			{
+        				operatorName = optCareRecord.getOperatorName();
+        			}
+            		
     			}	
     		}else{
     			//全麻
@@ -324,13 +326,27 @@ public class HisInterfaceServiceYXRM
                 {
                 	realOperationName = StringUtils.getStringByList(operDefNames);
                 }
-                
+                List<String> opertarNameList = new ArrayList<String>();
+                List<EvtParticipant> evtParticipantList = evtParticipantDao.getMainDocList(anaesRecord.getAnaRecordId(),"O","07");
+                if(null != evtParticipantList && evtParticipantList.size()>0)
+                {
+                	for(EvtParticipant evtParticipant : evtParticipantList)
+                	{
+                		opertarNameList.add(evtParticipant.getName());
+                	}
+                }
+                operatorName = StringUtils.getStringByList(opertarNameList);
     		}
     		stateObj.setAnaesMethodName(anaesMethodName);
     		stateObj.setOperStartTime(operStartTime);
 			stateObj.setOperEndTime(operEndTime);
+			if(StringUtils.isBlank(realOperationCode) || "null".equals(realOperationCode))
+        	{
+        		realOperationCode = "";
+        	}
     		stateObj.setRealOperationCode(realOperationCode);
     		stateObj.setRealOperationName(realOperationName);
+    		stateObj.setOperatorName(operatorName);
     		
     		try
 			{

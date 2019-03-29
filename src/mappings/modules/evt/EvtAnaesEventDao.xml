@@ -69,6 +69,10 @@
 			and code = #{anaesevent.code}
 		</if>
   </delete>
+  
+  <delete id="deleteByDocId">
+		delete from evt_anaesevent WHERE docId = #{docId}
+  </delete>
 
   <insert id="insert" parameterType="com.digihealth.anesthesia.evt.po.EvtAnaesEvent" >
     insert into evt_anaesevent (anaEventId, code, occurTime, 

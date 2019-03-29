@@ -23,6 +23,7 @@ import com.digihealth.anesthesia.evt.po.EvtMedicalEvent;
 public interface EvtMedicalEventDao {
     int deleteByPrimaryKey(String medEventId);
 
+    int deleteByDocId(@Param("docId")String docId);
     int insert(EvtMedicalEvent record);
 
     int insertSelective(EvtMedicalEvent record);

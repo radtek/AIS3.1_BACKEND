@@ -22,6 +22,7 @@ public class Row
     private String minPackageUnit;
     private String priceMinPackage;
     private String batch;
+    private String iskjyw;
     
     private String reservenumber;
     private String age;
@@ -81,7 +82,15 @@ public class Row
     private String idm;//类型  1为项目  2为药品
     
     
-	public String getRet() {
+	public String getIskjyw()
+    {
+        return iskjyw;
+    }
+    public void setIskjyw(String iskjyw)
+    {
+        this.iskjyw = iskjyw;
+    }
+    public String getRet() {
 		return ret;
 	}
 	public void setRet(String ret) {

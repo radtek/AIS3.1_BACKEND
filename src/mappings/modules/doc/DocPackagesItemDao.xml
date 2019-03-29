@@ -48,6 +48,19 @@
 			and a.costType = #{costType}
 	</select>
 	
+	<select id="queryHNHTYYUnCostListByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow">
+		SELECT b.chargeItemCode,b.chargeItemName,a.chargeAmount number,pkItId,'2' type
+			from doc_packages_item a ,bas_reg_opt t ,bas_charge_item b 
+			where a.regOptId = t.regOptId
+			and a.chargeItemId = b.chargeItemId  
+			and t.beid = b.beid
+			and b.`enable` = 1
+			and a.chargeAmount &gt; 0
+			and  a.regOptId = #{regOptId} and a.state = 'NO_FINISH' and isCharge = 1
+			and a.costType = #{costType}
+	</select>
+	
+	
 	<select id="queryUnChargItemByRegOptId" resultType="com.digihealth.anesthesia.interfacedata.po.ChargItem">
 		SELECT a.`chargeAmount` itemQty, b.`chargeItemCode` itemCode, b.`chargeItemName` itemName, '0' itemType, a.pkItId itemId
 			FROM doc_packages_item a ,bas_charge_item b 

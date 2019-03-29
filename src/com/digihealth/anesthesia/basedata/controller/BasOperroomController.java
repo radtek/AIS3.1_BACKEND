@@ -124,6 +124,40 @@ public class BasOperroomController extends BaseController
     }
     
     /**
+     * 保存手术室配置
+     * 
+     * @param operroom
+     * @return
+     */
+    @RequestMapping(value = "/saveOperroomQNZZY")
+    @ResponseBody
+    @ApiOperation(value = "保存手术室配置", httpMethod = "POST", notes = "保存手术室配置")
+    public String saveOperroomQNZZY(@ApiParam(name = "operroom", value = "手术室信息对象") @RequestBody BasOperroom operroom)
+    {
+        logger.info("begin saveOperroom");
+        ResponseValue resp = new ResponseValue();
+        if(CustomConfigureUtil.isSync()){
+            String roomId = basOperroomService.getRoomIdByIp(operroom.getRemotehost(),getBeid());
+             if(StringUtils.isBlank(operroom.getOperRoomId())){
+                 if(!"0".equals(roomId)){
+                    resp.setResultCode("100000001");
+                    resp.setResultMessage("新建手术室配置时,IP地址已经存在其他手术室，请核对!!");
+                    return resp.getJsonStr();
+                }
+             }else{
+                 if(!operroom.getOperRoomId().equals(roomId) && !"0".equals(roomId)){
+                    resp.setResultCode("100000001");
+                    resp.setResultMessage("保存手术室配置时,IP地址已经存在其他手术室，请核对!!");
+                    return resp.getJsonStr();
+                } 
+             }
+        }
+        basOperroomService.saveOperroomQNZZY(operroom);
+        logger.info("end saveOperroom");
+        return resp.getJsonStr();
+    }
+    
+    /**
      * 修改卫生护士
      * 
      * @param operroom

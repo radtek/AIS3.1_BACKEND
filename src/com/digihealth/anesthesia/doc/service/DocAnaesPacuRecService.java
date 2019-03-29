@@ -95,6 +95,11 @@ public class DocAnaesPacuRecService extends BaseService {
 	}
 	
 	@Transactional
+	public void savePacuNumber(DocAnaesPacuRec record) {
+		docAnaesPacuRecDao.updateByPrimaryKeySelective(record);
+	}
+	
+	@Transactional
 	public void saveAnaesPacuRec(DocAnaesPacuRec record,ResponseValue resp) {
 		//if(StringUtils.isBlank(record.getId())){
 			String bedId = record.getBedId();
@@ -270,8 +275,6 @@ public class DocAnaesPacuRecService extends BaseService {
 	@Transactional
 	public void changeBedByPacuRec(AnaesPacuChangeBedFormBean bean,ResponseValue resp) {
 		if(null != bean && StringUtils.isNotBlank(bean.getSourceBed()) && StringUtils.isNotBlank(bean.getTargetBed()) && StringUtils.isNotBlank(bean.getSourceRegOptId())){
-			//目标床位是否为空
-			boolean targetIsNull = true;
 			
 			BasRegionBed targetBed = basRegionBedDao.selectByPrimaryKey(bean.getTargetBed());
 			DocAnaesPacuRec targetRec = docAnaesPacuRecDao.getAnaesPacuRecByRegOptId(targetBed.getRegOptId());
@@ -279,38 +282,35 @@ public class DocAnaesPacuRecService extends BaseService {
 			BasRegionBed soureceBed = basRegionBedDao.selectByPrimaryKey(bean.getSourceBed());
 			DocAnaesPacuRec sourceRec = docAnaesPacuRecDao.getAnaesPacuRecByRegOptId(bean.getSourceRegOptId());
 			
-			if(targetBed != null && StringUtils.isNotBlank(targetBed.getRegOptId())){
-				targetIsNull = false;
-			}
-			
-			if(null != targetRec){
-				targetRec.setBedId(bean.getSourceBed());
-				docAnaesPacuRecDao.updateByPrimaryKeySelective(targetRec);
-				bean.setTargetRegOptId(targetRec.getRegOptId());
-			}
-			
-			if(null != sourceRec){
-				sourceRec.setBedId(bean.getTargetBed());
-				docAnaesPacuRecDao.updateByPrimaryKeySelective(sourceRec);
-			}
-			
-			if(null != targetBed){
-				if(targetIsNull){
-					targetBed.setStatus(1);
-				}
-				targetBed.setRegOptId(bean.getSourceRegOptId());
+			//换床时，两床位都存在患者时
+			if(targetBed!=null && StringUtils.isNotBlank(targetBed.getRegOptId())){
+				String tarOptId = targetBed.getRegOptId();
+				String souOptId = soureceBed.getRegOptId();
+				targetBed.setRegOptId(souOptId);
+				soureceBed.setRegOptId(tarOptId);
+				
 				basRegionBedDao.updateByPrimaryKey(targetBed);
+				basRegionBedDao.updateByPrimaryKey(soureceBed);
+				
+				if(null!=targetRec){
+					targetRec.setBedId(soureceBed.getId());
+					docAnaesPacuRecDao.updateByPrimaryKey(targetRec);
+					
+				}
+			}else{
+				String souOptId = soureceBed.getRegOptId();
+				targetBed.setRegOptId(souOptId);
+				targetBed.setStatus(1);
+				basRegionBedDao.updateByPrimaryKey(targetBed);
+				
+				soureceBed.setRegOptId("");
+				soureceBed.setStatus(0);
+				basRegionBedDao.updateByPrimaryKey(soureceBed);
+				
 			}
 			
-			if(null != soureceBed){
-				if(targetIsNull){
-					soureceBed.setStatus(0);
-					soureceBed.setRegOptId("");
-				}else{
-					soureceBed.setRegOptId(bean.getTargetRegOptId());
-				}
-				basRegionBedDao.updateByPrimaryKey(soureceBed);
-			}
+			sourceRec.setBedId(targetBed.getId());
+			docAnaesPacuRecDao.updateByPrimaryKey(sourceRec);
 		}
 		
 	}

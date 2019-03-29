@@ -763,7 +763,7 @@ o.designedAnaesMethodName,(select name from bas_user where bas_user.userName = a
 		WHEN 3 THEN 'III'
 		WHEN 4 THEN 'IV'
 		END  AS cutLevelName,
-		(select codeName from bas_sys_dict_item where groupId = 'pac_type' and codeValue = a.pcs and beid = #{baseQuery.beid}) as pcsName
+		(select codeName from bas_sys_dict_item where groupId = 'pac_type' and codeValue = a.pcs and beid = #{baseQuery.beid}) as pcsName,o.createTime
 		FROM bas_dispatch a left join bas_reg_opt o on a.regOptId = o.regOptId
 		left join bas_operroom m on a.operRoomId = m.operRoomId 
 		where 1 = 1 AND m.beid = #{baseQuery.beid} and o.beid = #{baseQuery.beid}

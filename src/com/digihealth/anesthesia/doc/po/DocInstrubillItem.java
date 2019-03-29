@@ -69,6 +69,12 @@ public class DocInstrubillItem {
 	@ApiModelProperty(value = "关体腔后")
     private Integer cloAfBody;
 
+    /**
+     * 皮肤缝合后
+     */
+	@ApiModelProperty(value = "皮肤缝合后")
+    private Integer skinSuture;
+
 	@ApiModelProperty(value = "创建人")
     private String createUser;
 
@@ -175,7 +181,15 @@ public class DocInstrubillItem {
         this.cloAfBody = cloAfBody;
     }
 
-    public String getCreateUser() {
+    public Integer getSkinSuture() {
+		return skinSuture;
+	}
+
+	public void setSkinSuture(Integer skinSuture) {
+		this.skinSuture = skinSuture;
+	}
+
+	public String getCreateUser() {
         return createUser;
     }
 

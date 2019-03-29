@@ -15,8 +15,8 @@ import org.apache.ibatis.annotations.Param;
 import com.digihealth.anesthesia.basedata.formbean.SystemSearchFormBean;
 import com.digihealth.anesthesia.common.persistence.CrudDao;
 import com.digihealth.anesthesia.common.persistence.annotation.MyBatisDao;
-import com.digihealth.anesthesia.doc.po.DocEventBilling;
 import com.digihealth.anesthesia.doc.po.DocPackagesItem;
+import com.digihealth.anesthesia.interfacedata.formbean.hnhtyy.CostHNHTYYRow;
 import com.digihealth.anesthesia.interfacedata.formbean.syzxyy.CostRow;
 import com.digihealth.anesthesia.interfacedata.po.ChargItem;
 
@@ -50,4 +50,6 @@ public interface DocPackagesItemDao extends CrudDao<DocPackagesItem>{
 	public int updateChargeStateByChargeItemId(@Param("chargeItemId")String chargeItemId, @Param("regOptId")String regOptId);
 	
 	int getMaxSeq(DocPackagesItem record);
+	
+	public List<CostHNHTYYRow> queryHNHTYYUnCostListByRegOptId(@Param("regOptId")String regOptId,@Param("costType")String costType);
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.digihealth.anesthesia.basedata.dao.BasCollectConfigDao" >
+  <resultMap id="BaseResultMap" type="com.digihealth.anesthesia.basedata.po.BasCollectConfig" >
+    <id column="roomId" property="roomId" jdbcType="VARCHAR" />
+    <id column="beid" property="beid" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="patientId" property="patientId" jdbcType="VARCHAR" />
+    <result column="devicesUsed" property="devicesUsed" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    roomId, beid, ip, patientId, devicesUsed
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from bas_collect_config
+    where roomId = #{roomId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from bas_collect_config
+    where roomId = #{roomId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.digihealth.anesthesia.basedata.po.BasCollectConfig" >
+    insert into bas_collect_config (roomId, beid, ip, 
+      patientId, devicesUsed)
+    values (#{roomId,jdbcType=VARCHAR}, #{beid,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{patientId,jdbcType=VARCHAR}, #{devicesUsed,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.digihealth.anesthesia.basedata.po.BasCollectConfig" >
+    insert into bas_collect_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roomId != null" >
+        roomId,
+      </if>
+      <if test="beid != null" >
+        beid,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="patientId != null" >
+        patientId,
+      </if>
+      <if test="devicesUsed != null" >
+        devicesUsed,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roomId != null" >
+        #{roomId,jdbcType=VARCHAR},
+      </if>
+      <if test="beid != null" >
+        #{beid,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="patientId != null" >
+        #{patientId,jdbcType=VARCHAR},
+      </if>
+      <if test="devicesUsed != null" >
+        #{devicesUsed,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.digihealth.anesthesia.basedata.po.BasCollectConfig" >
+    update bas_collect_config
+    <set >
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="patientId != null" >
+        patientId = #{patientId,jdbcType=VARCHAR},
+      </if>
+      <if test="devicesUsed != null" >
+        devicesUsed = #{devicesUsed,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where roomId = #{roomId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.digihealth.anesthesia.basedata.po.BasCollectConfig" >
+    update bas_collect_config
+    set ip = #{ip,jdbcType=VARCHAR},
+      patientId = #{patientId,jdbcType=VARCHAR},
+      devicesUsed = #{devicesUsed,jdbcType=VARCHAR}
+    where roomId = #{roomId,jdbcType=VARCHAR}
+      and beid = #{beid,jdbcType=VARCHAR}
+  </update>
+
+</mapper>
